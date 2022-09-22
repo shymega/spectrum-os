@@ -13,8 +13,9 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
   truncate -s 10G "$img"
   exec 3<>"$img"
   rm -f "$img"
-  exec qemu-kvm -cpu host -m 4G -machine q35 -snapshot \
+  exec qemu-kvm -cpu host -m 4G -machine q35,kernel-irqchip=split -snapshot \
     -display gtk,gl=on \
+    -device intel-iommu,intremap=on \
     -device virtio-vga-gl \
     -device qemu-xhci \
     -device usb-storage,drive=drive1,removable=true \

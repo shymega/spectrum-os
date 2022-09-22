@@ -61,7 +61,9 @@ clean:
 run: build/live.img
 	$(QEMU_KVM) -m 4G \
 	    -cpu host \
+	    -machine q35,kernel-irqchip=split \
 	    -display gtk,gl=on \
+	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \

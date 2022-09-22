@@ -69,7 +69,9 @@ run: build/initramfs build/rootfs.verity.roothash build/live.img
 	    -initrd build/initramfs \
 	    -append "ro console=ttyS0 ext=vda intel_iommu=on roothash=$$(< build/rootfs.verity.roothash)" \
 	    -cpu host \
+	    -machine q35,kernel-irqchip=split \
 	    -display gtk,gl=on \
+	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
