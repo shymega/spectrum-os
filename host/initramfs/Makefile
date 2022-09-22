@@ -67,7 +67,7 @@ run: build/initramfs build/rootfs.verity.roothash build/live.img
 	$(QEMU_KVM) -m 4G \
 	    -kernel $(KERNEL) \
 	    -initrd build/initramfs \
-	    -append "ro console=ttyS0 ext=vda roothash=$$(< build/rootfs.verity.roothash)" \
+	    -append "ro console=ttyS0 ext=vda intel_iommu=on roothash=$$(< build/rootfs.verity.roothash)" \
 	    -cpu host \
 	    -display gtk,gl=on \
 	    -device virtio-vga-gl \
