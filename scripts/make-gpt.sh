@@ -4,7 +4,7 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: EUPL-1.2+
 #
-# usage: make-gpt.sh GPT_PATH PATH:PARTTYPE[:PARTUUID]...
+# usage: make-gpt.sh GPT_PATH PATH:PARTTYPE[:PARTUUID[:PARTLABEL]]...
 
 ONE_MiB=1048576
 TWO_MiB=2097152
@@ -27,7 +27,7 @@ fillPartition() {
 		 dd if="$3" of="$1" seek="$start" count="$size" conv=notrunc)
 }
 
-# Prints the partition path from a PATH:PARTTYPE[:PARTUUID] string.
+# Prints the partition path from a PATH:PARTTYPE[:PARTUUID[:PARTLABEL]] string.
 partitionPath() {
 	awk -F: '{print $1}' <<EOF
 $1
