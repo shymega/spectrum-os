@@ -14,5 +14,5 @@
 
   checks = import nix/checks.nix { inherit config; };
 
-  combined = import img/combined/run-vm.nix { inherit config; };
+  combined = import release/combined/run-vm.nix { inherit config; };
 }
