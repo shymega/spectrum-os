@@ -2,4 +2,5 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 if { /etc/mdev/wait ext }
+if { resize2fs /dev/ext }
 mount /dev/ext /ext

@@ -6,7 +6,7 @@
 pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
-, busybox, cloud-hypervisor, cryptsetup, execline, jq, kmod
+, busybox, cloud-hypervisor, cryptsetup, execline, e2fsprogs, jq, kmod
 , mdevd, s6, s6-linux-init, socat, util-linuxMinimal, xorg
 }:
 
@@ -44,8 +44,8 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor execline jq kmod mdevd s6 s6-linux-init s6-rc socat
-    start-vm
+    cloud-hypervisor e2fsprogs execline jq kmod mdevd s6 s6-linux-init s6-rc
+    socat start-vm
 
     (cryptsetup.override {
       programs = {
@@ -57,11 +57,15 @@ let
 
     (busybox.override {
       extraConfig = ''
+        CONFIG_CHATTR n
         CONFIG_DEPMOD n
         CONFIG_FINDFS n
         CONFIG_INIT n
         CONFIG_INSMOD n
+        CONFIG_LSATTR n
         CONFIG_LSMOD n
+        CONFIG_MKE2FS n
+        CONFIG_MKFS_EXT2 n
         CONFIG_MODINFO n
         CONFIG_MODPROBE n
         CONFIG_RMMOD n
