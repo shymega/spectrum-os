@@ -8,6 +8,8 @@
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
 
+BACKGROUND = background
+CLOUD_HYPERVISOR = cloud-hypervisor
 CLOUD_HYPERVISOR = cloud-hypervisor
 CPIO = cpio
 CPIOFLAGS = --reproducible -R +0:+0 -H newc
@@ -15,10 +17,12 @@ MCOPY = mcopy
 MKFS_FAT = mkfs.fat
 MMD = mmd
 OBJCOPY = objcopy
+S6_IPCSERVER_SOCKETBINDER = s6-ipcserver-socketbinder
 TAR = tar
 TAR2EXT4 = tar2ext4
 TRUNCATE = truncate
 VERITYSETUP = veritysetup
+VIRTIOFSD = virtiofsd
 
 .SUFFIXES: .ext4 .tar
 .tar.ext4:

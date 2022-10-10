@@ -82,25 +82,35 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
-run-qemu: build/host/appvm/blk/root.img
+start-virtiofsd:
+	$(S6_IPCSERVER_SOCKETBINDER) -B virtiofsd.sock \
+	    $(BACKGROUND) $(VIRTIOFSD) --fd 0 --shared-dir . ""
+.PHONY: start-virtiofsd
+
+run-qemu: build/host/appvm/blk/root.img start-virtiofsd
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
 	  -drive file=build/host/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	  -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=PARTLABEL=root" \
 	  -netdev user,id=net0 \
 	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
+	  -chardev socket,id=virtiofsd,path=virtiofsd.sock \
+	  -device vhost-user-fs-pci,chardev=virtiofsd,tag=virtiofs0 \
+	  -object memory-backend-memfd,id=mem,size=128M,share=on \
+	  -numa node,memdev=mem \
 	  -chardev vc,id=virtiocon0 \
 	  -device virtio-serial-pci \
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/appvm/blk/root.img
+run-cloud-hypervisor: build/host/appvm/blk/root.img start-virtiofsd
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
-	    --memory size=128M \
+	    --memory size=128M,shared=on \
 	    --disk path=build/host/appvm/blk/root.img,readonly=on \
 	           path=$(RUN_IMG),readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
+	    --fs tag=virtiofs0,socket=virtiofsd.sock \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=PARTLABEL=root" \
 	    --console tty \

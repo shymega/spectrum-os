@@ -11,7 +11,11 @@ with config.pkgs;
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
-    cloud-hypervisor jq qemu_kvm reuse
+    # Both QEMU and virtiofsd come with a virtiofsd executable,
+    # so we have to list virtiofsd first.
+    virtiofsd
+
+    cloud-hypervisor execline jq qemu_kvm reuse s6
   ];
 
   KERNEL = "${passthru.kernel.dev}/vmlinux";
