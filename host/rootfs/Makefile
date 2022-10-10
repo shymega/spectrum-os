@@ -141,14 +141,20 @@ build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.ve
 	mv $@.tmp $@
 
 run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
-	$(QEMU_KVM) -cpu host -m 2G \
+	@set -x && \
+	ext="$$(mktemp build/spectrum-rootfs-extfs.XXXXXXXXXX.img)" && \
+	cp $(EXT_FS) "$$ext" && \
+	exec 3<>"$$ext" && \
+	rm -f "$$ext" && \
+	truncate -s +10G /proc/self/fd/3 && \
+	exec $(QEMU_KVM) -cpu host -m 2G \
 	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split,initrd=$(INITRAMFS) \
 	    -display gtk,gl=on \
 	    -qmp unix:vmm.sock,server,nowait \
 	    -monitor vc \
 	    -parallel none \
 	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
-	    -drive file=$(EXT_FS),if=virtio,format=raw,readonly=on \
+	    -drive file=/proc/self/fd/3,if=virtio,format=raw \
 	    -append "console=ttyS0 roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on" \
 	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl \
