@@ -1,0 +1,22 @@
+// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: MIT
+
+.main-content {
+    // Just the Docs puts titles next to definitions, rather than on
+    // the line before.  This makes the definitions too horizontally
+    // compressed.
+    dl {
+	display: block;
+    }
+    dt {
+	text-align: left;
+	font-weight: bold;
+
+	&::after {
+	    content: none;
+	}
+    }
+    dd {
+	margin-left: 2ch;
+    }
+}
