@@ -13,11 +13,12 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, runCommand, writeReferencesToFile, e2fsprogs, tar2ext4 }:
 
-{ run, providers ? {} }:
+{ run, providers ? {}, sharedDirs ? {} }:
 
 let
   inherit (lib)
-    any attrValues concatLists concatStrings hasInfix mapAttrsToList;
+    any attrValues concatLists concatStrings concatStringsSep hasInfix
+    mapAttrsToList;
 in
 
 assert !(any (hasInfix "\n") (concatLists (attrValues providers)));
@@ -29,7 +30,7 @@ runCommand "spectrum-vm" {
     (mapAttrsToList (kind: map (vm: "${kind}/${vm}\n")) providers));
   passAsFile = [ "providerDirs" ];
 } ''
-  mkdir -p "$out"/{blk,providers}
+  mkdir -p "$out"/{blk,providers,shared-dirs}
 
   mkdir root
   cd root
@@ -40,9 +41,20 @@ runCommand "spectrum-vm" {
   tar2ext4 -i ../run.tar -o "$out/blk/run.img"
   e2label "$out/blk/run.img" ext
 
-  pushd "$out/providers"
+  pushd "$out"
+
+  pushd providers
   xargs -rd '\n' dirname -- < "$providerDirsPath" | xargs -rd '\n' mkdir -p --
   xargs -rd '\n' touch -- < "$providerDirsPath"
+  popd
+
+  pushd shared-dirs
+  ${concatStringsSep "\n" (mapAttrsToList (key: { path }: ''
+    mkdir ${lib.escapeShellArg key}
+    ln -s ${lib.escapeShellArgs [ path "${key}/dir" ]}
+  '') sharedDirs)}
+  popd
+
   popd
 
   ln -s /usr/img/appvm/blk/root.img "$out/blk"
