@@ -37,7 +37,7 @@ fn main() -> std::io::Result<()> {
         OsStr::new("--cmdline"),
         OsStr::new("console=ttyS0 root=PARTLABEL=root"),
         OsStr::new("--memory"),
-        OsStr::new("size=128M"),
+        OsStr::new("size=128M,shared=on"),
         OsStr::new("--console"),
         OsStr::new("pty"),
         OsStr::new("--kernel"),
