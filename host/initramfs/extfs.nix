@@ -11,12 +11,13 @@ let
 
   appvm-catgirl = import ../../vm/app/catgirl.nix { inherit config; };
   appvm-lynx = import ../../vm/app/lynx.nix { inherit config; };
+  appvm-mg = import ../../vm/app/mg.nix { inherit config; };
 in
 
 runCommand "ext.ext4" {
   nativeBuildInputs = [ e2fsprogs ];
 } ''
-  mkdir -p root/svc/data/appvm-{catgirl,lynx}
+  mkdir -p root/svc/data/appvm-{catgirl,lynx,mg}
   cd root
 
   tar -C ${netvm} -c data | tar -C svc -x
@@ -24,6 +25,7 @@ runCommand "ext.ext4" {
 
   tar -C ${appvm-catgirl} -c . | tar -C svc/data/appvm-catgirl -x
   tar -C ${appvm-lynx} -c . | tar -C svc/data/appvm-lynx -x
+  tar -C ${appvm-mg} -c . | tar -C svc/data/appvm-mg -x
 
   mkfs.ext4 -d . $out 16T
   resize2fs -M $out
