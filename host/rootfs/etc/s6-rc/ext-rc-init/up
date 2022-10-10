@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
 if { mkdir -p /run/s6-rc.ext.src }
 
@@ -14,6 +15,16 @@ if {
   if { redirfd -w 1 ${name}/type echo longrun }
   if { redirfd -w 1 ${name}/notification-fd echo 3 }
   if { ln -s -- /bin/start-vm ${name}/run }
+
+  if {
+    elglob -0 paths ${dir}/shared-dirs/*
+    forx -pE path { $paths }
+    backtick -E fsname { basename -- $path }
+    if { cp -R -- /etc/template/fs ${name}-fs-${fsname} }
+    if { mkdir -- ${name}-fs-${fsname}/data ${name}-fs-${fsname}/env }
+    if { cp -P -- ${path}/dir ${name}-fs-${fsname}/data/shared-dir }
+    touch -- ${name}/dependencies.d/${name}-fs-${fsname}
+  }
 
   elglob -0 paths /ext/svc/data/${name}/providers/net/*
   forx -pE path { $paths }
