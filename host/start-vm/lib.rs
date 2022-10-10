@@ -112,6 +112,32 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
         return Err("no block devices specified".to_string());
     }
 
+    let shared_dirs_dir = config_dir.join("shared-dirs");
+    match shared_dirs_dir.read_dir().map(Iterator::peekable) {
+        Ok(mut entries) => {
+            if entries.peek().is_some() {
+                command.arg("--fs");
+            }
+
+            for result in entries {
+                let entry = result
+                    .map_err(|e| format!("examining directory entry: {}", e))?
+                    .file_name();
+
+                let mut arg = OsString::from("tag=");
+                arg.push(&entry);
+                arg.push(",socket=../");
+                arg.push(vm_name);
+                arg.push("-fs-");
+                arg.push(&entry);
+                arg.push("/env/virtiofsd.sock");
+                command.arg(arg);
+            }
+        }
+        Err(e) if e.kind() == ErrorKind::NotFound => {}
+        Err(e) => return Err(format!("reading directory {:?}: {}", shared_dirs_dir, e)),
+    }
+
     command.arg("--serial").arg({
         let mut serial = OsString::from("file=/run/");
         serial.push(&vm_name);
