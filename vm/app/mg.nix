@@ -6,5 +6,12 @@
 import ../make-vm.nix { inherit config; } {
   providers.net = [ "netvm" ];
   sharedDirs.virtiofs0.path = "/ext";
-  run = "${config.pkgs.pkgsStatic.mg}/bin/mg";
+  run = config.pkgs.pkgsStatic.callPackage (
+    { writeScript, mg }:
+    writeScript "run-mg" ''
+      #!/bin/execlineb -P
+      if { /etc/mdev/wait virtiofs0 }
+      ${mg}/bin/mg /run/virtiofs/virtiofs0
+    ''
+  ) { };
 }
