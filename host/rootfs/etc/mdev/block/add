@@ -35,5 +35,4 @@ if {
 }
 
 if { ln -s $devname ext }
-if { mount ext /ext }
 /etc/mdev/listen ext
