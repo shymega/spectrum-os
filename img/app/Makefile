@@ -36,6 +36,7 @@ VM_FILES = \
 	etc/mdev.conf \
 	etc/mdev/iface \
 	etc/mdev/listen \
+	etc/mdev/virtiofs \
 	etc/mdev/wait \
 	etc/passwd \
 	etc/resolv.conf \
