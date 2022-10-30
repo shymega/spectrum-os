@@ -43,9 +43,9 @@ nix-build spectrum/img/combined \
   -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
 ----
 
-This will take a very long time, but when it's done, a symbolic link
-named "result" will appear, pointing to a Spectrum USB installer
-image.
+If you haven't set up the xref:binary-cache.adoc[binary cache], this
+will take a very long time.  When it's done, a symbolic link named
+"result" will appear, pointing to a Spectrum USB installer image.
 
 CAUTION: Spectrum is not yet suitable for real-world use.  Do not use
 your Spectrum system for anything important or sensitive.  Spectrum is
