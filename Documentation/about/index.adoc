@@ -1,0 +1,32 @@
+= About Spectrum
+:description: Some words about Spectrum as the operating system, not a project. Highlights the differences between common Linux distributions and Spectrum.
+:page-nav_order: 1
+:page-has_children: true
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Spectrum is a Linux-based system that uses the
+https://github.com/NixOS/nix[Nix package manager] and
+the https://github.com/NixOS/nixpkgs[Nix Packages collection] (Nixpkgs).
+
+This gives an actively-developed base with good
+hardware support, powerful and optimised compartmentalization primitives in
+https://www.linux-kvm.org/page/Main_Page[KVM], and the reproducible packaging
+and configuration system that is important
+for a maintainable compartmentalized system.
+
+== Why Spectrum
+
+* User data and applications are managed centrally while remaining isolated.
+That means that the system can be backed up and managed as a whole, rather than
+mixed up in several dozen VMs.
+
+* The host system and isolated environments are managed declaratively and
+reproducibly using the Nix package manager.
+This can save the user the burden of maintaining many different virtual
+computers, allowing finer-grained resource access controls and making it
+possible to verify the software running across all environments.
+
+TIP: If you are interested in why we do something _this_ way instead of _that_
+way, see xref:../decisions/index.adoc[Architecture Decision Records].

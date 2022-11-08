@@ -1,0 +1,52 @@
+= Building Documentation
+:page-parent: Development
+:page-nav_order: 5
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Make sure you have https://nixos.org/download.html[Nix] installed.
+You may also want to xref:../installation/binary-cache.adoc[configure the Spectrum
+binary cache], to avoid having to wait for dependencies to compile on
+your local system.
+
+. Get a copy of the Spectrum source code:
++
+[source,shell]
+----
+git clone https://spectrum-os.org/git/spectrum
+----
+. Enter the documentation directory:
++
+[source,shell]
+----
+cd spectrum/Documentation
+----
+. Enter the development environment:
++
+[source,shell]
+----
+nix-shell -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
+----
+. In the development shell, do an initial build of the documentation
+site:
++
+[source,shell]
+----
+scripts/build.sh
+----
+. Run a development server for previewing changes locally:
++
+[source,shell]
+----
+jekyll serve
+----
++
+This will serve a local copy of the documentation at http://localhost:4000/.
++
+IMPORTANT: Jekyll does not handle rendering of the draw.io diagrams. If you
+modify any of those, or add new ones, run `scripts/build.sh` again to do a full
+rebuild of the site.
+
+After making changes to the documentation, see how to
+xref:first-patch.adoc[send your patch] and submit the changes for review.

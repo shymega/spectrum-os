@@ -1,0 +1,23 @@
+= Build and Run
+:description: How to download and install Spectrum OS.
+:page-nav_order: 2
+:page-has_children: true
+:page-has_toc: false
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+
+To start working with Spectrum, you need:
+
+* xref:../installation/binary-cache.adoc[Set up the binary cache] to speed up the build process.
+* xref:../installation/getting-spectrum.adoc[Build Spectrum] from the source.
+
+TIP: At this stage, Spectrum works only on x86-64.  AArch64 support is in
+development.
+
+== Uninstalling and Updating
+
+Currently, there is no implementation for a software update.
+
+You can replace Spectrum by installing another OS.

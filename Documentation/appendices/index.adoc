@@ -1,0 +1,13 @@
+= Appendices
+:description: Additional information.
+:page-nav_order: 5
+:page-has_children: true
+:page-has_toc: false
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+This section provides additional information on how to work with:
+
+* xref:../appendices/user-partition.adoc[user partition]
+* xref:../appendices/uuid-reference.adoc[universally unique identifier (UUID)].

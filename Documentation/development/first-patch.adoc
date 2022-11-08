@@ -1,10 +1,10 @@
-= Sending Your First Patch
-:page-parent: Tutorials
+= Sending Your Patch
+:page-parent: Working with Patches
+:page-grand_parent: Development
+:page-nav_order: 1
 
 // SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
-
-== Prerequisites
 
 This tutorial assumes that you already have basic
 https://git-scm.com/[git] experience.
@@ -14,19 +14,18 @@ https://spectrum-os.org/git/[Spectrum source tree].  You'll also need
 to have configured `git send-email` — a guide for this can be found at
 https://git-send-email.io/.
 
-== Making your changes
+== Making Changes
 
-If you've worked on any git repository before, the process for making
-your changes will probably be very familiar.
+The process of making changes is similar to working on any git repository.
 
-1. Create a branch for your changes:
+. Create a branch for your changes:
 +
 [source,shell]
 ----
 git checkout -b fix-docs # for example
 ----
-2. Make changes in your editor.
-3. Stage and commit your changes:
+. Make changes in your editor.
+. Stage and commit your changes:
 +
 [source,shell]
 ----
@@ -39,7 +38,7 @@ indicates your acceptance of the
 https://spectrum-os.org/git/spectrum/tree/DCO-1.1.txt[Developer's
 Certificate of Origin], which is mandatory for Spectrum patches.
 
-== Submitting changes
+== Submitting Changes
 
 Once you're happy with how the commits on your branch look, run:
 
@@ -64,13 +63,14 @@ message that will be sent before all of your patches.
 
 Once your patch has been submitted, wait for it to be reviewed.
 Feedback, if any, will be sent as email replies to your submitted
-patch.  You can respond to feedback in your mail client.  Please use
-the Reply All button to ensure that your messages are sent to the
+patch.  You can respond to feedback in your mail client.
+
+Use the *Reply All* button to sent your messages to the
 mailing list as well as to the person who sent the feedback.
 
-If you need to make changes to your patch, and submit a new version,
+If you need to make changes to your patch and submit a new version,
 use https://git-rebase.io/[`git rebase`] to create a new version of
-your patch(es), and submit it like this:
+your patch(es) and then submit it like this:
 
 [source,shell]
 ----
@@ -81,7 +81,7 @@ The added `-v2` flag indicates that this is version two of your
 patch set.  If your patches require more rounds of changes, submit
 subsequent rounds with `-v3`, `-v4`, etc. as appropriate.
 
-If you'd like to describe what has changed from the previous version
+If you would like to describe what has changed from the previous version
 of your patches, you can do so in a xref:cover-letter[cover letter]
 as described above.
 

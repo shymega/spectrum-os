@@ -1,6 +1,6 @@
 = 001 Host Update Mechanism
 :page-parent: Architecture Decision Records
-:page-grand_parent: Explanation
+:page-grand_parent: About Spectrum
 
 // SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
@@ -11,7 +11,7 @@ Proposed
 
 == Context
 
-Spectrum currently has no implementation for software update. The host --
+Spectrum currently has no implementation for software update.  The host --
 consisting of the Linux kernel, KVM, cloud-hypervisor and minimal user space
 tools -- will require software updates to support feature development and
 security fixes.

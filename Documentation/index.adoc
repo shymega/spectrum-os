@@ -1,13 +1,32 @@
-= Spectrum Docs
+= Spectrum Documentation
 :page-nav_exclude: true
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
-Spectrum is a compartmentalized operating system.
 
-If you'd like to try Spectrum, see xref:getting-spectrum.adoc[Getting
-Spectrum].
+Spectrum is an open-source project that aims to create a computer operating
+system, based on the principle of security by compartmentalization, that has a
+lower barrier to entry and is easy to use and maintain.
+
+== Using Spectrum
 
 To learn about what Spectrum is and how it's implemented, start with
-the xref:architecture.adoc[architecture overview].
+the xref:about/architecture.adoc[architecture overview].
+
+If you want to try Spectrum, see xref:../installation/index.adoc[Build and Run]
+ to setup a development environment.
+
+
+== Developing and Contributing
+
+Spectrum is made of free and open-source software.  It is free for anyone to
+ use, modify, and distribute.
+
+Once you are up and running, see
+ xref:../development/index.adoc[Development] to understand how to work with
+ Spectrum's code and participate in the collaborative development process.
+
+If you are thinking of contributing to Spectrum docs, see
+ xref:../development/building-documentation.adoc[Building Documentation].

@@ -1,5 +1,7 @@
 = Installing and Configuring b4
-:page-parent: Tutorials
+:page-parent: Working with Patches
+:page-grand_parent: Development
+:page-nav_order: 1
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 // SPDX-FileCopyrightText: 2022 Unikie
@@ -19,7 +21,7 @@ of the Spectrum root's nix-shell.
 
 You should be able to install b4 from your package manager.
 
-Using Nix, you can start a shell with b4 available by running
+Using Nix, you can start a shell with b4 available by running:
 
 [listing]
 [source,shell]

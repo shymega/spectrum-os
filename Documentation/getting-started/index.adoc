@@ -1,0 +1,13 @@
+= Getting Started
+:description: Exploring Spectrum OS. Using (=How-To-Guides), Configuring (adding smth).
+:page-nav_order: 3
+:page-has_children: true
+:page-has_toc: false
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Ready to get started with Spectrum? Here is what you can do next:
+
+* xref:../getting-started/creating-vms.adoc[Create your own VM] to use others applications.
+* xref:../getting-started/running-vms.adoc[Start some applications].

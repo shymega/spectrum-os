@@ -1,5 +1,6 @@
-= Setting Up the Binary Cache
-:page-parent: How-to Guides
+= Setting Up Binary Cache
+:page-parent: Build and Run
+:page-nav_order: 1
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
@@ -20,10 +21,9 @@ encounter any trouble with it.
 The binary cache is currently not able to provide logs, due to a
 https://github.com/NixOS/nix/pull/6051[Nix bug].
 
-== On NixOS
+== For NixOS
 
-The following configuration adds the Spectrum binary cache as a
-substituter, and tells Nix to trust builds signed with its public key.
+Add the following configuration to /etc/nixos/configuration.nix:
 
 [source,nix]
 ----
@@ -38,7 +38,13 @@ substituter, and tells Nix to trust builds signed with its public key.
 }
 ----
 
-== On Non-NixOS systems
+This configuration adds the Spectrum binary cache as a substituter and makes
+Nix trust builds signed with its public key.
+
+To apply changes, rebuild your system with the https://nixos.wiki/wiki/Nixos-rebuild[nixos-rebuild] command.
+
+
+== For Non-NixOS Systems
 
 Add the following configuration to /etc/nix/nix.conf:
 
@@ -47,6 +53,10 @@ Add the following configuration to /etc/nix/nix.conf:
 substituters = https://cache.dataaturservice.se/spectrum/ https://cache.nixos.org/
 trusted-public-keys = cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY= spectrum-os.org-1:rnnSumz3+Dbs5uewPlwZSTP0k3g/5SRG4hD7Wbr9YuQ=
 ----
+
+Run `systemctl restart nix-daemon.service` after making any changes in the Nix
+configuration.  After that the binary cache will be used automatically when
+`nix-build` is run.
 
 If you have other binary caches configured besides cache.nixos.org,
 make sure to add the Spectrum cache URL and public key to the existing

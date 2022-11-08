@@ -1,5 +1,7 @@
 = Testing Patches
-:page-parent: How-to Guides
+:page-parent: Working with Patches
+:page-grand_parent: Development
+:page-nav_order: 2
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 // SPDX-FileCopyrightText: 2022 Unikie
@@ -9,7 +11,7 @@ Potential changes to Spectrum are posted to and discussed on the
 https://spectrum-os.org/participating.html#spectrum-devel[devel@spectrum-os.org]
 mailing list.
 
-== Apply the patch
+== Apply Patch
 
 . Find the patch series you want to test on
   https://spectrum-os.org/lists/archives/spectrum-devel/[public-inbox].
@@ -33,15 +35,15 @@ of the Spectrum root's nix-shell, which allows you to skip this step.
 ----
 b4 am 20220511092352.70E54C980@atuin.qyliss.net
 ----
-
-. b4 will indicate the file name it has downloaded the patches into
-  with a line like:
+b4 will indicate the file name it has downloaded the patches into with a line
+like:
 +
 [example]
 [listing]
+----
 Writing ./20220424_hi_host_rootfs_fix_weston_hotplugging.mbx
-+
-Run `git am` on that file to apply the patches, for example:
+----
+. Run `git am` on that file to apply the patches. For example:
 +
 [example]
 [source,shell]
@@ -49,14 +51,12 @@ Run `git am` on that file to apply the patches, for example:
 git am 20220424_hi_host_rootfs_fix_weston_hotplugging.mbx
 ----
 
-== Post your test results
+== Post Your Results
 
-When you've tested a patch, it's really helpful to
+When you tested a patch, it is helpful to
 xref:replying.adoc[reply] with your test results.
 
-If the patch worked for you, please reply to it and include a line
-like the following, separated from any reply text:
-
+If the patch worked for you, please reply to it and include a line like the following, separated from any reply text:
 ----
 Tested-by: John Smith <john@example.com>
 ----
@@ -66,10 +66,10 @@ patch replies will be automatically included in the commit message
 when a patch is applied.
 
 It's also helpful to explain in your reply how you tested the patch,
-but you don't have to if it's obvious.  (For example, if a patch is
+but you don't have to if it's obvious.  For example, if a patch is
 supposed to fix a bug, and you verified that after applying the patch
 the bug is fixed, just the Tested-by line on its own is enough to
-indicate that.)
+indicate that.
 
 If you found an issue with the patch, do not include a Tested-by line,
 and instead reply to the patch explaining what you tested, what you

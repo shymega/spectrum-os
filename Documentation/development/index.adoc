@@ -1,0 +1,27 @@
+= Development
+:description: Development progress, general development practices
+:page-nav_order: 4
+:page-has_children: true
+
+// SPDX-FileCopyrightText: 2022 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Spectrum is free software, currently under active development.
+
+
+== Developer Setup
+
+* https://git.kernel.org/pub/scm/utils/b4/b4.git/about/[b4]
+* https://nixos.org/manual/nix/stable/introduction.html[Nix package manager]
+* https://docs.asciidoctor.org/[AsciiDoc] for writing the documentation
+
+
+== Mailing Lists
+
+The Spectrum project runs several
+https://spectrum-os.org/participating.html#mailing-lists[mailing lists] on
+which you can ask your questions or help other people with the questions they
+have.  All the Spectrum developers as well as many long time Linux and Spectrum users are on the lists.
+
+For real-time feedback, use
+https://spectrum-os.org/participating.html#irc[IRC/Matrix channel].

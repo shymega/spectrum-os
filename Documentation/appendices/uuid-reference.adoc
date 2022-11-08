@@ -1,7 +1,7 @@
-= UUID Reference
-:page-parent: Reference
-:toc: preamble
+= Appendix B. UUID
+:page-parent: Appendices
 :toclevels: 1
+:page-nav_order: 2
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
@@ -40,7 +40,7 @@ xref:user-partition.adoc[Spectrum user partition].
 
 === `56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e`
 
-https://github.com/endlessm/eos-installer["eosimages"] partition on the 
+https://github.com/endlessm/eos-installer["eosimages"] partition on the
 Spectrum combined live system / installer image.
 
 == Combined Image Partition IDs
