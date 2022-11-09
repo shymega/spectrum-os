@@ -1,6 +1,7 @@
 #!/bin/sh -eu
 #
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: EUPL-1.2+
 #
 # usage: make-gpt.sh GPT_PATH PATH:PARTTYPE[:PARTUUID]...
@@ -38,7 +39,8 @@ scriptsDir="$(dirname "$0")"
 out="$1"
 shift
 
-nl=$'\n'
+nl='
+'
 table="label: gpt"
 
 # Keep 1MiB free at the start, and 1MiB free at the end.
