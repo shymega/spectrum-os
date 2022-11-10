@@ -12,5 +12,7 @@
 {
   doc = import ./Documentation { inherit config; };
 
+  checks = import nix/checks.nix { inherit config; };
+
   combined = import img/combined/run-vm.nix { inherit config; };
 }
