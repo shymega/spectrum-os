@@ -23,7 +23,7 @@ sizeMiB() {
 fillPartition() {
 	sfdisk -J "$1" | jq -r --argjson index "$2" \
 		'.partitiontable.partitions[$index] | "\(.start) \(.size)"' |
-		(read start size;
+		(read -r start size;
 		 dd if="$3" of="$1" seek="$start" count="$size" conv=notrunc)
 }
 
@@ -48,7 +48,7 @@ gptBytes=$TWO_MiB
 for partition; do
 	sizeMiB="$(sizeMiB "$(partitionPath "$partition")")"
 	table="$table${nl}size=${sizeMiB}MiB,$(awk -f "$scriptsDir/sfdisk-field.awk" -v partition="$partition")"
-	gptBytes="$(expr "$gptBytes" + "$sizeMiB" \* $ONE_MiB)"
+	gptBytes="$((gptBytes + sizeMiB * ONE_MiB))"
 done
 
 rm -f "$out"
@@ -60,5 +60,5 @@ EOF
 n=0
 for partition; do
 	fillPartition "$out" "$n" "$(partitionPath "$partition")"
-	n="$(expr "$n" + 1)"
+	n="$((n + 1))"
 done
