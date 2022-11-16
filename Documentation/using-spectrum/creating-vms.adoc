@@ -1,5 +1,5 @@
 = Creating VMs
-:page-parent: Getting Started
+:page-parent: Using Spectrum
 :page-nav_order: 1
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
