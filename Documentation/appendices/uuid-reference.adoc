@@ -1,4 +1,4 @@
-= Appendix B. UUID
+= Appendix B. UUID Reference
 :page-parent: Appendices
 :toclevels: 1
 :page-nav_order: 2
