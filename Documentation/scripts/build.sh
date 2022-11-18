@@ -4,7 +4,7 @@
 
 cd "$(dirname "$0")/.."
 
-if [ ! -w . -a ! -w .jekyll-cache ]; then
+if [ ! -w . ] && [ ! -w .jekyll-cache ]; then
 	JEKYLLFLAGS=--disable-disk-cache
 fi
 
