@@ -11,12 +11,14 @@
     runCommand "spectrum-shellcheck" {
       src = lib.cleanSourceWith {
         filter = path: type:
-          type == "directory" || builtins.match ''.*[^/]\.sh'' path != null;
+          (builtins.baseNameOf path != "build" && type == "directory")
+          || builtins.match ''.*[^/]\.sh'' path != null;
         src = lib.cleanSource ../.;
       };
 
       nativeBuildInputs = [ shellcheck ];
     } ''
+      shopt -s globstar
       shellcheck $src/**/*.sh
       touch $out
     ''
