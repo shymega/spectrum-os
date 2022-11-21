@@ -6,7 +6,7 @@
 cd "$(dirname "$0")/../.."
 
 PATTERN='\b[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}\b'
-UUID_REFERENCE_PATH=Documentation/appendices/uuid-reference.adoc
+UUID_REFERENCE_PATH=Documentation/development/uuid-reference.adoc
 
 documented_uuids=$(mktemp)
 trap 'rm -f -- "$documented_uuids"' EXIT

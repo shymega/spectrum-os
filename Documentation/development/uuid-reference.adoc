@@ -1,7 +1,6 @@
-= Appendix B. UUID Reference
-:page-parent: Appendices
-:toclevels: 1
-:page-nav_order: 2
+= UUID Reference
+:page-parent: Development
+:page-nav_order: 6
 
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
@@ -25,13 +24,13 @@ Specification].
 === `4f68bce3-e8cd-4db1-96e7-fbcaf984b709`
 
 "Root Partition (amd64/x86_64)" from the
-https://systemd.io/DISCOVERABLE_PARTITIONS/[Discoverable Partitions
+https://uapi-group.org/specifications/specs/discoverable_partitions_specification/[Discoverable Partitions
 Specification].
 
 === `2c7357ed-ebd2-46d9-aec1-23d437ec2bf5`
 
 "Root Verity Partition (amd64/x86_64)" from the
-https://systemd.io/DISCOVERABLE_PARTITIONS/[Discoverable Partitions
+https://uapi-group.org/specifications/specs/discoverable_partitions_specification/[Discoverable Partitions
 Specification].
 
 === `9293e1ff-cee4-4658-88be-898ec863944f`

@@ -15,7 +15,7 @@ lower barrier to entry and is easy to use and maintain.
 To learn about what Spectrum is and how it's implemented, start with
 the xref:about/architecture.adoc[architecture overview].
 
-If you want to try Spectrum, see xref:../installation/index.adoc[Build and Run]
+If you want to try Spectrum, see xref:installation/index.adoc[Build and Run]
  to setup a development environment.
 
 
@@ -25,8 +25,8 @@ Spectrum is made of free and open-source software.  It is free for anyone to
  use, modify, and distribute.
 
 Once you are up and running, see
- xref:../development/index.adoc[Development] to understand how to work with
+ xref:development/index.adoc[Development] to understand how to work with
  Spectrum's code and participate in the collaborative development process.
 
-If you are thinking of contributing to Spectrum docs, see
- xref:../development/building-documentation.adoc[Building Documentation].
+If you are thinking of contributing to the Spectrum docs, see
+ xref:development/building-documentation.adoc[Building Documentation].

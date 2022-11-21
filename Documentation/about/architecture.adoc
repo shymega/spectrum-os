@@ -15,8 +15,8 @@ The default set of virtual machines includes two application VMs,
 _appvm-catgirl_ (an IRC client) and _appvm-lynx_ (a text-based web
 browser); and a system VM, _netvm_ (which handles hardware network
 devices and provides network services to application VMs).
-Refer to xref:../getting-started/creating-vms.adoc[Creating VMs] and
-xref:../getting-started/running-vms.adoc[Running
+Refer to xref:../using-spectrum/creating-vms.adoc[Creating VMs] and
+xref:../using-spectrum/running-vms.adoc[Running
 VMs] for more information about using VMs in Spectrum.
 
 == Architecture Decision Records (ADRs)
@@ -28,7 +28,7 @@ https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions[ADRs].
 == Spectrum Host System
 
 Compartmentalization is implemented using
-https://cloud-hypervisor.org/[cloud-hypervisor] virtual machines.
+https://cloudhypervisor.org/[cloud-hypervisor] virtual machines.
 cloud-hypervisor uses Linux's
 https://en.wikipedia.org/wiki/Kernel-based_Virtual_Machine[Kernel-based Virtual
 Machine] (KVM) to provide lightweight, hardware-accelerated VMs.
