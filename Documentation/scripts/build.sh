@@ -5,10 +5,10 @@
 cd "$(dirname "$0")/.."
 
 if [ ! -w . ] && [ ! -w .jekyll-cache ]; then
-	JEKYLLFLAGS=--disable-disk-cache
+	set -- --disable-disk-cache "$@"
 fi
 
 find . '(' '!' -path ./_site -o -prune ')' \
 	-a -name '*.drawio' \
 	-exec drawio -xf svg '{}' ';'
-jekyll build $JEKYLLFLAGS -b /doc -d "${1:-_site}"
+jekyll build -b /doc "$@"

@@ -20,7 +20,7 @@ stdenvNoCC.mkDerivation {
 
   buildPhase = ''
     runHook preBuild
-    scripts/build.sh $out
+    scripts/build.sh -d $out
     runHook postBuild
   '';
 
