@@ -55,6 +55,6 @@ The Spectrum installer system.
 
 == Finding Undocumented UUIDs
 
-Running the Documentation/scripts/undocumented-uuids.sh script from
+Running the `Documentation/scripts/undocumented-uuids.sh` script from
 the root of the Spectrum repository will scan the entire tree for
 UUIDs not mentioned in this document.

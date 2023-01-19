@@ -28,5 +28,5 @@ Once you are up and running, see
  xref:development/index.adoc[Development] to understand how to work with
  Spectrum's code and participate in the collaborative development process.
 
-If you are thinking of contributing to the Spectrum docs, see
- xref:development/building-documentation.adoc[Building Documentation].
+If you are thinking of contributing to the Spectrum code or docs, see
+ xref:contributing/index.adoc[Contributing].

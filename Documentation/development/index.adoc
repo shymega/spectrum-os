@@ -15,13 +15,16 @@ Spectrum is free software, currently under active development.
 * https://nixos.org/manual/nix/stable/introduction.html[Nix package manager]
 * https://docs.asciidoctor.org/[AsciiDoc] for writing the documentation
 
+TIP: For information on writing guidelines,
+see xref:../contributing/writing_documentation.adoc[Documentation Style Guide].
+
 
 == Mailing Lists
 
 The Spectrum project runs several
-https://spectrum-os.org/participating.html#mailing-lists[mailing lists] on
+xref:../contributing/communication.adoc[mailing lists] on
 which you can ask your questions or help other people with the questions they
 have.  All the Spectrum developers as well as many long time Linux and Spectrum users are on the lists.
 
 For real-time feedback, use
-https://spectrum-os.org/participating.html#irc[IRC/Matrix channel].
+xref:../contributing/communication.adoc[IRC/Matrix channel].

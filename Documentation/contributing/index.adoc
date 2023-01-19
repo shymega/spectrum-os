@@ -1,0 +1,95 @@
+= Contributing
+:description: How to contribute changes to the Spectrum source repository.
+:page-nav_order: 5
+:page-has_children: true
+
+// SPDX-FileCopyrightText: 2023 Unikie
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Thank you so much for your interest in contributing to Spectrum.
+Having a healthy community of people who feel empowered to work
+on the project is vital to its success.
+
+If you have any questions about the project, please
+xref:../contributing/communication.adoc[get in touch] with
+the community. We will gladly help you out!
+
+
+== Contributing Code
+
+If you are interested in contributing code to Spectrum,
+you can find the source repositories online: https://spectrum-os.org/git/.
+
+If you have made changes you would like to be included
+in the official Spectrum distribution, please send patches
+to the spectrum-devel mailing list (devel@spectrum-os.org).
+For more information, see
+xref:../development/working-with-patches.adoc[Working with Patches].
+
+Sending patches to the list is easy — you can do it with Git,
+straight from the command line. You do not have to set anything up
+in your email client, and you do not have to subscribe to the list.
+The only thing you need to do is probably to set up Git so it knows
+how to send email using your provider's SMTP server.
+These instructions https://git-send-email.io/ should be enough
+to get you going. If you are still stuck, send an email
+to *devel@spectrum-os.org* and we will help you out.
+
+Once you have Git configured correctly, sending your changes to the
+list should be as simple as something like:
+
+[listing]
+[source,shell]
+git send-email origin/master --to devel@spectrum-os.org
+
+You will be CCed on replies to your posts, so you do not even have to be
+subscribed to the mailing list if you are worried about too much traffic.
+There is also a web interface https://spectrum-os.org/lists/hyperkitty/
+that you can use to browse or even post to the mailing list.
+
+Add a Signed-off-by line to each patch you submit, to indicate your
+certification of the xref:https://spectrum-os.org/git/spectrum/tree/DCO-1.1.txt[Developer's Certificate of Origin] for that patch.
+The easiest way to do this is with `git commit's -s` flag.
+
+Do not be too afraid of getting it wrong the first couple of times.
+This might well be a new way of collaborating for you, and everybody
+understands that. Hopefully, you will soon realise just how effective
+this style of collaboration can be compared to the alternatives.
+
+== Contributing Documentation
+
+If you notice something that can be fixed or improved:
+
+. xref:https://spectrum-os.org/doc/development/first-patch.html#making-changes[Edit or add any relevant documentation].
++
+TIP: Make sure your changes are formatted correctly and consistently
+with the rest of the documentation. For information on writing guidelines,
+see xref:../contributing/writing_documentation.adoc[Documentation Style Guide].
++
+. xref:../contributing/building-documentation.adoc[Test your documentation].
+Reread what you wrote and run a spellchecker on it to make sure you did not miss anything.
+. xref:https://spectrum-os.org/doc/development/first-patch.html#submitting-changes[Submit changes].
+
+
+=== Documentation To-Do List
+
+Spectrum documentation needs are:
+
+* Reporting Bugs
+* Development conventions/style (code review, naming)
+* Integration, code philosophy
+
+The list will be updated. Improvements to the documentation are welcome!
+
+== Contributing Other Things
+
+At this stage, it is difficult to say what things would be useful
+to the project beyond code and documentation. Artwork will be
+extremely important and valuable. But, do not let that dissuade you!
+At some point, we will need all sorts of things, and we might as well
+get the work done early if people are willing to do it.
+
+If you think you have skills to offer the project beyond writing code,
+we would love to hear from you. The best thing to do is to either talk
+with us on spectrum-discuss, or in real time on IRC.
+For more information, see xref:../contributing/communication.adoc[Communication in Spectrum].
