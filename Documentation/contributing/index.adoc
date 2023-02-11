@@ -24,7 +24,7 @@ If you have made changes you would like to be included
 in the official Spectrum distribution, please send patches
 to the spectrum-devel mailing list (devel@spectrum-os.org).
 For more information, see
-xref:../development/working-with-patches.adoc[Working with Patches].
+xref:working-with-patches.adoc[Working with Patches].
 
 Sending patches to the list is easy — you can do it with Git,
 straight from the command line. You do not have to set anything up
@@ -60,7 +60,7 @@ this style of collaboration can be compared to the alternatives.
 
 If you notice something that can be fixed or improved:
 
-. xref:https://spectrum-os.org/doc/development/first-patch.html#making-changes[Edit or add any relevant documentation].
+. xref:first-patch.html#making-changes[Edit or add any relevant documentation].
 +
 TIP: Make sure your changes are formatted correctly and consistently
 with the rest of the documentation. For information on writing guidelines,
@@ -68,7 +68,7 @@ see xref:../contributing/writing_documentation.adoc[Documentation Style Guide].
 +
 . xref:../contributing/building-documentation.adoc[Test your documentation].
 Reread what you wrote and run a spellchecker on it to make sure you did not miss anything.
-. xref:https://spectrum-os.org/doc/development/first-patch.html#submitting-changes[Submit changes].
+. xref:first-patch.html#submitting-changes[Submit changes].
 
 
 === Documentation To-Do List

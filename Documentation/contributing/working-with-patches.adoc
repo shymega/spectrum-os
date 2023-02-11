@@ -1,6 +1,6 @@
 = Working with Patches
-:page-parent: Development
-:page-nav_order: 3
+:page-parent: Contributing
+:page-nav_order: 2
 :page-has_children: true
 
 // SPDX-FileCopyrightText: 2022 Unikie
@@ -8,5 +8,5 @@
 
 Patches are the way for contributors to submit code to the Spectrum project.
 
-Make sure to xref:../development/b4.adoc[install and configure the b4 utility]
-for applying and testing other people's patches.
+Make sure to xref:b4.adoc[install and configure the b4 utility] for
+applying and testing other people's patches.

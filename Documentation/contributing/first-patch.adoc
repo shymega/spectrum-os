@@ -1,6 +1,6 @@
 = Sending Your Patch
 :page-parent: Working with Patches
-:page-grand_parent: Development
+:page-grand_parent: Contributing
 :page-nav_order: 1
 
 // SPDX-FileCopyrightText: 2022 Unikie

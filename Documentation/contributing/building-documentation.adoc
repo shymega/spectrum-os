@@ -1,6 +1,6 @@
 = Building Documentation
 :page-parent: Contributing
-:page-nav_order: 3
+:page-nav_order: 4
 
 // SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
@@ -49,4 +49,4 @@ modify any of those, or add new ones, run `scripts/build.sh` again to do a full
 rebuild of the site.
 
 After making changes to the documentation, see how to
-xref:../development/first-patch.adoc[send your patch] and submit the changes for review.
+xref:first-patch.adoc[send your patch] and submit the changes for review.

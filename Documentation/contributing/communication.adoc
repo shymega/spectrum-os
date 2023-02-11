@@ -81,7 +81,7 @@ and where patches are sent.
 There is a separate guide for the Spectrum development process,
 including how patches are sent to this list and discussed.
 For more information, see
-xref:../development/working-with-patches.adoc[Working with Patches].
+xref:working-with-patches.adoc[Working with Patches].
 
 You can subscribe
 xref:https://spectrum-os.org/lists/mailman3/lists/devel.spectrum-os.org/[on the web], or by sending mail to *devel-subscribe@spectrum-os.org*.
