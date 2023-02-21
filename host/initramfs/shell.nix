@@ -18,7 +18,7 @@ with pkgs;
 
 initramfs.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
   nativeBuildInputs = nativeBuildInputs ++ [
-    cryptsetup qemu_kvm util-linux
+    cryptsetup qemu_kvm tar2ext4 util-linux
   ];
 
   EXT_FS = extfs;

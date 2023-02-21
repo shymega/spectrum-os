@@ -9,7 +9,11 @@ QEMU_KVM = qemu-kvm
 CPIO = cpio
 CPIOFLAGS = --reproducible -R +0:+0 -H newc
 SCRIPTS = ../../scripts
+TAR = tar
+TAR2EXT4 = tar2ext4
 VERITYSETUP = veritysetup
+
+RUN_IMAGE = build/live.img
 
 build/initramfs: $(MICROCODE) build/local.cpio $(PACKAGES_CPIO)
 	cat $(MICROCODE) > $@
@@ -59,11 +63,23 @@ build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.ve
 	    $(ROOT_FS):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$($(SCRIPTS)/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
 	mv $@.tmp $@
 
+build/loop.tar: build/live.img
+	$(TAR) -cf $@ build/live.img
+
+.SUFFIXES: .ext4 .tar
+.tar.ext4:
+	$(TAR2EXT4) -i $< -o $@
+
+build/loop.img: $(SCRIPTS)/make-gpt.sh build/loop.ext4
+	$(SCRIPTS)/make-gpt.sh $@.tmp \
+	    build/loop.ext4:56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e
+	mv $@.tmp $@
+
 clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/initramfs build/rootfs.verity.roothash build/live.img
+run: build/initramfs build/rootfs.verity.roothash $(RUN_IMAGE)
 	$(QEMU_KVM) -m 4G \
 	    -kernel $(KERNEL) \
 	    -initrd build/initramfs \
@@ -75,6 +91,6 @@ run: build/initramfs build/rootfs.verity.roothash build/live.img
 	    -device virtio-vga-gl \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
-	    -drive file=build/live.img,id=drive1,format=raw,if=none,readonly=true \
+	    -drive file=$(RUN_IMAGE),id=drive1,format=raw,if=none,readonly=true \
 	    -drive file=$(EXT_FS),format=raw,if=virtio,readonly=true
 .PHONY: run
