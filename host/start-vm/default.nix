@@ -5,16 +5,14 @@
 { lib, stdenv, meson, ninja, rustc }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith hasSuffix;
+  inherit (lib) hasSuffix;
 in
 
 stdenv.mkDerivation {
   name = "start-vm";
 
-  src = cleanSourceWith {
-    filter = name: _type: !(hasSuffix ".nix" name);
-    src = cleanSource ./.;
-  };
+  inherit (config) src;
+  sourceRoot = "source/host/start-vm";
 
   nativeBuildInputs = [ meson ninja rustc ];
 

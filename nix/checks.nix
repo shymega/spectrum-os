@@ -23,13 +23,7 @@
   rustfmt = config.pkgs.callPackage (
     { lib, runCommand, rustfmt }:
     runCommand "spectrum-rustfmt" {
-      src = lib.cleanSourceWith {
-        filter = path: type:
-          (builtins.baseNameOf path != "build" && type == "directory")
-          || builtins.match ''.*[^/]\.rs'' path != null;
-        src = lib.cleanSource ../.;
-      };
-
+      inherit (config) src;
       nativeBuildInputs = [ rustfmt ];
     } ''
       shopt -s globstar
@@ -41,13 +35,7 @@
   shellcheck = config.pkgs.callPackage (
     { lib, runCommand, shellcheck }:
     runCommand "spectrum-shellcheck" {
-      src = lib.cleanSourceWith {
-        filter = path: type:
-          (builtins.baseNameOf path != "build" && type == "directory")
-          || builtins.match ''.*[^/]\.sh'' path != null;
-        src = lib.cleanSource ../.;
-      };
-
+      inherit (config) src;
       nativeBuildInputs = [ shellcheck ];
     } ''
       shopt -s globstar

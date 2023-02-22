@@ -11,7 +11,6 @@ prefix = /usr/local
 imgdir = $(prefix)/img
 
 VMM = qemu
-SCRIPTS = ../../scripts
 
 HOST_BUILD_FILES = \
 	build/host/appvm/blk/root.img \
@@ -29,9 +28,9 @@ build/host/appvm/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
-build/host/appvm/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
+build/host/appvm/blk/root.img: ../../scripts/make-gpt.sh ../../scripts/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)
-	$(SCRIPTS)/make-gpt.sh $@.tmp \
+	../../scripts/make-gpt.sh $@.tmp \
 	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:5460386f-2203-4911-8694-91400125c604:root
 	mv $@.tmp $@
 

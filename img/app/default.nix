@@ -13,9 +13,7 @@ config.pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
-
-  scripts = import ../../scripts { inherit config; };
+  inherit (lib) concatMapStringsSep hasSuffix;
 
   packages = [
     execline kmod mdevd s6 s6-linux-init s6-rc
@@ -66,19 +64,15 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-appvm";
 
-  src = cleanSourceWith {
-    filter = name: _type:
-      name != "${toString ./.}/build" &&
-      !(hasSuffix ".nix" name);
-    src = cleanSource ./.;
-  };
+  inherit (config) src;
+  sourceRoot = "source/img/app";
 
   nativeBuildInputs = [ jq s6-rc tar2ext4 util-linux ];
 
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";
 
-  makeFlags = [ "SCRIPTS=${scripts}" "prefix=$(out)" ];
+  makeFlags = [ "prefix=$(out)" ];
 
   enableParallelBuilding = true;
 

@@ -10,4 +10,6 @@
 
 ({ pkgs ? import <nixpkgs> {} }: {
   inherit pkgs;
+
+  src = import ./src.nix { inherit (pkgs) lib; };
 }) config

@@ -8,7 +8,6 @@ QEMU_KVM = qemu-kvm
 CLOUD_HYPERVISOR = cloud-hypervisor
 
 VMM = qemu
-SCRIPTS = ../../../scripts
 
 HOST_BUILD_FILES = \
 	build/host/data/netvm/blk/root.img \
@@ -31,9 +30,9 @@ build/host/data/netvm/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
-build/host/data/netvm/blk/root.img: $(SCRIPTS)/make-gpt.sh $(SCRIPTS)/sfdisk-field.awk build/rootfs.ext4
+build/host/data/netvm/blk/root.img: ../../../scripts/make-gpt.sh ../../../scripts/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)
-	$(SCRIPTS)/make-gpt.sh $@.tmp \
+	../../../scripts/make-gpt.sh $@.tmp \
 	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
 	mv $@.tmp $@
 

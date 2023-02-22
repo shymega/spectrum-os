@@ -9,13 +9,12 @@
 
 let
   inherit (config) pkgs;
-  inherit (pkgs.lib) cleanSource cleanSourceWith hasSuffix toUpper;
+  inherit (pkgs.lib) hasSuffix toUpper;
 
   extfs = pkgs.pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit config;
   };
   rootfs = import ../../host/rootfs { inherit config; };
-  scripts = import ../../scripts { inherit config; };
   initramfs = import ../../host/initramfs { inherit config rootfs; };
   efiArch = stdenv.hostPlatform.efiArch;
 in
@@ -23,12 +22,8 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-live.img";
 
-  src = cleanSourceWith {
-    filter = name: _type:
-      name != "${toString ./.}/build" &&
-      !(hasSuffix ".nix" name);
-    src = cleanSource ./.;
-  };
+  inherit (config) src;
+  sourceRoot = "source/release/live";
 
   nativeBuildInputs = [ cryptsetup dosfstools jq mtools util-linux ];
 
@@ -40,7 +35,6 @@ stdenvNoCC.mkDerivation {
   EFINAME = "BOOT${toUpper efiArch}.EFI";
 
   buildFlags = [ "build/live.img" ];
-  makeFlags = [ "SCRIPTS=${scripts}" ];
 
   installPhase = ''
     runHook preInstall

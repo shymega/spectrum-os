@@ -14,9 +14,7 @@ config.pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
-
-  scripts = import ../../../scripts { inherit config; };
+  inherit (lib) concatMapStringsSep hasSuffix;
 
   connman = connmanMinimal;
 
@@ -75,19 +73,13 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-netvm";
 
-  src = cleanSourceWith {
-    filter = name: _type:
-      name != "${toString ./.}/build" &&
-      !(hasSuffix ".nix" name);
-    src = cleanSource ./.;
-  };
+  inherit (config) src;
+  sourceRoot = "source/vm/sys/net";
 
   nativeBuildInputs = [ jq s6-rc tar2ext4 util-linux ];
 
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";
-
-  makeFlags = [ "SCRIPTS=${scripts}" ];
 
   installPhase = ''
     mv build/svc $out

@@ -9,14 +9,8 @@
 stdenvNoCC.mkDerivation {
   name = "spectrum-docs";
 
-  src = with lib; cleanSourceWith {
-    src = cleanSource ./.;
-    filter = name: _type:
-      builtins.baseNameOf name != ".jekyll-cache" &&
-      builtins.baseNameOf name != "_site" &&
-      !(hasSuffix ".nix" name) &&
-      !(hasSuffix ".svg" name);
-  };
+  inherit (config) src;
+  sourceRoot = "source/Documentation";
 
   buildPhase = ''
     runHook preBuild

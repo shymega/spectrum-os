@@ -6,7 +6,6 @@
 # QEMU_KVM = qemu-system-x86_64 -enable-kvm.
 QEMU_KVM = qemu-kvm
 
-SCRIPTS = ../../scripts
 VERITYSETUP = veritysetup
 
 # tar2ext4 will leave half a filesystem behind if it's interrupted
@@ -134,10 +133,10 @@ build/rootfs.verity.roothash: build/rootfs.verity
 build/rootfs.verity.superblock: build/rootfs.verity
 	tail -n +2 build/rootfs.verity > $@
 
-build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash build/rootfs.ext4
-	$(SCRIPTS)/make-gpt.sh $@.tmp \
-	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$($(SCRIPTS)/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
-	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$($(SCRIPTS)/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
+build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash build/rootfs.ext4
+	../../scripts/make-gpt.sh $@.tmp \
+	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$(../../scripts/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
+	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$(../../scripts/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
 	mv $@.tmp $@
 
 run: build/live.img $(EXT_FS) build/rootfs.verity.roothash

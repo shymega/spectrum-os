@@ -11,7 +11,7 @@ pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
+  inherit (lib) concatMapStringsSep hasSuffix;
   inherit (nixosAllHardware.config.hardware) firmware;
 
   start-vm = import ../start-vm {
@@ -120,11 +120,8 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-rootfs";
 
-  src = cleanSourceWith {
-    filter = name: _type:
-      name != "${toString ./.}/build" && !(hasSuffix ".nix" name);
-    src = cleanSource ./.;
-  };
+  inherit (config) src;
+  sourceRoot = "source/host/rootfs";
 
   nativeBuildInputs = [ s6-rc tar2ext4 ];
 

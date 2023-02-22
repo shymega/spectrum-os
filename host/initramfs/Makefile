@@ -8,7 +8,6 @@ QEMU_KVM = qemu-kvm
 
 CPIO = cpio
 CPIOFLAGS = --reproducible -R +0:+0 -H newc
-SCRIPTS = ../../scripts
 TAR = tar
 TAR2EXT4 = tar2ext4
 VERITYSETUP = veritysetup
@@ -57,10 +56,10 @@ build/rootfs.verity.roothash: build/rootfs.verity
 build/rootfs.verity.superblock: build/rootfs.verity
 	tail -n +2 build/rootfs.verity > $@
 
-build/live.img: $(SCRIPTS)/format-uuid.sh $(SCRIPTS)/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS)
-	$(SCRIPTS)/make-gpt.sh $@.tmp \
-	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$($(SCRIPTS)/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
-	    $(ROOT_FS):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$($(SCRIPTS)/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
+build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS)
+	../../scripts/make-gpt.sh $@.tmp \
+	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$(../../scripts/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
+	    $(ROOT_FS):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$(../../scripts/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
 	mv $@.tmp $@
 
 build/loop.tar: build/live.img
@@ -70,8 +69,8 @@ build/loop.tar: build/live.img
 .tar.ext4:
 	$(TAR2EXT4) -i $< -o $@
 
-build/loop.img: $(SCRIPTS)/make-gpt.sh build/loop.ext4
-	$(SCRIPTS)/make-gpt.sh $@.tmp \
+build/loop.img: ../../scripts/make-gpt.sh build/loop.ext4
+	../../scripts/make-gpt.sh $@.tmp \
 	    build/loop.ext4:56a3bbc3-aefa-43d9-a64d-7b3fd59bbc4e
 	mv $@.tmp $@
 

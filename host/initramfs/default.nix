@@ -10,7 +10,7 @@ let inherit (config) pkgs; in pkgs.callPackage (
 }:
 
 let
-  inherit (lib) cleanSource cleanSourceWith concatMapStringsSep hasSuffix;
+  inherit (lib) concatMapStringsSep hasSuffix;
 
   linux = rootfs.kernel;
 
@@ -80,12 +80,8 @@ in
 stdenvNoCC.mkDerivation {
   name = "initramfs";
 
-  src = cleanSourceWith {
-    filter = name: _type:
-      name != "${toString ./.}/build" &&
-      !(hasSuffix ".nix" name);
-    src = cleanSource ./.;
-  };
+  inherit (config) src;
+  sourceRoot = "source/host/initramfs";
 
   MICROCODE = microcode;
   PACKAGES_CPIO = packagesCpio;
