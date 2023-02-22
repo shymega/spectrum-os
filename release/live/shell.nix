@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../nix/eval-config.nix {} }:
+import ../../nix/eval-config.nix ({ config, ... }:
 
 with config.pkgs;
 
@@ -12,4 +12,4 @@ with config.pkgs;
 
     OVMF_CODE = "${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd";
   }
-)
+))

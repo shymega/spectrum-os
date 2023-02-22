@@ -1,9 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ config ? import ../nix/eval-config.nix {} }:
-
-{
+import ../nix/eval-config.nix ({ config, src, ... }: {
   recurseForDerivations = true;
 
   doc-links = config.pkgs.callPackage (
@@ -23,7 +21,7 @@
   reuse = config.pkgs.callPackage (
     { lib, runCommand, reuse }:
     runCommand "spectrum-reuse" {
-      inherit (config) src;
+      inherit src;
       nativeBuildInputs = [ reuse ];
     } ''
       reuse --root $src lint
@@ -34,7 +32,7 @@
   rustfmt = config.pkgs.callPackage (
     { lib, runCommand, rustfmt }:
     runCommand "spectrum-rustfmt" {
-      inherit (config) src;
+      inherit src;
       nativeBuildInputs = [ rustfmt ];
     } ''
       shopt -s globstar
@@ -46,7 +44,7 @@
   shellcheck = config.pkgs.callPackage (
     { lib, runCommand, shellcheck }:
     runCommand "spectrum-shellcheck" {
-      inherit (config) src;
+      inherit src;
       nativeBuildInputs = [ shellcheck ];
     } ''
       shopt -s globstar
@@ -54,4 +52,4 @@
       touch $out
     ''
   ) {};
-}
+})

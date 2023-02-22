@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../nix/eval-config.nix {} }:
+import ../../nix/eval-config.nix ({ config, ... } @ args:
 
 let
   inherit (config) pkgs;
@@ -23,4 +23,4 @@ initramfs.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
   EXT_FS = extfs;
   KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
   ROOT_FS = rootfs;
-})
+}))

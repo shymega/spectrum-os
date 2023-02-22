@@ -2,14 +2,14 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: MIT
 
-{ config ? import ../nix/eval-config.nix {} }: config.pkgs.callPackage (
+import ../nix/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
 
 { lib, stdenvNoCC, jekyll, drawio-headless }:
 
 stdenvNoCC.mkDerivation {
   name = "spectrum-docs";
 
-  inherit (config) src;
+  inherit src;
   sourceRoot = "source/Documentation";
 
   buildPhase = ''
@@ -26,4 +26,4 @@ stdenvNoCC.mkDerivation {
 }
 ) {
   jekyll = import ./jekyll.nix { inherit config; };
-}
+})

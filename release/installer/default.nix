@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../nix/eval-config.nix {}, extraConfig ? {} }:
+import ../../nix/eval-config.nix ({ config, extraConfig ? {}, ... }:
 with config.pkgs;
 
 let
@@ -21,5 +21,4 @@ in
   ] ++ config.boot.kernelParams);
 
   store = writeReferencesToFile config.system.build.toplevel;
-}
-
+})

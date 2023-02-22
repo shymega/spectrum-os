@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../nix/eval-config.nix {} }:
+import ../../nix/eval-config.nix ({ config, ... }:
 
 let
   inherit (builtins) storeDir;
@@ -43,4 +43,4 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
     -kernel ${installer.kernel} \
     -initrd ${installer.initramfs} \
     -append ${escapeShellArg installer.kernelParams}
-''
+'')

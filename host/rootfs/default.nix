@@ -2,7 +2,8 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ config ? import ../../nix/eval-config.nix {} }: let inherit (config) pkgs; in
+import ../../nix/eval-config.nix (
+{ config, src, ... }: let inherit (config) pkgs; in
 pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
@@ -120,7 +121,7 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-rootfs";
 
-  inherit (config) src;
+  inherit src;
   sourceRoot = "source/host/rootfs";
 
   nativeBuildInputs = [ s6-rc tar2ext4 ];
@@ -142,4 +143,4 @@ stdenvNoCC.mkDerivation {
     platforms = platforms.linux;
   };
 }
-) {}
+) {})

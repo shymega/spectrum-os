@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../../nix/eval-config.nix {} }:
+import ../../nix/eval-config.nix ({ config, ... }:
 
 import ../make-vm.nix { inherit config; } {
   providers.net = [ "netvm" ];
@@ -12,4 +12,4 @@ import ../make-vm.nix { inherit config; } {
       ${lynx}/bin/lynx https://spectrum-os.org
     ''
   ) { };
-}
+})

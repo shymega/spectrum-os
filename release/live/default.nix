@@ -2,7 +2,8 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ config ? import ../../nix/eval-config.nix {} }: config.pkgs.callPackage (
+import ../../nix/eval-config.nix ({ config, src, ... }:
+config.pkgs.callPackage (
 
 { stdenvNoCC, cryptsetup, dosfstools, jq, mtools, util-linux, stdenv
 , systemd }:
@@ -22,7 +23,7 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-live.img";
 
-  inherit (config) src;
+  inherit src;
   sourceRoot = "source/release/live";
 
   nativeBuildInputs = [ cryptsetup dosfstools jq mtools util-linux ];
@@ -46,4 +47,4 @@ stdenvNoCC.mkDerivation {
 
   passthru = { inherit rootfs; };
 }
-) {}
+) {})

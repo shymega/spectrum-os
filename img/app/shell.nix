@@ -1,9 +1,8 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../nix/eval-config.nix {}
-, run ? ../../vm/app/catgirl.nix
-}:
+import ../../nix/eval-config.nix (
+{ config, run ? ../../vm/app/catgirl.nix, ... }:
 
 with config.pkgs;
 
@@ -21,4 +20,4 @@ with config.pkgs;
   shellHook = ''
     export RUN_IMG="$(printf "%s\n" "$runDef"/blk/run.img)"
   '';
-})
+}))

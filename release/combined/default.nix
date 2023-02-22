@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2021 Yureka <yuka@yuka.dev>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-{ config ? import ../../nix/eval-config.nix {} }: with config.pkgs;
+import ../../nix/eval-config.nix ({ config, ... } @ args: with config.pkgs;
 
 let
   inherit (builtins) storeDir;
@@ -113,4 +113,4 @@ runCommand "spectrum-installer" {
   fillPartition $out 0 ${esp}
   fillPartition $out 1 ${rootfs}
   fillPartition $out 2 ${eosimages}
-''
+'')

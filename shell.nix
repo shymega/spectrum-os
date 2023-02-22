@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: MIT
 
-{ config ? import nix/eval-config.nix {} }: with config.pkgs;
+import nix/eval-config.nix ({ config, ... }: with config.pkgs;
 
 mkShell {
   nativeBuildInputs = [ b4 reuse rustfmt ];
@@ -13,4 +13,4 @@ mkShell {
     export "GIT_CONFIG_VALUE_''${GIT_CONFIG_COUNT:-0}"=https://spectrum-os.org/lists/archives/spectrum-devel/%s
     GIT_CONFIG_COUNT+=1
   '';
-}
+})

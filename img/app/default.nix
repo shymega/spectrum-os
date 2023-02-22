@@ -1,10 +1,8 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../nix/eval-config.nix {}
-, terminfo ? config.pkgs.foot.terminfo
-}:
-
+import ../../nix/eval-config.nix (
+{ config, src, terminfo ? config.pkgs.foot.terminfo, ... }:
 config.pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
@@ -64,7 +62,7 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-appvm";
 
-  inherit (config) src;
+  inherit src;
   sourceRoot = "source/img/app";
 
   nativeBuildInputs = [ jq s6-rc tar2ext4 util-linux ];
@@ -83,4 +81,4 @@ stdenvNoCC.mkDerivation {
     platforms = platforms.linux;
   };
 }
-) {}
+) {})

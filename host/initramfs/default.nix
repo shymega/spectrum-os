@@ -1,10 +1,13 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-{ config ? import ../../nix/eval-config.nix {}
+import ../../nix/eval-config.nix (
+{ config, src
 , rootfs ? import ../rootfs { inherit config; }
+, ...
 }:
-let inherit (config) pkgs; in pkgs.callPackage (
+config.pkgs.callPackage (
+
 { lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
 , pkgsStatic, busybox, cpio, microcodeAmd, microcodeIntel
 }:
@@ -80,7 +83,7 @@ in
 stdenvNoCC.mkDerivation {
   name = "initramfs";
 
-  inherit (config) src;
+  inherit src;
   sourceRoot = "source/host/initramfs";
 
   MICROCODE = microcode;
@@ -96,4 +99,4 @@ stdenvNoCC.mkDerivation {
 
   enableParallelBuilding = true;
 }
-) {}
+) {})

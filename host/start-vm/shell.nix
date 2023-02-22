@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ config ? import ../../nix/eval-config.nix {} }:
+import ../../nix/eval-config.nix ({ config, ... }:
 
 with config.pkgs;
 
@@ -10,4 +10,4 @@ with config.pkgs;
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [ rustfmt ];
-})
+}))
