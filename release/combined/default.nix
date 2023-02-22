@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2021 Yureka <yuka@yuka.dev>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../nix/eval-config.nix ({ config, ... } @ args: with config.pkgs;
+import ../../lib/eval-config.nix ({ config, ... } @ args: with config.pkgs;
 
 let
   inherit (builtins) storeDir;

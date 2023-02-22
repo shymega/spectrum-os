@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../nix/eval-config.nix (
+import ../../lib/eval-config.nix (
 { config, src, ... }: let inherit (config) pkgs; in
 pkgs.pkgsStatic.callPackage (
 

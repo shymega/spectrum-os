@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../nix/eval-config.nix ({ config, ... }: with config.pkgs;
+import ../../lib/eval-config.nix ({ config, ... }: with config.pkgs;
 
 runCommand "eosimages.img" {
   nativeBuildInputs = [ e2fsprogs tar2ext4 ];

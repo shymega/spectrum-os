@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../nix/eval-config.nix ({ config, src, ... }: {
+import ../lib/eval-config.nix ({ config, src, ... }: {
   recurseForDerivations = true;
 
   doc-links = config.pkgs.callPackage (

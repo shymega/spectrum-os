@@ -1,16 +1,7 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-# qemu-kvm is non-standard, but is present in at least Fedora and
-# Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
-# QEMU_KVM = qemu-system-x86_64 -enable-kvm.
-QEMU_KVM = qemu-kvm
-
-CPIO = cpio
-CPIOFLAGS = --reproducible -R +0:+0 -H newc
-TAR = tar
-TAR2EXT4 = tar2ext4
-VERITYSETUP = veritysetup
+include ../../lib/common.mk
 
 RUN_IMAGE = build/live.img
 
@@ -64,10 +55,6 @@ build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/roo
 
 build/loop.tar: build/live.img
 	$(TAR) -cf $@ build/live.img
-
-.SUFFIXES: .ext4 .tar
-.tar.ext4:
-	$(TAR2EXT4) -i $< -o $@
 
 build/loop.img: ../../scripts/make-gpt.sh build/loop.ext4
 	../../scripts/make-gpt.sh $@.tmp \

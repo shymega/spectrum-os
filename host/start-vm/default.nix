@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../nix/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
+import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
 { lib, stdenv, meson, ninja, rustc }:
 
 let

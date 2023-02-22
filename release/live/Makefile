@@ -1,17 +1,7 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-# qemu-kvm is non-standard, but is present in at least Fedora and
-# Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
-# QEMU_KVM = qemu-system-x86_64 -enable-kvm.
-QEMU_KVM = qemu-kvm
-
-MCOPY = mcopy
-MKFS_FAT = mkfs.fat
-MMD = mmd
-OBJCOPY = objcopy
-TRUNCATE = truncate
-VERITYSETUP = veritysetup
+include ../../lib/common.mk
 
 build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/boot.fat build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS) $(EXT_FS)
 	../../scripts/make-gpt.sh $@.tmp \

@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: MIT
 
-import nix/eval-config.nix ({ config, ... }: with config.pkgs;
+import lib/eval-config.nix ({ config, ... }: with config.pkgs;
 
 mkShell {
   nativeBuildInputs = [ b4 reuse rustfmt ];

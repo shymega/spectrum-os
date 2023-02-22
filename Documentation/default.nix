@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: MIT
 
-import ../nix/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
+import ../lib/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
 
 { lib, stdenvNoCC, jekyll, drawio-headless }:
 

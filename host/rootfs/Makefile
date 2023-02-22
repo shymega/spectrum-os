@@ -1,18 +1,7 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-# qemu-kvm is non-standard, but is present in at least Fedora and
-# Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
-# QEMU_KVM = qemu-system-x86_64 -enable-kvm.
-QEMU_KVM = qemu-kvm
-
-VERITYSETUP = veritysetup
-
-# tar2ext4 will leave half a filesystem behind if it's interrupted
-# half way through.
-build/rootfs.ext4: build/rootfs.tar
-	tar2ext4 -i build/rootfs.tar -o $@.tmp
-	mv $@.tmp $@
+include ../../lib/common.mk
 
 FILES = \
 	etc/fonts/fonts.conf \
@@ -46,6 +35,8 @@ DIRS = dev etc/s6-linux-init/env ext run proc sys
 LINKS = bin sbin
 
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
+
+build/rootfs.ext4:
 
 build/empty:
 	mkdir -p $@

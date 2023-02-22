@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../nix/eval-config.nix ({ config, ... } @ args:
+import ../../lib/eval-config.nix ({ config, ... } @ args:
 
 let
   inherit (config) pkgs;

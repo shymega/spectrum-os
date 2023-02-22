@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-import ../../nix/eval-config.nix (
+import ../../lib/eval-config.nix (
 { config, src
 , rootfs ? import ../rootfs { inherit config; }
 , ...

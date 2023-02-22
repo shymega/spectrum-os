@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../nix/eval-config.nix ({ config, src, ... }:
+import ../../lib/eval-config.nix ({ config, src, ... }:
 config.pkgs.callPackage (
 
 { stdenvNoCC, cryptsetup, dosfstools, jq, mtools, util-linux, stdenv

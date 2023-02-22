@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../nix/eval-config.nix ({ config, ... } @ args:
+import ../../lib/eval-config.nix ({ config, ... } @ args:
 
 let
   rootfs = import ./. { inherit config; };

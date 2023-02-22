@@ -1,11 +1,7 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-# qemu-kvm is non-standard, but is present in at least Fedora and
-# Nixpkgs.  If you don't have qemu-kvm, you'll need to set e.g.
-# QEMU_KVM = qemu-system-x86_64 -enable-kvm.
-QEMU_KVM = qemu-kvm
-CLOUD_HYPERVISOR = cloud-hypervisor
+include ../../../lib/common.mk
 
 VMM = qemu
 
@@ -34,13 +30,6 @@ build/host/data/netvm/blk/root.img: ../../../scripts/make-gpt.sh ../../../script
 	mkdir -p $$(dirname $@)
 	../../../scripts/make-gpt.sh $@.tmp \
 	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
-	mv $@.tmp $@
-
-# tar2ext4 will leave half a filesystem behind if it's interrupted
-# half way through.
-build/rootfs.ext4: build/rootfs.tar
-	mkdir -p $$(dirname $@)
-	tar2ext4 -i build/rootfs.tar -o $@.tmp
 	mv $@.tmp $@
 
 VM_FILES = \

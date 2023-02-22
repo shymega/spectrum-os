@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../nix/eval-config.nix (
+import ../../lib/eval-config.nix (
 { config, run ? ../../vm/app/catgirl.nix, ... }:
 
 with config.pkgs;
