@@ -5,7 +5,6 @@
 
 let
   inherit (config) pkgs;
-  inherit (pkgs.lib) cleanSource cleanSourceWith;
 
   extfs = pkgs.pkgsStatic.callPackage ./extfs.nix {
     inherit config;
