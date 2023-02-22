@@ -20,6 +20,17 @@
     ''
   ) {};
 
+  reuse = config.pkgs.callPackage (
+    { lib, runCommand, reuse }:
+    runCommand "spectrum-reuse" {
+      inherit (config) src;
+      nativeBuildInputs = [ reuse ];
+    } ''
+      reuse --root $src lint
+      touch $out
+    ''
+  ) {};
+
   rustfmt = config.pkgs.callPackage (
     { lib, runCommand, rustfmt }:
     runCommand "spectrum-rustfmt" {
