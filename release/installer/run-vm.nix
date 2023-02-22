@@ -33,7 +33,7 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
   truncate -s 10G "$img"
   exec 3<>"$img"
   rm -f "$img"
-  exec qemu-kvm -cpu host -m 4G -machine q35 -snapshot \
+  exec qemu-kvm -cpu host -m 4G -machine q35 \
     -display gtk,gl=on \
     -device virtio-vga-gl \
     -virtfs local,mount_tag=store,path=/nix/store,security_model=none,readonly=true \
