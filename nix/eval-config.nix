@@ -7,14 +7,16 @@
 # with --arg/--argstr.
 callback: { ... } @ args:
 
+let
+  customConfigPath = builtins.tryEval <spectrumConfig>;
+in
+
 callback (args // rec {
   config = ({ pkgs ? import <nixpkgs> {} }: {
     inherit pkgs;
-  }) args.config or (let customPath = builtins.tryEval <spectrum-config>; in
-  if customPath.success then import customPath.value
-  else if builtins.pathExists ../config.nix then import ../config.nix
-  else {})
-;
+  }) args.config or (if customConfigPath.success then import customConfigPath.value
+                     else if builtins.pathExists ../config.nix then import ../config.nix
+                     else {});
 
   src = import ./src.nix { inherit (config.pkgs) lib; };
 })
