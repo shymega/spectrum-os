@@ -18,5 +18,13 @@ callback (args // rec {
                      else if builtins.pathExists ../config.nix then import ../config.nix
                      else {});
 
-  src = import ./src.nix { inherit (config.pkgs) lib; };
+  src = with config.pkgs.lib; cleanSourceWith {
+    filter = path: type:
+      path != toString ../Documentation/_site &&
+      path != toString ../Documentation/.jekyll-cache &&
+      path != toString ../Documentation/diagrams/stack.svg &&
+      (type == "file" -> !hasSuffix ".nix" path) &&
+      (type == "directory" -> builtins.baseNameOf path != "build");
+    src = cleanSource ../.;
+  };
 })
