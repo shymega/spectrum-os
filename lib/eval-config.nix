@@ -8,7 +8,7 @@
 callback: { ... } @ args:
 
 let
-  customConfigPath = builtins.tryEval <spectrumConfig>;
+  customConfigPath = builtins.tryEval <spectrum-config>;
 in
 
 callback (args // rec {
