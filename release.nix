@@ -6,7 +6,7 @@
 import lib/eval-config.nix ({ config, ... }: {
   doc = import ./Documentation { inherit config; };
 
-  checks = import release/checks.nix { inherit config; };
+  checks = import release/checks { inherit config; };
 
   combined = import release/combined/run-vm.nix { inherit config; };
 })
