@@ -23,7 +23,7 @@ callback (args // rec {
       path != toString ../Documentation/_site &&
       path != toString ../Documentation/.jekyll-cache &&
       path != toString ../Documentation/diagrams/stack.svg &&
-      (type == "file" -> !hasSuffix ".nix" path) &&
+      (type == "regular" -> !hasSuffix ".nix" path) &&
       (type == "directory" -> builtins.baseNameOf path != "build");
     src = cleanSource ../.;
   };
