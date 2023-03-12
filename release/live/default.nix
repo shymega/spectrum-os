@@ -35,13 +35,9 @@ stdenvNoCC.mkDerivation {
   SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
   EFINAME = "BOOT${toUpper efiArch}.EFI";
 
-  buildFlags = [ "build/live.img" ];
+  buildFlags = [ "dest=$(out)" ];
 
-  installPhase = ''
-    runHook preInstall
-    mv build/live.img $out
-    runHook postInstall
-  '';
+  dontInstall = true;
 
   enableParallelBuilding = true;
 

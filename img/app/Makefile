@@ -1,30 +1,25 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 include ../../lib/common.mk
 
-prefix = /usr/local
+prefix = build/host
 imgdir = $(prefix)/img
 
 VMM = qemu
 
 HOST_BUILD_FILES = \
-	build/host/appvm/blk/root.img \
-	build/host/appvm/vmlinux
+	$(imgdir)/appvm/blk/root.img \
+	$(imgdir)/appvm/vmlinux
 
 all: $(HOST_BUILD_FILES)
 .PHONY: all
 
-install: $(HOST_BUILD_FILES)
-	mkdir -p $(imgdir)
-	tar -c $(HOST_BUILD_FILES) | tar -C $(imgdir) -x --strip-components 2
-.PHONY: install
-
-build/host/appvm/vmlinux: $(VMLINUX)
+$(imgdir)/appvm/vmlinux: $(VMLINUX)
 	mkdir -p $$(dirname $@)
 	cp $(VMLINUX) $@
 
-build/host/appvm/blk/root.img: ../../scripts/make-gpt.sh ../../scripts/sfdisk-field.awk build/rootfs.ext4
+$(imgdir)/appvm/blk/root.img: ../../scripts/make-gpt.sh ../../scripts/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)
 	../../scripts/make-gpt.sh $@.tmp \
 	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:5460386f-2203-4911-8694-91400125c604:root
@@ -90,9 +85,9 @@ start-virtiofsd:
 	    $(BACKGROUND) $(VIRTIOFSD) --fd 0 --shared-dir . ""
 .PHONY: start-virtiofsd
 
-run-qemu: build/host/appvm/blk/root.img start-virtiofsd
+run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
-	  -drive file=build/host/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
+	  -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	  -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
 	  -append "console=ttyS0 root=PARTLABEL=root" \
 	  -netdev user,id=net0 \
@@ -106,11 +101,11 @@ run-qemu: build/host/appvm/blk/root.img start-virtiofsd
 	  -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: build/host/appvm/blk/root.img start-virtiofsd
+run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
 	    --memory size=128M,shared=on \
-	    --disk path=build/host/appvm/blk/root.img,readonly=on \
+	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
 	           path=$(RUN_IMG),readonly=on \
 	    --net tap=tap0,mac=0A:B3:EC:00:00:00 \
 	    --fs tag=virtiofs0,socket=virtiofsd.sock \

@@ -130,9 +130,9 @@ stdenvNoCC.mkDerivation {
   MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
   PACKAGES_TAR = packagesTar;
 
-  installPhase = ''
-    cp build/rootfs.ext4 $out
-  '';
+  makeFlags = [ "dest=$(out)" ];
+
+  dontInstall = true;
 
   enableParallelBuilding = true;
 

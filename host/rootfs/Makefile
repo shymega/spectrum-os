@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 include ../../lib/common.mk
+
+dest = build/rootfs.ext4
 
 FILES = \
 	etc/fonts/fonts.conf \
@@ -39,7 +41,8 @@ LINKS = bin sbin
 
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 
-build/rootfs.ext4:
+$(dest): build/rootfs.tar
+	$(TAR2EXT4) -i build/rootfs.tar -o $@
 
 build/empty:
 	mkdir -p $@
@@ -115,8 +118,8 @@ clean:
 # veritysetup format produces two files, but Make only (portably)
 # supports one output per rule, so we combine the two outputs then
 # define two more rules to separate them again.
-build/rootfs.verity: build/rootfs.ext4
-	$(VERITYSETUP) format build/rootfs.ext4 build/rootfs.verity.superblock.tmp \
+build/rootfs.verity: $(dest)
+	$(VERITYSETUP) format $(dest) build/rootfs.verity.superblock.tmp \
 	    | awk -F ':[[:blank:]]*' '$$1 == "Root hash" {print $$2; exit}' \
 	    > build/rootfs.verity.roothash.tmp
 	cat build/rootfs.verity.roothash.tmp build/rootfs.verity.superblock.tmp \
@@ -127,10 +130,10 @@ build/rootfs.verity.roothash: build/rootfs.verity
 build/rootfs.verity.superblock: build/rootfs.verity
 	tail -n +2 build/rootfs.verity > $@
 
-build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash build/rootfs.ext4
+build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/rootfs.verity.superblock build/rootfs.verity.roothash $(dest)
 	../../scripts/make-gpt.sh $@.tmp \
 	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$(../../scripts/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
-	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$(../../scripts/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
+	    $(dest):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$(../../scripts/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
 	mv $@.tmp $@
 
 run: build/live.img $(EXT_FS) build/rootfs.verity.roothash

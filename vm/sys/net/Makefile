@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 include ../../../lib/common.mk
+
+prefix = build/svc
 
 VMM = qemu
 
@@ -16,7 +18,7 @@ HOST_BUILD_FILES = \
 # intended to be part of the input, like temporary editor files or
 # .license files.  So for all these reasons, only explicitly listed
 # files are included in the build result.
-build/svc: $(HOST_BUILD_FILES)
+$(prefix): $(HOST_BUILD_FILES)
 	rm -rf $@
 	mkdir -p $@
 

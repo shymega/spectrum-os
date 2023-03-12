@@ -72,6 +72,8 @@ stdenvNoCC.mkDerivation {
 
   makeFlags = [ "prefix=$(out)" ];
 
+  dontInstall = true;
+
   enableParallelBuilding = true;
 
   passthru = { inherit kernel packagesSysroot; };

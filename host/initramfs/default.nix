@@ -91,11 +91,9 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ cpio ];
 
-  installPhase = ''
-    runHook preInstall
-    cp build/initramfs $out
-    runHook postInstall
-  '';
+  makeFlags = [ "dest=$(out)" ];
+
+  dontInstall = true;
 
   enableParallelBuilding = true;
 }

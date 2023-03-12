@@ -1,9 +1,11 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 include ../../lib/common.mk
 
-build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/boot.fat build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS) $(EXT_FS)
+dest = build/live.img
+
+$(dest): ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/boot.fat build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS) $(EXT_FS)
 	../../scripts/make-gpt.sh $@.tmp \
 	    build/boot.fat:c12a7328-f81f-11d2-ba4b-00a0c93ec93b \
 	    build/rootfs.verity.superblock:2c7357ed-ebd2-46d9-aec1-23d437ec2bf5:$$(../../scripts/format-uuid.sh "$$(dd if=build/rootfs.verity.roothash bs=32 skip=1 count=1 status=none)") \
@@ -47,7 +49,7 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/live.img
+run: $(dest)
 	$(QEMU_KVM) -m 4G \
 	    -cpu host \
 	    -machine q35,kernel-irqchip=split \
@@ -57,5 +59,5 @@ run: build/live.img
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
 	    -drive file=$(OVMF_CODE),format=raw,if=pflash,readonly=true \
-	    -drive file=build/live.img,id=drive1,format=raw,if=none,readonly=true
+	    -drive file=$(dest),id=drive1,format=raw,if=none,readonly=true
 .PHONY: run

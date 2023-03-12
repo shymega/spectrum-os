@@ -1,11 +1,13 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 include ../../lib/common.mk
 
+dest = build/initramfs
+
 RUN_IMAGE = build/live.img
 
-build/initramfs: $(MICROCODE) build/local.cpio $(PACKAGES_CPIO)
+$(dest): $(MICROCODE) build/local.cpio $(PACKAGES_CPIO)
 	cat $(MICROCODE) > $@
 	cat build/local.cpio $(PACKAGES_CPIO) | gzip -9n >> $@
 
@@ -65,10 +67,10 @@ clean:
 	rm -rf build
 .PHONY: clean
 
-run: build/initramfs build/rootfs.verity.roothash $(RUN_IMAGE)
+run: $(dest) build/rootfs.verity.roothash $(RUN_IMAGE)
 	$(QEMU_KVM) -m 4G \
 	    -kernel $(KERNEL) \
-	    -initrd build/initramfs \
+	    -initrd $(dest) \
 	    -append "ro console=ttyS0 ext=vda intel_iommu=on roothash=$$(< build/rootfs.verity.roothash)" \
 	    -cpu host \
 	    -machine q35,kernel-irqchip=split \

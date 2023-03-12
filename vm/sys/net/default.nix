@@ -79,9 +79,9 @@ stdenvNoCC.mkDerivation {
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";
 
-  installPhase = ''
-    mv build/svc $out
-  '';
+  makeFlags = [ "prefix=$(out)" ];
+
+  dontInstall = true;
 
   enableParallelBuilding = true;
 
