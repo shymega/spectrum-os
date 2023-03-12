@@ -4,10 +4,6 @@
 import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
 { lib, stdenv, meson, ninja, rustc }:
 
-let
-  inherit (lib) hasSuffix;
-in
-
 stdenv.mkDerivation {
   name = "start-vm";
 

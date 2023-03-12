@@ -13,7 +13,7 @@ config.pkgs.callPackage (
 }:
 
 let
-  inherit (lib) concatMapStringsSep hasSuffix;
+  inherit (lib) concatMapStringsSep;
 
   linux = rootfs.kernel;
 

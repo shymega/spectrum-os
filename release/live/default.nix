@@ -10,7 +10,7 @@ config.pkgs.callPackage (
 
 let
   inherit (config) pkgs;
-  inherit (pkgs.lib) hasSuffix toUpper;
+  inherit (pkgs.lib) toUpper;
 
   extfs = pkgs.pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit config;

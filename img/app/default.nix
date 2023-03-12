@@ -11,7 +11,7 @@ config.pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) concatMapStringsSep hasSuffix;
+  inherit (lib) concatMapStringsSep;
 
   packages = [
     execline kmod mdevd s6 s6-linux-init s6-rc

@@ -12,7 +12,7 @@ config.pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) concatMapStringsSep hasSuffix;
+  inherit (lib) concatMapStringsSep;
 
   connman = connmanMinimal;
 

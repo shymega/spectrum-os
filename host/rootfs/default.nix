@@ -12,7 +12,7 @@ pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) concatMapStringsSep hasSuffix;
+  inherit (lib) concatMapStringsSep;
   inherit (nixosAllHardware.config.hardware) firmware;
 
   start-vm = import ../start-vm {
