@@ -21,4 +21,6 @@ import ../../lib/eval-config.nix ({ ... } @ args:
   shellcheck = import ./shellcheck.nix args;
 
   try = import ./try.nix args;
+
+  wayland = import ./wayland args;
 })

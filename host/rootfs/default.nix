@@ -136,7 +136,7 @@ stdenvNoCC.mkDerivation {
 
   enableParallelBuilding = true;
 
-  passthru = { inherit firmware kernel nixosAllHardware; };
+  passthru = { inherit appvm firmware kernel nixosAllHardware; };
 
   meta = with lib; {
     license = licenses.eupl12;
