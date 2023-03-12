@@ -1,0 +1,12 @@
+= Release Builds
+:page-parent: Development
+
+// SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+The https://spectrum-os.org/git/spectrum/tree/release.nix[release.nix]
+file contains everything considered to be part of a "full build" of
+Spectrum.  That is, building release.nix should build everything we'd
+like to make sure builds successfully, and everything we'd like to be
+available in the binary cache.  This includes the various Spectrum
+images for distribution, as well as the xref:checks.adoc[checks].

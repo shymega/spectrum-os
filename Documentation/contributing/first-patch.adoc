@@ -25,6 +25,7 @@ The process of making changes is similar to working on any git repository.
 git checkout -b fix-docs # for example
 ----
 . Make changes in your editor.
+. Run the xref:../development/checks.adoc[checks] against your changes.
 . Stage and commit your changes:
 +
 [source,shell]

@@ -1,0 +1,18 @@
+= Checks
+:page-parent: Development
+
+// SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+As part of the release build of Spectrum, checks are run to test
+functionality, ensure conformity with code conventions, and so on.
+
+These checks are defined inside the
+https://spectrum-os.org/git/spectrum/tree/release/checks[release/checks]
+directory.  To run a check, use `nix-build`:
+
+[source,shell]
+[listing]
+nix-build -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz release/checks/shellcheck.nix
+
+Building the release/checks directory will run all checks.
