@@ -102,6 +102,7 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 .PHONY: run-qemu
 
 run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-virtiofsd
+	rm -f vmm.sock
 	$(CLOUD_HYPERVISOR) \
 	    --api-socket path=vmm.sock \
 	    --memory size=128M,shared=on \
