@@ -5,6 +5,3 @@
 build/
 result
 result-*
-
-# s6-ipcserver-socketbinder creates lockfiles for sockets.
-*.sock.lock

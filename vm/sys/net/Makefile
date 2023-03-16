@@ -108,9 +108,9 @@ run-qemu: build/host/data/netvm/blk/root.img
 .PHONY: run-qemu
 
 run-cloud-hypervisor: build/host/data/netvm/blk/root.img
-	rm -f vmm.sock
+	rm -f build/vmm.sock
 	$(CLOUD_HYPERVISOR) \
-	    --api-socket path=vmm.sock \
+	    --api-socket path=build/vmm.sock \
 	    --memory size=128M \
 	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
 	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
