@@ -88,18 +88,18 @@ start-virtiofsd:
 
 run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
-	  -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	  -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
-	  -append "console=ttyS0 root=PARTLABEL=root" \
-	  -netdev user,id=net0 \
-	  -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
-	  -chardev socket,id=virtiofsd,path=build/virtiofsd.sock \
-	  -device vhost-user-fs-pci,chardev=virtiofsd,tag=virtiofs0 \
-	  -object memory-backend-memfd,id=mem,size=128M,share=on \
-	  -numa node,memdev=mem \
-	  -chardev vc,id=virtiocon0 \
-	  -device virtio-serial-pci \
-	  -device virtconsole,chardev=virtiocon0
+	    -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
+	    -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
+	    -append "console=ttyS0 root=PARTLABEL=root" \
+	    -netdev user,id=net0 \
+	    -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
+	    -chardev socket,id=virtiofsd,path=build/virtiofsd.sock \
+	    -device vhost-user-fs-pci,chardev=virtiofsd,tag=virtiofs0 \
+	    -object memory-backend-memfd,id=mem,size=128M,share=on \
+	    -numa node,memdev=mem \
+	    -chardev vc,id=virtiocon0 \
+	    -device virtio-serial-pci \
+	    -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
 run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-virtiofsd

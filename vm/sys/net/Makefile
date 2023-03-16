@@ -96,15 +96,15 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 
 run-qemu: build/host/data/netvm/blk/root.img
 	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
-	  -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	  -append "console=ttyS0 root=PARTLABEL=root" \
-	  -netdev user,id=net0 \
-	  -device e1000e,netdev=net0 \
-	  -netdev user,id=net1 \
-	  -device virtio-net,netdev=net1,mac=0A:B3:EC:80:00:00 \
-	  -chardev vc,id=virtiocon0 \
-	  -device virtio-serial-pci \
-	  -device virtconsole,chardev=virtiocon0
+	    -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
+	    -append "console=ttyS0 root=PARTLABEL=root" \
+	    -netdev user,id=net0 \
+	    -device e1000e,netdev=net0 \
+	    -netdev user,id=net1 \
+	    -device virtio-net,netdev=net1,mac=0A:B3:EC:80:00:00 \
+	    -chardev vc,id=virtiocon0 \
+	    -device virtio-serial-pci \
+	    -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
 run-cloud-hypervisor: build/host/data/netvm/blk/root.img
