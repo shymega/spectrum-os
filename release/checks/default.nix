@@ -8,6 +8,8 @@ import ../../lib/eval-config.nix ({ ... } @ args:
 
   doc-links = import ./doc-links.nix args;
 
+  pkg-tests = import ./pkg-tests.nix args;
+
   reuse = import ./reuse.nix args;
 
   rustfmt = import ./rustfmt.nix args;

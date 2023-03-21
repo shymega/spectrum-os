@@ -3,9 +3,9 @@
 
 import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenv }:
+{ lib, stdenv, clang-tools }:
 
-stdenv.mkDerivation {
+let self = stdenv.mkDerivation {
   name = "lseek";
 
   inherit src;
@@ -15,12 +15,24 @@ stdenv.mkDerivation {
 
   enableParallelBuilding = true;
 
+  passthru.tests = {
+    clang-tidy = self.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
+      nativeBuildInputs = nativeBuildInputs ++ [ clang-tools ];
+
+      buildPhase = ''
+        clang-tidy --warnings-as-errors='*' lseek.c --
+        touch $out
+        exit 0
+      '';
+    });
+  };
+
   meta = with lib; {
     description = "Seek an open file descriptor, then exec.";
     license = licenses.eupl12;
     maintainers = with maintainers; [ qyliss ];
     platforms = platforms.unix;
   };
-}
+}; in self
 
 ) { })
