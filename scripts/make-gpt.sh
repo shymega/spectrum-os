@@ -1,13 +1,12 @@
 #!/bin/sh -eu
 #
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: EUPL-1.2+
 #
 # usage: make-gpt.sh GPT_PATH PATH:PARTTYPE[:PARTUUID[:PARTLABEL]]...
 
 ONE_MiB=1048576
-TWO_MiB=2097152
 
 # Prints the number of 1MiB blocks required to store the file named
 # $1.  We use 1MiB blocks because that's what sfdisk uses for
@@ -44,7 +43,7 @@ nl='
 table="label: gpt"
 
 # Keep 1MiB free at the start, and 1MiB free at the end.
-gptBytes=$TWO_MiB
+gptBytes=$((ONE_MiB * 2))
 for partition; do
 	sizeMiB="$(sizeMiB "$(partitionPath "$partition")")"
 	table="$table${nl}size=${sizeMiB}MiB,$(awk -f "$scriptsDir/sfdisk-field.awk" -v partition="$partition")"
