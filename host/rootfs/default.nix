@@ -1,9 +1,18 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
 import ../../lib/eval-config.nix (
-{ config, src, ... }: let inherit (config) pkgs; in
+
+{ config, src
+, lseek ? import ../../tools/lseek { inherit config; }
+, ...
+}:
+
+let
+  inherit (config) pkgs;
+in
+
 pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
@@ -124,7 +133,7 @@ stdenvNoCC.mkDerivation {
   inherit src;
   sourceRoot = "source/host/rootfs";
 
-  nativeBuildInputs = [ s6-rc tar2ext4 ];
+  nativeBuildInputs = [ lseek s6-rc tar2ext4 ];
 
   MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
   MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";

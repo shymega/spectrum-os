@@ -1,8 +1,14 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../../lib/eval-config.nix (
-{ config, src, terminfo ? config.pkgs.foot.terminfo, ... }:
+
+{ config, src
+, lseek ? import ../../../tools/lseek { inherit config; }
+, terminfo ? config.pkgs.foot.terminfo
+, ...
+}:
+
 config.pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
@@ -74,7 +80,7 @@ stdenvNoCC.mkDerivation {
   inherit src;
   sourceRoot = "source/vm/sys/net";
 
-  nativeBuildInputs = [ jq s6-rc tar2ext4 util-linux ];
+  nativeBuildInputs = [ jq lseek s6-rc tar2ext4 util-linux ];
 
   PACKAGES_TAR = packagesTar;
   VMLINUX = "${kernel.dev}/vmlinux";

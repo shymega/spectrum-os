@@ -1,11 +1,14 @@
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
 import ../../lib/eval-config.nix (
+
 { config, src
+, lseek ? import ../../tools/lseek { inherit config; }
 , rootfs ? import ../rootfs { inherit config; }
 , ...
 }:
+
 config.pkgs.callPackage (
 
 { lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
@@ -89,7 +92,7 @@ stdenvNoCC.mkDerivation {
   MICROCODE = microcode;
   PACKAGES_CPIO = packagesCpio;
 
-  nativeBuildInputs = [ cpio ];
+  nativeBuildInputs = [ cpio lseek ];
 
   makeFlags = [ "dest=$(out)" ];
 

@@ -1,12 +1,19 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../lib/eval-config.nix ({ config, src, ... }:
+import ../../lib/eval-config.nix (
+
+{ config, src
+, lseek ? import ../../tools/lseek { inherit config; }
+, ...
+}:
+
 config.pkgs.callPackage (
 
 { stdenvNoCC, cryptsetup, dosfstools, jq, mtools, util-linux, stdenv
-, systemd }:
+, systemd
+}:
 
 let
   inherit (config) pkgs;
@@ -26,7 +33,7 @@ stdenvNoCC.mkDerivation {
   inherit src;
   sourceRoot = "source/release/live";
 
-  nativeBuildInputs = [ cryptsetup dosfstools jq mtools util-linux ];
+  nativeBuildInputs = [ cryptsetup dosfstools jq lseek mtools util-linux ];
 
   EXT_FS = extfs;
   INITRAMFS = initramfs;

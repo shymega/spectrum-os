@@ -20,10 +20,12 @@ sizeMiB() {
 
 # Copies from path $3 into partition number $2 in partition table $1.
 fillPartition() {
-	sfdisk -J "$1" | jq -r --argjson index "$2" \
-		'.partitiontable.partitions[$index] | "\(.start) \(.size)"' |
-		(read -r start size;
-		 dd if="$3" of="$1" seek="$start" count="$size" conv=notrunc)
+	start="$(sfdisk -J "$1" | jq -r --argjson index "$2" \
+		'.partitiontable.partitions[$index].start * 512')"
+
+	# GNU cat will use copy_file_range(2) if possible, whereas dd
+	# will always do a userspace copy, which is significantly slower.
+	lseek -S 1 "$start" cat "$3" 1<>"$1"
 }
 
 # Prints the partition path from a PATH:PARTTYPE[:PARTUUID[:PARTLABEL]] string.
