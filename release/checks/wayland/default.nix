@@ -15,10 +15,17 @@ config.pkgs.nixosTest ({ pkgs, ... }: {
   nodes.machine = { ... }: {
     hardware.opengl.enable = true;
 
+    systemd.services.cloud-hypervisor = {
+      after = [ "crosvm-gpu.service" "weston.service" ];
+      requires = [ "crosvm-gpu.service" "weston.service" ];
+      serviceConfig.ExecStart = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory shared=on --disk path=${appvm}/img/appvm/blk/root.img,readonly=on --disk path=${run}/blk/run.img,readonly=on --cmdline \"console=ttyS0 root=PARTLABEL=root\" --gpu socket=/run/crosvm-gpu.sock --serial tty --console null --kernel ${appvm}/img/appvm/vmlinux";
+    };
+
     systemd.services.crosvm = {
       after = [ "crosvm-gpu.service" "weston.service" ];
       requires = [ "crosvm-gpu.service" "weston.service" ];
-      serviceConfig.ExecStart = "${pkgs.crosvm}/bin/crosvm run --disk ${appvm}/img/appvm/blk/root.img --disk ${run}/blk/run.img -p \"console=ttyS0 root=PARTLABEL=root\" --vhost-user-gpu /run/crosvm-gpu.sock --serial type=stdout,hardware=virtio-console,stdin=true ${appvm}/img/appvm/vmlinux";
+      serviceConfig.ExecStart = "${pkgs.crosvm}/bin/crosvm run -s /run/crosvm --disk ${appvm}/img/appvm/blk/root.img --disk ${run}/blk/run.img -p \"console=ttyS0 root=PARTLABEL=root\" --vhost-user-gpu /run/crosvm-gpu.sock --serial type=stdout,hardware=virtio-console,stdin=true ${appvm}/img/appvm/vmlinux";
+      serviceConfig.ExecStop = "${pkgs.crosvm}/bin/crosvm stop /run/crosvm";
     };
 
     systemd.services.crosvm-gpu = {
@@ -61,10 +68,14 @@ config.pkgs.nixosTest ({ pkgs, ... }: {
     machine.wait_for_unit('multi-user.target')
 
     machine.start_job('crosvm.service')
-
     machine.wait_for_unit('surface-notify-socket.service');
     machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=180)
+    machine.screenshot('crosvm')
+    machine.stop_job('crosvm-gpu.service')
+    machine.stop_job('crosvm.service')
 
-    machine.screenshot('weston')
+    machine.start_job('cloud-hypervisor.service')
+    machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=180)
+    machine.screenshot('cloud-hypervisor')
   '';
 }))
