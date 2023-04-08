@@ -65,7 +65,7 @@ https://github.com/utdemir/nix-tree[nix-tree] in the Spectrum repository:
 
 [source,shell]
 [listing]
-nix-build img/live -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz --no-out-link | xargs -o nix-tree
+nix-build img/live --no-out-link | xargs -o nix-tree
 
 See the https://diode.zone/w/8DBDQ6HQUe5UUdLkpDuL35[video] of Spectrum live
 image interactive analysis with nix-tree.

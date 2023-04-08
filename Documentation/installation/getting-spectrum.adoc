@@ -25,11 +25,8 @@ applications.
 [source,shell]
 ----
 git clone https://spectrum-os.org/git/spectrum
-git clone https://github.com/NixOS/nixpkgs
-git clone -b rootfs --reference nixpkgs \
-  https://spectrum-os.org/git/nixpkgs nixpkgs-spectrum
 cd spectrum/host/rootfs
-nix-shell -I nixpkgs=../../../nixpkgs-spectrum --run 'make run'
+nix-shell --run 'make run'
 ----
 
 This builds just enough of Spectrum to try it out in a VM, but it will
@@ -48,8 +45,7 @@ First, you need to build the Spectrum image:
 [source,shell]
 ----
 git clone https://spectrum-os.org/git/spectrum
-nix-build spectrum/release/combined \
-  -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
+nix-build spectrum/release/combined
 ----
 
 If you haven't set up the xref:binary-cache.adoc[binary cache], this

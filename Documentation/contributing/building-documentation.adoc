@@ -26,7 +26,7 @@ cd spectrum/Documentation
 +
 [source,shell]
 ----
-nix-shell -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz
+nix-shell
 ----
 . In the development shell, do an initial build of the documentation
 site:
