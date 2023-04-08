@@ -9,14 +9,19 @@ callback: { ... } @ args:
 
 let
   customConfigPath = builtins.tryEval <spectrum-config>;
+
+  default = import ./config.default.nix;
+
+  callConfig = config: if builtins.typeOf config == "lambda" then config {
+    inherit default;
+  } else config;
 in
 
 callback (args // rec {
-  config = ({ pkgs ? import <nixpkgs> {} }: {
-    inherit pkgs;
-  }) args.config or (if customConfigPath.success then import customConfigPath.value
-                     else if builtins.pathExists ../config.nix then import ../config.nix
-                     else {});
+  config = default // callConfig args.config or
+    (if customConfigPath.success then import customConfigPath.value
+     else if builtins.pathExists ../config.nix then import ../config.nix
+     else {});
 
   src = with config.pkgs.lib; cleanSourceWith {
     filter = path: type:

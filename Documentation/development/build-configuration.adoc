@@ -23,17 +23,15 @@ custom Nixpkgs to evaluate Spectrum.
 [example]
 [source,nix]
 ----
+{ default, ... }:
+
 {
-  pkgs = import <nixpkgs> {
-    overlays = [
-      (final: super: {
-        weston = super.weston.overrideAttrs ({ patches ? [], ... }: {
-          patches = patches ++ [
-            path/to/weston.patch
-          ];
-        });
-      })
-    ];
-  };
+  pkgs = default.pkgs.extend (final: super: {
+    weston = super.weston.overrideAttrs ({ patches ? [], ... }: {
+      patches = patches ++ [
+        path/to/weston.patch
+      ];
+    });
+  });
 }
 ----
