@@ -10,9 +10,3 @@ import lib/eval-config.nix ({ config, ... }: {
 
   combined = import release/combined/run-vm.nix { inherit config; };
 })
-
-# Set config = {} to disable implicitly reading config.nix, since
-# we'll want the result to be the same as on the binary cache.  If it
-# turns out there is a compelling reason to read the default config
-# here, we can reconsider this.
-{ config = {}; }
