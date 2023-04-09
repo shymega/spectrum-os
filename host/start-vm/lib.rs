@@ -81,8 +81,6 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
         Err(e) => return Err(format!("reading directory {:?}: {}", net_providers_dir, e)),
     }
 
-    command.arg("--disk");
-
     let blk_dir = config_dir.join("blk");
     match blk_dir.read_dir() {
         Ok(entries) => {
@@ -102,23 +100,15 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
                 let mut arg = OsString::from("path=");
                 arg.push(entry);
                 arg.push(",readonly=on");
-                command.arg(arg);
+                command.arg("--disk").arg(arg);
             }
         }
         Err(e) => return Err(format!("reading directory {:?}: {}", blk_dir, e)),
     }
 
-    if command.get_args().last() == Some(OsStr::new("--disk")) {
-        return Err("no block devices specified".to_string());
-    }
-
     let shared_dirs_dir = config_dir.join("shared-dirs");
-    match shared_dirs_dir.read_dir().map(Iterator::peekable) {
-        Ok(mut entries) => {
-            if entries.peek().is_some() {
-                command.arg("--fs");
-            }
-
+    match shared_dirs_dir.read_dir() {
+        Ok(entries) => {
             for result in entries {
                 let entry = result
                     .map_err(|e| format!("examining directory entry: {}", e))?
@@ -131,7 +121,7 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
                 arg.push("-fs-");
                 arg.push(&entry);
                 arg.push("/env/virtiofsd.sock");
-                command.arg(arg);
+                command.arg("--fs").arg(arg);
             }
         }
         Err(e) if e.kind() == ErrorKind::NotFound => {}

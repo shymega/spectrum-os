@@ -108,7 +108,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	    --api-socket path=build/vmm.sock \
 	    --memory size=128M,shared=on \
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
-	           path=$(RUN_IMG),readonly=on \
+	    --disk path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
 	    --kernel $(KERNEL) \
 	    --cmdline "console=ttyS0 root=PARTLABEL=root" \

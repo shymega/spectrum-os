@@ -31,5 +31,7 @@ test('tap_open (name too long)', executable('tap_open-name-too-long',
 
 test('vm_command-basic', executable('vm_command-basic',
   'vm_command-basic.rs', link_with : [rust_lib, rust_helper]))
+test('vm_command-multiple-disks', executable('vm_command-multiple-disks',
+  'vm_command-multiple-disks.rs', link_with : [rust_lib, rust_helper]))
 test('vm_command-shared-dir', executable('vm_command-shared-dir',
   'vm_command-shared-dir.rs', link_with : [rust_lib, rust_helper]))
