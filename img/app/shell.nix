@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/eval-config.nix (
-{ config, run ? ../../vm/app/catgirl.nix, ... }:
+{ config, run ? ../../vm/app/mg.nix, ... }:
 
 with config.pkgs;
 
