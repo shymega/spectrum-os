@@ -18,8 +18,6 @@ with config.pkgs;
     cloud-hypervisor execline jq qemu_kvm reuse s6
   ];
 
-  KERNEL = "${passthru.kernel.dev}/vmlinux";
-
   runDef = import run { inherit config; };
   shellHook = ''
     export RUN_IMG="$(printf "%s\n" "$runDef"/blk/run.img)"

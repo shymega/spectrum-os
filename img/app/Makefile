@@ -15,9 +15,9 @@ HOST_BUILD_FILES = \
 all: $(HOST_BUILD_FILES)
 .PHONY: all
 
-$(imgdir)/appvm/vmlinux: $(VMLINUX)
+$(imgdir)/appvm/vmlinux: $(KERNEL)
 	mkdir -p $$(dirname $@)
-	cp $(VMLINUX) $@
+	cp $(KERNEL) $@
 
 $(imgdir)/appvm/blk/root.img: ../../scripts/make-gpt.sh ../../scripts/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)

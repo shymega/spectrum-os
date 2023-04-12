@@ -24,9 +24,9 @@ $(prefix): $(HOST_BUILD_FILES)
 
 	tar -c $(HOST_BUILD_FILES) | tar -C $@ -x --strip-components 2
 
-build/host/data/netvm/vmlinux: $(VMLINUX)
+build/host/data/netvm/vmlinux: $(KERNEL)
 	mkdir -p $$(dirname $@)
-	cp $(VMLINUX) $@
+	cp $(KERNEL) $@
 
 build/host/data/netvm/blk/root.img: ../../../scripts/make-gpt.sh ../../../scripts/sfdisk-field.awk build/rootfs.ext4
 	mkdir -p $$(dirname $@)

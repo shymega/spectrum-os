@@ -74,7 +74,7 @@ stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ jq lseek s6-rc tar2ext4 util-linux ];
 
   PACKAGES_TAR = packagesTar;
-  VMLINUX = "${kernel.dev}/vmlinux";
+  KERNEL = "${kernel.dev}/vmlinux";
 
   makeFlags = [ "prefix=$(out)" ];
 
