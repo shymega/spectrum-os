@@ -40,18 +40,21 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
     let config_dir = config_root.join(vm_name);
 
     let mut command = Command::new("s6-notifyoncheck");
-    command.args(&["-dc", "test -S env/cloud-hypervisor.sock"]);
+    command.args(["-dc", "test -S env/cloud-hypervisor.sock"]);
     command.arg("cloud-hypervisor");
-    command.args(&["--api-socket", "env/cloud-hypervisor.sock"]);
-    command.args(&["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
-    command.args(&["--memory", "size=128M,shared=on"]);
-    command.args(&["--console", "pty"]);
+    command.args(["--api-socket", "env/cloud-hypervisor.sock"]);
+    command.args(["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
+    command.args(["--memory", "size=128M,shared=on"]);
+    command.args(["--console", "pty"]);
     command.arg("--kernel");
     command.arg(config_dir.join("vmlinux"));
 
     let net_providers_dir = config_dir.join("providers/net");
     match net_providers_dir.read_dir() {
         Ok(entries) => {
+            // TODO: to support multiple net providers, we'll need
+            // a better naming scheme for tap and bridge devices.
+            #[allow(clippy::never_loop)]
             for r in entries {
                 let entry = r
                     .map_err(|e| format!("examining directory entry: {}", e))?
@@ -72,8 +75,6 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
                     .arg("--net")
                     .arg(format!("fd={},mac={}", fd, format_mac(&mac)));
 
-                // TODO: to support multiple net providers, we'll need
-                // a better naming scheme for tap and bridge devices.
                 break;
             }
         }
@@ -130,7 +131,7 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
 
     command.arg("--serial").arg({
         let mut serial = OsString::from("file=/run/");
-        serial.push(&vm_name);
+        serial.push(vm_name);
         serial.push(".log");
         serial
     });

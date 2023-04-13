@@ -34,7 +34,7 @@ pub fn add_net(vm_name: &OsStr, tap: RawFd, mac: &str) -> Result<OsString, NonZe
         .or(Err(EPERM))?;
 
     let jq_out = match Command::new("jq")
-        .args(&["-j", ".id"])
+        .args(["-j", ".id"])
         .stdin(ch_remote.stdout.take().unwrap())
         .stderr(Stdio::inherit())
         .output()
