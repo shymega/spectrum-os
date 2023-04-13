@@ -9,8 +9,6 @@
 QEMU_KVM = qemu-kvm
 
 BACKGROUND = background
-CLOUD_HYPERVISOR = cloud-hypervisor
-CLOUD_HYPERVISOR = cloud-hypervisor
 CPIO = cpio
 CPIOFLAGS = --reproducible -R +0:+0 -H newc
 MCOPY = mcopy

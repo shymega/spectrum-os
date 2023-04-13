@@ -87,10 +87,10 @@ start-virtiofsd:
 .PHONY: start-virtiofsd
 
 run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
-	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
+	@../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	    -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
-	    -append "console=ttyS0 root=PARTLABEL=root" \
+	    -append "root=PARTLABEL=root" \
 	    -netdev user,id=net0 \
 	    -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
 	    -chardev socket,id=virtiofsd,path=build/virtiofsd.sock \
@@ -104,14 +104,14 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 
 run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	rm -f build/vmm.sock
-	$(CLOUD_HYPERVISOR) \
+	@../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
 	    --memory size=128M,shared=on \
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
 	    --disk path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
 	    --kernel $(KERNEL) \
-	    --cmdline "console=ttyS0 root=PARTLABEL=root" \
+	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor

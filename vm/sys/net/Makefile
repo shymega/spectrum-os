@@ -95,9 +95,9 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    exit=$$?; rm -r $$dir; exit $$exit
 
 run-qemu: build/host/data/netvm/blk/root.img
-	$(QEMU_KVM) -m 128 -cpu host -machine q35,kernel=$(KERNEL) -vga none \
+	@../../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	    -append "console=ttyS0 root=PARTLABEL=root" \
+	    -append "root=PARTLABEL=root" \
 	    -netdev user,id=net0 \
 	    -device e1000e,netdev=net0 \
 	    -netdev user,id=net1 \
@@ -109,14 +109,14 @@ run-qemu: build/host/data/netvm/blk/root.img
 
 run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	rm -f build/vmm.sock
-	$(CLOUD_HYPERVISOR) \
+	@../../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
 	    --memory size=128M \
 	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
 	    --net tap=tap0 \
 	    --net tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
-	    --cmdline "console=ttyS0 root=PARTLABEL=root" \
+	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor
