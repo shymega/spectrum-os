@@ -11,5 +11,5 @@ with config.pkgs;
 {
   hardeningDisable = [ "fortify" ];
 
-  nativeBuildInputs = nativeBuildInputs ++ [ rustfmt ];
+  nativeBuildInputs = nativeBuildInputs ++ [ clippy rustfmt ];
 }))
