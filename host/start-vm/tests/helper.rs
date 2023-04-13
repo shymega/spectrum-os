@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 use std::ffi::OsString;
 use std::io;
@@ -33,13 +33,12 @@ pub struct TempDir(PathBuf);
 
 impl TempDir {
     pub fn new() -> std::io::Result<Self> {
-        let mut dirname = OsString::from("spectrum-start-vm-test-");
-        dirname.push(prog_name());
-        dirname.push(".XXXXXX");
-        let mut template = tmpdir();
-        template.push(dirname);
+        let mut dirname = tmpdir().into_os_string().into_vec();
+        dirname.extend_from_slice(b"/spectrum-start-vm-test-");
+        dirname.extend_from_slice(&prog_name().into_bytes());
+        dirname.extend_from_slice(b".XXXXXX\0");
 
-        let c_path = Box::into_raw(template.into_os_string().into_vec().into_boxed_slice());
+        let c_path = Box::into_raw(dirname.into_boxed_slice());
 
         // Safe because we own c_path.
         if unsafe { mkdtemp(c_path as *mut c_char) }.is_null() {
@@ -47,7 +46,9 @@ impl TempDir {
         }
 
         // Safe because we own c_path and it came from Box::into_raw.
-        let path = PathBuf::from(OsString::from_vec(unsafe { Box::from_raw(c_path) }.into()));
+        let mut buf: Vec<_> = unsafe { Box::from_raw(c_path) }.into();
+        buf.pop(); // Remove the NUL terminator.
+        let path = PathBuf::from(OsString::from_vec(buf));
         Ok(Self(path))
     }
 
