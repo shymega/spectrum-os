@@ -9,5 +9,7 @@ with config.pkgs;
 { nativeBuildInputs ? [], ... }:
 
 {
+  hardeningDisable = [ "fortify" ];
+
   nativeBuildInputs = nativeBuildInputs ++ [ rustfmt ];
 }))
