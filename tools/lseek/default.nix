@@ -5,7 +5,7 @@ import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.pkgsStatic.c
 
 { lib, stdenv, clang-tools }:
 
-let self = stdenv.mkDerivation {
+lib.fix (self: stdenv.mkDerivation {
   name = "lseek";
 
   inherit src;
@@ -33,6 +33,6 @@ let self = stdenv.mkDerivation {
     maintainers = with maintainers; [ qyliss ];
     platforms = platforms.unix;
   };
-}; in self
+})
 
 ) { })
