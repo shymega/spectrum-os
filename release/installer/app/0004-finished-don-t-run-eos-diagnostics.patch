@@ -1,4 +1,4 @@
-From edb82b623c4238fc18b7a317f05562a92519419f Mon Sep 17 00:00:00 2001
+From aefbf6a50097486616a7d0d3bc09e4efb0ed953b Mon Sep 17 00:00:00 2001
 SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 SPDX-License-Identifier: GPL-2.0-or-later
 From: Alyssa Ross <hi@alyssa.is>
@@ -14,10 +14,10 @@ error message about not being able to find it on the error screen.
  1 file changed, 15 deletions(-)
 
 diff --git a/gnome-image-installer/pages/finished/gis-finished-page.c b/gnome-image-installer/pages/finished/gis-finished-page.c
-index b546fcbe..9f75d2ef 100644
+index 6cd26ff2..47b60adb 100644
 --- a/gnome-image-installer/pages/finished/gis-finished-page.c
 +++ b/gnome-image-installer/pages/finished/gis-finished-page.c
-@@ -300,21 +300,6 @@ gis_finished_page_shown (GisPage *page)
+@@ -285,21 +285,6 @@ gis_finished_page_shown (GisPage *page)
        gtk_widget_hide (priv->success_box);
        gis_assistant_locale_changed (assistant);
  
@@ -36,9 +36,9 @@ index b546fcbe..9f75d2ef 100644
 -                                       g_object_ref (self));
 -        }
 -
-       if (gis_store_is_unattended())
-         {
-           g_timeout_add_seconds (1, (GSourceFunc)toggle_leds, page);
+       /* If running within a live session, hide the "Turn off" button on error,
+        * since we have a perfectly good [X] button on the titlebar and we want
+        * to encourage the user to notice the link to the diagnostics file.
 -- 
-2.33.0
+2.37.1
 

@@ -1,4 +1,4 @@
-From 2738d4316abe780e50a4f6241b9845fe200edfdd Mon Sep 17 00:00:00 2001
+From 058050ee5ba6a8d8dae2ba7fa7334ee19f98dbf8 Mon Sep 17 00:00:00 2001
 SPDX-License-Identifier: GPL-2.0-or-later
 SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 From: Alyssa Ross <hi@alyssa.is>
@@ -14,13 +14,13 @@ installing other operating systems.
  1 file changed, 2 insertions(+)
 
 diff --git a/gnome-image-installer/util/gpt.c b/gnome-image-installer/util/gpt.c
-index c88ba9b9..7a33210f 100644
+index 02926a5e..1261d9a0 100644
 --- a/gnome-image-installer/util/gpt.c
 +++ b/gnome-image-installer/util/gpt.c
-@@ -241,12 +241,14 @@ int is_eos_gpt_valid(struct ptable *pt, uint64_t *size)
-           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS2, 16)==0
-           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS3, 16)==0
-           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS4, 16)==0) {
+@@ -253,12 +253,14 @@ int is_eos_gpt_valid(struct ptable *pt, uint64_t *size)
+           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS_AARCH64, 16)==0
+           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS_RISCV_32, 16)==0
+           || memcmp(&pt->partitions[i].type_guid, GPT_GUID_LINUX_ROOTFS_RISCV_64, 16)==0) {
 +#if 0
          uint64_t flags = 0;
          memcpy(&flags, pt->partitions[i].attributes, 8);
@@ -33,5 +33,5 @@ index c88ba9b9..7a33210f 100644
          break ;
        }
 -- 
-2.33.0
+2.37.1
 

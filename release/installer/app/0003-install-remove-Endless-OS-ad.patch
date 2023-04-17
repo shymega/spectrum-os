@@ -1,4 +1,4 @@
-From 7072ac1bfc3c8d77db122b6ba3d943bc2c477eb5 Mon Sep 17 00:00:00 2001
+From 1061a8c3cfb31dcc2519841360c6d14612898b2c Mon Sep 17 00:00:00 2001
 SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 SPDX-License-Identifier: GPL-2.0-or-later
 From: Alyssa Ross <hi@alyssa.is>
@@ -95,5 +95,5 @@ index d3b7769c..2fcc31b9 100644
            <packing>
              <property name="expand">True</property>
 -- 
-2.33.0
+2.37.1
 

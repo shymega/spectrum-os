@@ -1,4 +1,4 @@
-From 9b163a05e237ff27688093252da8440592df5898 Mon Sep 17 00:00:00 2001
+From 786b48e3659db0a184600c5c7047d883b74c82cf Mon Sep 17 00:00:00 2001
 SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 SPDX-License-Identifier: GPL-2.0-or-later
 From: Alyssa Ross <hi@alyssa.is>
@@ -10,10 +10,10 @@ Subject: [PATCH 5/5] finished: promote #spectrum, not the Endless forum
  1 file changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/gnome-image-installer/pages/finished/gis-finished-page.c b/gnome-image-installer/pages/finished/gis-finished-page.c
-index 9f75d2ef..f5af32f1 100644
+index 47b60adb..2fc1ccf3 100644
 --- a/gnome-image-installer/pages/finished/gis-finished-page.c
 +++ b/gnome-image-installer/pages/finished/gis-finished-page.c
-@@ -481,11 +481,9 @@ gis_finished_page_locale_changed (GisPage *page)
+@@ -461,11 +461,9 @@ gis_finished_page_locale_changed (GisPage *page)
      }
  
    support_email = get_customer_support_email ();
@@ -28,5 +28,5 @@ index 9f75d2ef..f5af32f1 100644
  }
  
 -- 
-2.33.0
+2.37.1
 

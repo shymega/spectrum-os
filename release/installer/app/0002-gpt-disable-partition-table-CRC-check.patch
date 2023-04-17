@@ -1,4 +1,4 @@
-From 2dac5859a943b499db7cbb078bde827c0b3cc7df Mon Sep 17 00:00:00 2001
+From 56dff17022a2ca631ac2ea529a84cb424c913500 Mon Sep 17 00:00:00 2001
 SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 SPDX-License-Identifier: GPL-2.0-or-later
 From: Alyssa Ross <hi@alyssa.is>
@@ -12,10 +12,10 @@ three entries in the partition table.
  1 file changed, 2 insertions(+)
 
 diff --git a/gnome-image-installer/util/gpt.c b/gnome-image-installer/util/gpt.c
-index 7a33210f..7ba99ebb 100644
+index 1261d9a0..fb8bab17 100644
 --- a/gnome-image-installer/util/gpt.c
 +++ b/gnome-image-installer/util/gpt.c
-@@ -213,6 +213,7 @@ int is_eos_gpt_valid(struct ptable *pt, uint64_t *size)
+@@ -223,6 +223,7 @@ int is_eos_gpt_valid(struct ptable *pt, uint64_t *size)
          g_warning("invalid header crc");
          return 0;
      }
@@ -23,7 +23,7 @@ index 7a33210f..7ba99ebb 100644
      //  crc32 of partition table
      int n = pt->header.ptable_count * pt->header.ptable_partition_size;
      uint8_t *buffer = (uint8_t*)malloc(n);
-@@ -226,6 +227,7 @@ int is_eos_gpt_valid(struct ptable *pt, uint64_t *size)
+@@ -236,6 +237,7 @@ int is_eos_gpt_valid(struct ptable *pt, uint64_t *size)
          return 0;
      }
      free(buffer);
@@ -32,5 +32,5 @@ index 7a33210f..7ba99ebb 100644
      // The first partition must be an EFI System Partition
      if(memcmp(&pt->partitions[0].type_guid, GPT_GUID_EFI, 16)!=0) {
 -- 
-2.33.0
+2.37.1
 
