@@ -6,7 +6,7 @@ include ../../lib/common.mk
 prefix = build/host
 imgdir = $(prefix)/img
 
-VMM = qemu
+VMM = cloud-hypervisor
 
 HOST_BUILD_FILES = \
 	$(imgdir)/appvm/blk/root.img \
