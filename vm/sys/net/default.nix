@@ -67,9 +67,6 @@ let
       VIRTIO_BLK = yes;
       VIRTIO_CONSOLE = yes;
       EXT4_FS = yes;
-      DRM_BOCHS = yes;
-      DRM = yes;
-      AGP = yes;
     };
   };
 in
