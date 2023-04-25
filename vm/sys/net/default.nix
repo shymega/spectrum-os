@@ -60,7 +60,7 @@ let
         -T ${writeReferencesToFile packagesSysroot} .
   '';
 
-  kernel = buildPackages.linux.override {
+  kernel = (buildPackages.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       VIRTIO = yes;
       VIRTIO_PCI = yes;
@@ -68,7 +68,17 @@ let
       VIRTIO_CONSOLE = yes;
       EXT4_FS = yes;
     };
-  };
+  }).overrideAttrs ({ installFlags ? [], ... }: {
+    installFlags = installFlags ++ [
+      # vmlinux.bin is the stripped version of vmlinux.
+      # Confusingly, compressed/vmlinux.bin is the stripped version of
+      # the top-level vmlinux target, while the top-level vmlinux.bin
+      # is the stripped version of compressed/vmlinux.  So we use
+      # compressed/vmlinux.bin, since we want a stripped version of
+      # the kernel that *hasn't* been built to be compressed.  Weird!
+      "KBUILD_IMAGE=$(boot)/compressed/vmlinux.bin"
+    ];
+  });
 in
 
 stdenvNoCC.mkDerivation {
@@ -80,7 +90,7 @@ stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ jq lseek s6-rc tar2ext4 util-linux ];
 
   PACKAGES_TAR = packagesTar;
-  KERNEL = "${kernel.dev}/vmlinux";
+  KERNEL = "${kernel}/vmlinux.bin";
 
   makeFlags = [ "prefix=$(out)" ];
 
