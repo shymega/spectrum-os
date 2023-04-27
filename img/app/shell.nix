@@ -7,7 +7,7 @@ import ../../lib/eval-config.nix (
 with config.pkgs;
 
 (import ./. { inherit config; }).overrideAttrs (
-{ passthru ? {}, nativeBuildInputs ? [], ... }:
+{ nativeBuildInputs ? [], ... }:
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [

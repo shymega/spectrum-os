@@ -16,7 +16,7 @@ in
 
   boot.plymouth.enable = true;
   boot.plymouth.logo = pkgs.callPackage (
-    { lib, runCommand, fetchurl, inkscape }:
+    { runCommand, fetchurl, inkscape }:
     runCommand "spectrum-logo.png" {
       nativeBuildInputs = [ inkscape ];
       svg = fetchurl {

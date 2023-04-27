@@ -4,7 +4,7 @@
 
 import ../lib/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
 
-{ lib, stdenvNoCC, jekyll, drawio-headless }:
+{ stdenvNoCC, jekyll, drawio-headless }:
 
 stdenvNoCC.mkDerivation {
   name = "spectrum-docs";

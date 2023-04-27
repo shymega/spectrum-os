@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-{ config, runCommand, e2fsprogs, tar2ext4 }:
+{ config, runCommand, e2fsprogs }:
 
 let
   netvm = import ../../vm/sys/net {

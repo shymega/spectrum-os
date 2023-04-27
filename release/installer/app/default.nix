@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-{ lib, eos-installer, fetchurl, fetchpatch }:
+{ eos-installer, fetchurl }:
 
 let
   logo = fetchurl {

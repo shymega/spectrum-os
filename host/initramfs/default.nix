@@ -18,8 +18,6 @@ config.pkgs.callPackage (
 let
   inherit (lib) concatMapStringsSep;
 
-  linux = rootfs.kernel;
-
   modules = makeModulesClosure {
     inherit (rootfs) firmware kernel;
     rootModules = with rootfs.nixosAllHardware.config.boot.initrd;

@@ -4,7 +4,7 @@
 import ../../../lib/eval-config.nix ({ config, ... }: with config.pkgs;
 
 (import ./. { inherit config; }).overrideAttrs (
-{ passthru ? {}, nativeBuildInputs ? [], ... }:
+{ nativeBuildInputs ? [], ... }:
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [ cloud-hypervisor jq qemu_kvm reuse ];

@@ -5,7 +5,6 @@ import ../../lib/eval-config.nix ({ config, extraConfig ? {}, ... }:
 with config.pkgs;
 
 let
-  inherit (builtins) head match storeDir;
   inherit (nixos {
     imports = [ ./configuration.nix extraConfig ];
   }) config;
