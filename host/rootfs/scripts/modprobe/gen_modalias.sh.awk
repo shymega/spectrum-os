@@ -1,6 +1,6 @@
 #!/usr/bin/awk -f
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021, 2023 Alyssa Ross <hi@alyssa.is>
 #
 # This program generates a shell script expected to be run with a
 # kernel uevent in its environment, for example from mdev.conf.  The
@@ -53,27 +53,28 @@ FNR == 1 {
 $1 == "alias" && $3 in remap {
 	normalize_driver_name($3)
 	command = remap[$3]
-	patterns[command][patterns_lengths[command]++] = $2
+	commands[command] = ""
+	patterns[patterns_lengths[command]++ "|" command] = $2
 }
 
 END {
-	for (_ in patterns) {
+	for (_ in commands) {
 		print ""
 		print "case \"$MODALIAS\" in"
 		break
 	}
 
-	for (exec in patterns) {
+	for (command in commands) {
 		printf "\t"
-		for (n in patterns[exec]) {
+		for (n = 0; n < patterns_lengths[command]; n++) {
 			if (n > 0)
 				printf "|"
-			printf "%s", patterns[exec][n]
+			printf "%s", patterns[n "|" command]
 		}
-		printf ")\n\t\texec %s\n\t\t;;\n", exec
+		printf ")\n\t\texec %s\n\t\t;;\n", command
 	}
 
-	for (_ in patterns) {
+	for (_ in commands) {
 		printf "\t*)\n\t\texec modprobe -q \"$MODALIAS\"\n\t\t;;\nesac"
 		break
 	}
