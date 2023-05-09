@@ -36,6 +36,7 @@ BEGIN {
 
 		remap[driver] = command
 	}
+	close(modmap)
 
 	print "#!/bin/sh -x"
 	# Break this up to avoid confusing reuse lint.
