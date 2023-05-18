@@ -4,5 +4,5 @@
 import lib/eval-config.nix ({ config, ... }: with config.pkgs;
 
 mkShell {
-  nativeBuildInputs = [ b4 reuse rustfmt ];
+  nativeBuildInputs = [ b4 reuse ];
 })
