@@ -3,7 +3,7 @@
 
 include ../../lib/common.mk
 
-dest = build/rootfs.ext4
+dest = build/rootfs.erofs
 
 FILES = \
 	etc/fonts/fonts.conf \
@@ -41,20 +41,14 @@ LINKS = bin sbin
 
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 
-$(dest): build/rootfs.tar
-	$(TAR2EXT4) -i build/rootfs.tar -o $@
+$(dest): ../../scripts/make-erofs.sh $(FILES) $(BUILD_FILES) build/empty
+	../../scripts/make-erofs.sh -- $@ $(PACKAGES) \
+	    $$(for file in $(FILES) $(LINKS); do printf '%s %s ' $$file $$file; done) \
+	    $$(for file in $(BUILD_FILES); do printf '%s %s ' $$file $${file#build/}; done) \
+	    $$(printf 'build/empty %s ' $(DIRS))
 
 build/empty:
 	mkdir -p $@
-
-build/rootfs.tar: build/empty $(PACKAGES_TAR) $(FILES) $(BUILD_FILES)
-	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
-	tar $(TARFLAGS) --append -f $@ $(FILES) $(LINKS)
-	echo $(BUILD_FILES) | cut -d/ -f2 | \
-	    tar $(TARFLAGS) --append -f $@ -C build -T -
-	for m in $(DIRS); do \
-	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
-	done
 
 build/etc/mdev/modules.map: scripts/modprobe/gen_modules.map.awk
 	mkdir -p $$(dirname $@)
@@ -112,6 +106,7 @@ build/etc/s6-rc: $(S6_RC_FILES)
 	    exit=$$?; rm -r $$dir; exit $$exit
 
 clean:
+	chmod -R +w build
 	rm -rf build
 .PHONY: clean
 

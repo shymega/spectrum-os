@@ -23,7 +23,7 @@ background {
 }
 importas -iu mdevd_pid !
 
-if { modprobe ext4 }
+if { modprobe erofs }
 
 # Do a blocking read on the fifo to wait for mdevd to find the
 # partition.

@@ -15,7 +15,7 @@ in
 
 pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, s6-rc, tar2ext4
+{ lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, erofs-utils, s6-rc
 , busybox, cloud-hypervisor, cryptsetup, execline, e2fsprogs, jq, kmod
 , mdevd, s6, s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
 }:
@@ -118,12 +118,6 @@ let
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
     ln -s ${util-linuxMinimal}/bin/{findfs,lsblk} $out/usr/bin
   '';
-
-  packagesTar = runCommand "packages.tar" {} ''
-    cd ${packagesSysroot}
-    tar -cf $out --sort=name --mtime=@0 --verbatim-files-from \
-        -T ${writeReferencesToFile packagesSysroot} .
-  '';
 in
 
 stdenvNoCC.mkDerivation {
@@ -132,11 +126,20 @@ stdenvNoCC.mkDerivation {
   inherit src;
   sourceRoot = "source/host/rootfs";
 
-  nativeBuildInputs = [ lseek s6-rc tar2ext4 ];
+  nativeBuildInputs = [ erofs-utils lseek s6-rc ];
 
   MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
   MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
-  PACKAGES_TAR = packagesTar;
+
+  PACKAGES = [ packagesSysroot "/" ];
+
+  shellHook = ''
+    PACKAGES+=" $(sed p ${writeReferencesToFile packagesSysroot} | tr '\n' ' ')"
+  '';
+
+  preBuild = ''
+    runHook shellHook
+  '';
 
   makeFlags = [ "dest=$(out)" ];
 

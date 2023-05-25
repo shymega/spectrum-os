@@ -21,7 +21,7 @@ let
   modules = makeModulesClosure {
     inherit (rootfs) firmware kernel;
     rootModules = with rootfs.nixosAllHardware.config.boot.initrd;
-      availableKernelModules ++ kernelModules ++ [ "dm-verity" "loop" ];
+      availableKernelModules ++ kernelModules ++ [ "dm-verity" "erofs" "loop" ];
   };
 
   packages = [
