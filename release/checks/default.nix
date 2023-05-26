@@ -15,4 +15,6 @@ import ../../lib/eval-config.nix ({ ... } @ args:
   rustfmt = import ./rustfmt.nix args;
 
   shellcheck = import ./shellcheck.nix args;
+
+  try = import ./try.nix args;
 })

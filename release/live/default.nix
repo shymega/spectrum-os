@@ -48,6 +48,6 @@ stdenvNoCC.mkDerivation {
 
   enableParallelBuilding = true;
 
-  passthru = { inherit rootfs; };
+  passthru = { inherit initramfs rootfs; };
 }
 ) {})
