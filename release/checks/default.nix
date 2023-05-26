@@ -10,6 +10,8 @@ import ../../lib/eval-config.nix ({ ... } @ args:
 
   pkg-tests = import ./pkg-tests.nix args;
 
+  no-roothash = import ./no-roothash.nix args;
+
   reuse = import ./reuse.nix args;
 
   rustfmt = import ./rustfmt.nix args;
