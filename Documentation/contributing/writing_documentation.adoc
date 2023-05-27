@@ -11,11 +11,11 @@ formatting, and organizing the Spectrum documentation.
 Please follow these guidelines and conventions
 when editing the documentation.
 
-We use xref:https://nixos.org/manual/nix/stable/introduction.html[Nix]
-and xref:https://github.com/just-the-docs/just-the-docs[Just the Docs]
-for building the documentation. Sources are written in AsciiDoc
-If you are new with it,
-see xref:https://docs.asciidoctor.org/asciidoc/latest/[AsciiDoc Language Documentation].
+We use https://nixos.org/manual/nix/stable/introduction.html[Nix] and
+https://github.com/just-the-docs/just-the-docs[Just the Docs] for
+building the documentation. Sources are written in AsciiDoc If you are
+new with it, see
+https://docs.asciidoctor.org/asciidoc/latest/[AsciiDoc Language Documentation].
 
 If you want to test your changes,
 see xref:../contributing/building-documentation.adoc[Building Documentation].
@@ -38,7 +38,7 @@ to suit your changing needs.
 
 == Document Layout
 
-* xref:https://docs.asciidoctor.org/asciidoc/latest/document/header/[Document header]:
+* https://docs.asciidoctor.org/asciidoc/latest/document/header/[Document header]:
 include your name and a revision line following the author line. Example:
 
     = Document Title
@@ -64,15 +64,15 @@ abbreviations are used.
 ** Keep text hard-wrapped at 70-80 characters. (Most editors should be able
 to do this automatically.) This makes it easier to pick out specific parts
 in review, and also makes it easier to read in some editors. (It does not make a difference to the result as rendered in the web browser.)
-** Keep the text in the description attribute hard-wrapped as well. For more information, see the xref:https://docs.asciidoctor.org/asciidoc/latest/document/metadata/#description[Document Metadata] section of the Asciidoctor Docs.
+** Keep the text in the description attribute hard-wrapped as well. For more information, see the https://docs.asciidoctor.org/asciidoc/latest/document/metadata/#description[Document Metadata] section of the Asciidoctor Docs.
 
-* Put one sentence on each line. This makes it easy to move content around, and also easy to spot (too) long sentences. For more information, see xref:https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[AsciiDoc Recommended Practices].
+* Put one sentence on each line. This makes it easy to move content around, and also easy to spot (too) long sentences. For more information, see https://asciidoctor.org/docs/asciidoc-recommended-practices/#one-sentence-per-line[AsciiDoc Recommended Practices].
 
 == Structure
 
 * Use subheading to organize information.
 * One topic per article.
-* To make accents, use xref:https://docs.asciidoctor.org/asciidoc/latest/blocks/admonitions/[admonitions].
+* To make accents, use https://docs.asciidoctor.org/asciidoc/latest/blocks/admonitions/[admonitions].
 * Use numbered lists for actions that happen in sequence.
 * Do not use parenthesis for additional information, make a separate sentence instead.
 

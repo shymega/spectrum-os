@@ -48,7 +48,7 @@ There is also a web interface https://spectrum-os.org/lists/hyperkitty/
 that you can use to browse or even post to the mailing list.
 
 Add a Signed-off-by line to each patch you submit, to indicate your
-certification of the xref:https://spectrum-os.org/git/spectrum/tree/DCO-1.1.txt[Developer's Certificate of Origin] for that patch.
+certification of the https://spectrum-os.org/git/spectrum/tree/DCO-1.1.txt[Developer's Certificate of Origin] for that patch.
 The easiest way to do this is with `git commit's -s` flag.
 
 Do not be too afraid of getting it wrong the first couple of times.

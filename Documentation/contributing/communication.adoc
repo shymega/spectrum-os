@@ -27,17 +27,17 @@ Spectrum's developers, subscribe to *announce@spectrum-os.org*.
 You can discuss Spectrum and related topics in real time on IRC, or
 more long-form on spectrum-announce (_discuss@spectrum-os.org_).
 Finally, development work happens in Spectrum's
-xref:https://spectrum-os.org/git/[source repositories], and is
-discussed on spectrum-devel (_devel@spectrum-os.org_).
+https://spectrum-os.org/git/[source repositories], and is discussed on
+spectrum-devel (_devel@spectrum-os.org_).
 
 
 == Internet Relay Chat
 
 There is a single Internet Relay Chat (IRC) channel,
-xref:ircs://irc.libera.chat:6697/spectrum[#spectrum]
-on xref:https://libera.chat/[Libera.Chat], for all kinds of Spectrum
-discussions.  You can also join through xref:https://matrix.org/[Matrix] as
-xref:https://matrix.to/#/#spectrum:libera.chat[#spectrum:libera.chat].
+link:ircs://irc.libera.chat:6697/spectrum[#spectrum] on
+https://libera.chat/[Libera.Chat], for all kinds of Spectrum
+discussions.  You can also join through https://matrix.org/[Matrix] as
+https://matrix.to/#/#spectrum:libera.chat[#spectrum:libera.chat].
 If you are new to IRC, you might find Matrix the easiest way to get started.
 The channel is *logged*, but the logs are not available online yet.
 
@@ -49,11 +49,11 @@ following along with it, the best thing to do is subscribe to one or
 more of the Spectrum mailing lists.
 
 If mailing lists are not your thing, that is okay! Try the
-xref:https://spectrum-os.org/lists/hyperkitty/[Web UI], which allows
-you to interact with the mailing lists much like a modern web forum.
+https://spectrum-os.org/lists/hyperkitty/[Web UI], which allows you to
+interact with the mailing lists much like a modern web forum.
 
-Each list has xref:https://spectrum-os.org/lists/archives/[archives]
-that can also be accessed via the web, NNTP or Atom. You are strongly
+Each list has https://spectrum-os.org/lists/archives/[archives] that
+can also be accessed via the web, NNTP or Atom. You are strongly
 encouraged to mirror them.
 
 [cols="1,1"]
@@ -64,14 +64,14 @@ encouraged to mirror them.
 from Spectrum's developers will be posted.
 
 You can subscribe
-xref:https://spectrum-os.org/lists/mailman3/lists/announce.spectrum-os.org/[on the web],
+https://spectrum-os.org/lists/mailman3/lists/announce.spectrum-os.org/[on the web],
 or by sending mail to *announce-subscribe@spectrum-os.org*.
 
 |discuss@spectrum-os.org
 |This list contains high-level discussion about the project.
 
 You can subscribe
-xref:https://spectrum-os.org/lists/mailman3/lists/discuss.spectrum-os.org/[on the web],
+https://spectrum-os.org/lists/mailman3/lists/discuss.spectrum-os.org/[on the web],
 or by sending mail to *discuss-subscribe@spectrum-os.org*.
 
 |devel@spectrum-os.org
@@ -84,6 +84,6 @@ For more information, see
 xref:working-with-patches.adoc[Working with Patches].
 
 You can subscribe
-xref:https://spectrum-os.org/lists/mailman3/lists/devel.spectrum-os.org/[on the web], or by sending mail to *devel-subscribe@spectrum-os.org*.
+https://spectrum-os.org/lists/mailman3/lists/devel.spectrum-os.org/[on the web], or by sending mail to *devel-subscribe@spectrum-os.org*.
 
 |===

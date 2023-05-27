@@ -8,6 +8,8 @@ import ../../lib/eval-config.nix ({ ... } @ args:
 
   doc-links = import ./doc-links.nix args;
 
+  doc-anchors = import ./doc-anchors.nix args;
+
   pkg-tests = import ./pkg-tests.nix args;
 
   no-roothash = import ./no-roothash.nix args;
