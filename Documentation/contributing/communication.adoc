@@ -34,10 +34,10 @@ discussed on spectrum-devel (_devel@spectrum-os.org_).
 == Internet Relay Chat
 
 There is a single Internet Relay Chat (IRC) channel,
-xref:ircs://irc.libera.chat:6697/spectrum[spectrum:libera.chat]
+xref:ircs://irc.libera.chat:6697/spectrum[#spectrum]
 on xref:https://libera.chat/[Libera.Chat], for all kinds of Spectrum
 discussions.  You can also join through xref:https://matrix.org/[Matrix] as
-xref:https://matrix.to/#/#spectrum:libera.chat[spectrum:libera.chat].
+xref:https://matrix.to/#/#spectrum:libera.chat[#spectrum:libera.chat].
 If you are new to IRC, you might find Matrix the easiest way to get started.
 The channel is *logged*, but the logs are not available online yet.
 
