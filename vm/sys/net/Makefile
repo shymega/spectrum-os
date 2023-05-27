@@ -28,10 +28,10 @@ build/host/data/netvm/vmlinux: $(KERNEL)
 	mkdir -p $$(dirname $@)
 	cp $(KERNEL) $@
 
-build/host/data/netvm/blk/root.img: ../../../scripts/make-gpt.sh ../../../scripts/sfdisk-field.awk build/rootfs.ext4
+build/host/data/netvm/blk/root.img: ../../../scripts/make-gpt.sh ../../../scripts/sfdisk-field.awk build/rootfs.erofs
 	mkdir -p $$(dirname $@)
 	../../../scripts/make-gpt.sh $@.tmp \
-	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
+	    build/rootfs.erofs:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
 	mv $@.tmp $@
 
 VM_FILES = \
@@ -56,14 +56,11 @@ VM_BUILD_FILES = build/etc/s6-rc
 build/empty:
 	mkdir -p $@
 
-build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
-	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
-	tar $(TARFLAGS) --append -f $@ $(VM_FILES) $(VM_LINKS)
-	echo $(VM_BUILD_FILES) | cut -d/ -f2 | \
-	    tar $(TARFLAGS) --append -f $@ -C build -T -
-	for m in $(VM_DIRS); do \
-	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
-	done
+build/rootfs.erofs: ../../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) build/empty
+	../../../scripts/make-erofs.sh -- $@ $(PACKAGES) \
+	    $$(for file in $(VM_FILES) $(VM_LINKS); do printf '%s %s ' $$file $$file; done) \
+	    $$(for file in $(VM_BUILD_FILES); do printf '%s %s ' $$file $${file#build/}; done) \
+	    $$(printf 'build/empty %s ' $(VM_DIRS))
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/connman/dependencies \

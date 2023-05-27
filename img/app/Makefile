@@ -19,10 +19,10 @@ $(imgdir)/appvm/vmlinux: $(KERNEL)
 	mkdir -p $$(dirname $@)
 	cp $(KERNEL) $@
 
-$(imgdir)/appvm/blk/root.img: ../../scripts/make-gpt.sh ../../scripts/sfdisk-field.awk build/rootfs.ext4
+$(imgdir)/appvm/blk/root.img: ../../scripts/make-gpt.sh ../../scripts/sfdisk-field.awk build/rootfs.erofs
 	mkdir -p $$(dirname $@)
 	../../scripts/make-gpt.sh $@.tmp \
-	    build/rootfs.ext4:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:5460386f-2203-4911-8694-91400125c604:root
+	    build/rootfs.erofs:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:5460386f-2203-4911-8694-91400125c604:root
 	mv $@.tmp $@
 
 VM_FILES = \
@@ -50,14 +50,11 @@ VM_BUILD_FILES = build/etc/s6-rc
 build/empty:
 	mkdir -p $@
 
-build/rootfs.tar: build/empty $(PACKAGES_TAR) $(VM_FILES) $(VM_BUILD_FILES)
-	cp --no-preserve=mode -f $(PACKAGES_TAR) $@
-	tar $(TARFLAGS) --append -f $@ $(VM_FILES) $(VM_LINKS)
-	echo $(VM_BUILD_FILES) | cut -d/ -f2 | \
-	    tar $(TARFLAGS) --append -f $@ -C build -T -
-	for m in $(VM_DIRS); do \
-	    tar $(TARFLAGS) --append -hf $@ --xform="s,.*,$$m," build/empty ; \
-	done
+build/rootfs.erofs: ../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) build/empty
+	../../scripts/make-erofs.sh -- $@ $(PACKAGES) \
+	    $$(for file in $(VM_FILES) $(VM_LINKS); do printf '%s %s ' $$file $$file; done) \
+	    $$(for file in $(VM_BUILD_FILES); do printf '%s %s ' $$file $${file#build/}; done) \
+	    $$(printf 'build/empty %s ' $(VM_DIRS))
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/app/run \

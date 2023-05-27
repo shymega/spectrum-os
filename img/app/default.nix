@@ -12,7 +12,7 @@ import ../../lib/eval-config.nix (
 config.pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
-, jq, s6-rc, tar2ext4, util-linux
+, erofs-utils, jq, s6-rc, util-linux
 , busybox, cacert, execline, kmod, mdevd, s6, s6-linux-init
 }:
 
@@ -45,12 +45,6 @@ let
     ln -s ${cacert}/etc/ssl $out/usr/share
   '';
 
-  packagesTar = runCommand "packages.tar" {} ''
-    cd ${packagesSysroot}
-    tar -cf $out --verbatim-files-from \
-        -T ${writeReferencesToFile packagesSysroot} .
-  '';
-
   kernelTarget =
     if stdenvNoCC.hostPlatform.isx86 then
       # vmlinux.bin is the stripped version of vmlinux.
@@ -69,7 +63,7 @@ let
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;
       VIRTIO_CONSOLE = yes;
-      EXT4_FS = yes;
+      EROFS_FS = yes;
       EXPERT = yes;
       FONTS = lib.mkForce unset;
       FONT_8x8 = lib.mkForce unset;
@@ -92,10 +86,18 @@ stdenvNoCC.mkDerivation {
   inherit src;
   sourceRoot = "source/img/app";
 
-  nativeBuildInputs = [ jq lseek s6-rc tar2ext4 util-linux ];
+  nativeBuildInputs = [ erofs-utils jq lseek s6-rc util-linux ];
 
-  PACKAGES_TAR = packagesTar;
+  PACKAGES = [ packagesSysroot "/" ];
   KERNEL = "${kernel}/${baseNameOf kernelTarget}";
+
+  shellHook = ''
+    PACKAGES+=" $(sed p ${writeReferencesToFile packagesSysroot} | tr '\n' ' ')"
+  '';
+
+  preBuild = ''
+    runHook shellHook
+  '';
 
   makeFlags = [ "prefix=$(out)" ];
 
