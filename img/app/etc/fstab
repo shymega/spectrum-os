@@ -4,5 +4,5 @@ proc		/proc		proc	defaults					0	0
 devpts		/dev/pts	devpts	defaults,gid=4,mode=620				0	0
 tmpfs		/dev/shm	tmpfs	defaults					0	0
 sysfs		/sys		sysfs	defaults					0	0
-LABEL=ext	/run/ext	ext4	ro						0	0
+LABEL=ext	/run/ext	erofs	ro						0	0
 store		/nix/store	overlay	ro,lowerdir=/nix/store:/run/ext/nix/store	0	0

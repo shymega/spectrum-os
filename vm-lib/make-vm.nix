@@ -11,7 +11,7 @@
 
 pkgs.pkgsStatic.callPackage (
 
-{ lib, runCommand, writeReferencesToFile, e2fsprogs, tar2ext4 }:
+{ lib, runCommand, writeReferencesToFile, erofs-utils }:
 
 { run, providers ? {}, sharedDirs ? {} }:
 
@@ -24,7 +24,7 @@ in
 assert !(any (hasInfix "\n") (concatLists (attrValues providers)));
 
 runCommand "spectrum-vm" {
-  nativeBuildInputs = [ e2fsprogs tar2ext4 ];
+  nativeBuildInputs = [ erofs-utils ];
 
   providerDirs = concatStrings (concatLists
     (mapAttrsToList (kind: map (vm: "${kind}/${vm}\n")) providers));
@@ -35,11 +35,10 @@ runCommand "spectrum-vm" {
   mkdir root
   cd root
   ln -s ${run} run
-  comm -23 <(sort ${writeReferencesToFile run}) \
-      <(sort ${writeReferencesToFile basePaths}) |
-      tar -cf ../run.tar --verbatim-files-from -T - run
-  tar2ext4 -i ../run.tar -o "$out/blk/run.img"
-  e2label "$out/blk/run.img" ext
+
+  ${../scripts/make-erofs.sh} -L ext -- "$out/blk/run.img" run run \
+      $(comm -23 <(sort ${writeReferencesToFile run}) \
+          <(sort ${writeReferencesToFile basePaths}) | sed p)
 
   pushd "$out"
 
