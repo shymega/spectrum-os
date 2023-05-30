@@ -49,7 +49,6 @@ let
 
     weston = super.weston.overrideAttrs ({ mesonFlags ? [], ... }: {
       mesonFlags = mesonFlags ++ [
-        "-Dlauncher-logind=false"
         "-Dsystemd=false"
       ];
     });
