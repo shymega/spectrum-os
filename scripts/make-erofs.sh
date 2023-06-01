@@ -18,7 +18,7 @@ while [ $# -gt $opt_count ]; do
 	arg1="$1"
 	shift
 
-        if [ -z "${img-}" ]; then
+	if [ -z "${img-}" ]; then
 		set -- "$@" "$arg1"
 		opt_count=$((opt_count + 1))
 
