@@ -141,7 +141,7 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	exec $(QEMU_KVM) -cpu host -m 2G \
 	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split,initrd=$(INITRAMFS) \
 	    -display gtk,gl=on \
-	    -qmp unix:vmm.sock,server,nowait \
+	    -qmp unix:build/vmm.sock,server,nowait \
 	    -monitor vc \
 	    -parallel none \
 	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
