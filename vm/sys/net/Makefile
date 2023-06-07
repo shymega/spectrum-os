@@ -94,7 +94,8 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 run-qemu: build/host/data/netvm/blk/root.img
 	@../../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	    -append "root=PARTLABEL=root" \
+	    -append "root=PARTLABEL=root nokaslr" \
+	    -gdb unix:build/gdb.sock,server,nowait \
 	    -netdev user,id=net0 \
 	    -device e1000e,netdev=net0 \
 	    -netdev user,id=net1 \

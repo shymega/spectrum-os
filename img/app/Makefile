@@ -87,7 +87,8 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	@../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	    -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
-	    -append "root=PARTLABEL=root" \
+	    -append "root=PARTLABEL=root nokaslr" \
+	    -gdb unix:build/gdb.sock,server,nowait \
 	    -netdev user,id=net0 \
 	    -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
 	    -chardev socket,id=virtiofsd,path=build/virtiofsd.sock \
