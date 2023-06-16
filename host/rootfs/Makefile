@@ -106,7 +106,7 @@ build/etc/s6-rc: $(S6_RC_FILES)
 	    exit=$$?; rm -r $$dir; exit $$exit
 
 clean:
-	chmod -R +w build
+	-chmod -Rf +w build
 	rm -rf build
 .PHONY: clean
 
