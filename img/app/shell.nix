@@ -7,7 +7,7 @@ import ../../lib/eval-config.nix (
 with config.pkgs;
 
 (import ./. { inherit config; }).overrideAttrs (
-{ nativeBuildInputs ? [], ... }:
+{ nativeBuildInputs ? [], shellHook ? "", ... }:
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
@@ -19,7 +19,7 @@ with config.pkgs;
   ];
 
   runDef = import run { inherit config; };
-  shellHook = ''
+  shellHook = shellHook + ''
     export RUN_IMG="$(printf "%s\n" "$runDef"/blk/run.img)"
   '';
 }))
