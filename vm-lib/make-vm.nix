@@ -32,11 +32,7 @@ runCommand "spectrum-vm" {
 } ''
   mkdir -p "$out"/{blk,providers,shared-dirs}
 
-  mkdir root
-  cd root
-  ln -s ${run} run
-
-  ${../scripts/make-erofs.sh} -L ext -- "$out/blk/run.img" run run \
+  ${../scripts/make-erofs.sh} -L ext -- "$out/blk/run.img" ${run} run \
       $(comm -23 <(sort ${writeReferencesToFile run}) \
           <(sort ${writeReferencesToFile basePaths}) | sed p)
 
