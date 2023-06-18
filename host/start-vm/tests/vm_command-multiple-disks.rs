@@ -21,7 +21,7 @@ fn main() -> std::io::Result<()> {
     symlink("/dev/null", vm_config.join("blk/disk1.img"))?;
     symlink("/dev/null", vm_config.join("blk/disk2.img"))?;
 
-    let command = vm_command(service_dir, &tmp_dir.path().join("svc/data")).unwrap();
+    let command = vm_command(service_dir, &tmp_dir.path().join("svc/data"), -1).unwrap();
     let args: Box<[_]> = command.get_args().collect();
 
     for i in 1..=2 {

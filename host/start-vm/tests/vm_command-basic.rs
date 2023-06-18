@@ -21,19 +21,16 @@ fn main() -> std::io::Result<()> {
     File::create(&kernel_path)?;
     File::create(&image_path)?;
 
-    let command = vm_command(service_dir, &tmp_dir.path().join("svc/data")).unwrap();
-    assert_eq!(command.get_program(), "s6-notifyoncheck");
+    let command = vm_command(service_dir, &tmp_dir.path().join("svc/data"), 4).unwrap();
+    assert_eq!(command.get_program(), "cloud-hypervisor");
 
     let mut expected_disk_arg = OsString::from("path=");
     expected_disk_arg.push(image_path);
     expected_disk_arg.push(",readonly=on");
 
     let expected_args = vec![
-        OsStr::new("-dc"),
-        OsStr::new("test -S env/cloud-hypervisor.sock"),
-        OsStr::new("cloud-hypervisor"),
         OsStr::new("--api-socket"),
-        OsStr::new("env/cloud-hypervisor.sock"),
+        OsStr::new("fd=4"),
         OsStr::new("--cmdline"),
         OsStr::new("console=ttyS0 root=PARTLABEL=root"),
         OsStr::new("--memory"),

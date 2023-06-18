@@ -1,18 +1,24 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 mod ch;
 mod net;
+mod s6;
+mod unix;
 
 use std::borrow::Cow;
 use std::env::args_os;
 use std::ffi::{CString, OsStr, OsString};
 use std::io::{self, ErrorKind};
+use std::os::unix::net::UnixListener;
 use std::os::unix::prelude::*;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
 use net::{format_mac, net_setup, NetConfig};
+use unix::clear_cloexec;
+
+pub use s6::notify_readiness;
 
 pub fn prog_name() -> String {
     args_os()
@@ -25,7 +31,24 @@ pub fn prog_name() -> String {
         .into_owned()
 }
 
-pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
+pub fn create_api_socket() -> Result<UnixListener, String> {
+    let api_socket = UnixListener::bind("env/cloud-hypervisor.sock")
+        .map_err(|e| format!("creating API socket: {e}"))?;
+
+    // Safe because we own api_socket.
+    if unsafe { clear_cloexec(api_socket.as_fd()) } == -1 {
+        let errno = io::Error::last_os_error();
+        return Err(format!("clearing CLOEXEC on API socket fd: {}", errno));
+    }
+
+    Ok(api_socket)
+}
+
+pub fn vm_command(
+    dir: PathBuf,
+    config_root: &Path,
+    api_socket_fd: RawFd,
+) -> Result<Command, String> {
     let dir = dir.into_os_string().into_vec();
     let dir = PathBuf::from(OsString::from_vec(dir));
 
@@ -39,10 +62,8 @@ pub fn vm_command(dir: PathBuf, config_root: &Path) -> Result<Command, String> {
 
     let config_dir = config_root.join(vm_name);
 
-    let mut command = Command::new("s6-notifyoncheck");
-    command.args(["-dc", "test -S env/cloud-hypervisor.sock"]);
-    command.arg("cloud-hypervisor");
-    command.args(["--api-socket", "env/cloud-hypervisor.sock"]);
+    let mut command = Command::new("cloud-hypervisor");
+    command.args(["--api-socket", &format!("fd={api_socket_fd}")]);
     command.args(["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
     command.args(["--memory", "size=128M,shared=on"]);
     command.args(["--console", "pty"]);
@@ -145,7 +166,7 @@ mod tests {
 
     #[test]
     fn test_vm_name_comma() {
-        assert!(vm_command("/v,m".into(), Path::new("/"))
+        assert!(vm_command("/v,m".into(), Path::new("/"), -1)
             .unwrap_err()
             .contains("comma"));
     }

@@ -7,7 +7,7 @@ project('start-vm', 'rust', 'c',
 add_project_arguments('-D_GNU_SOURCE', language : 'c')
 add_project_arguments('-C', 'panic=abort', language : 'rust')
 
-c_lib = static_library('start-vm', 'net.c', 'net-util.c')
+c_lib = static_library('start-vm', 'net.c', 'net-util.c', 'unix.c')
 rust_lib = static_library('start_vm', 'lib.rs', link_with : c_lib)
 
 executable('start-vm', 'start-vm.rs', link_with : rust_lib, install : true)
