@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
 if { mkdir -p /run/s6-rc.ext.src }
@@ -14,7 +14,8 @@ if {
   if { mkdir -- ${name} ${name}/dependencies.d ${name}/env }
   if { redirfd -w 1 ${name}/type echo longrun }
   if { redirfd -w 1 ${name}/notification-fd echo 3 }
-  if { ln -s -- /bin/start-vm ${name}/run }
+  if { redirfd -w 1 ${name}/run printf "#!/bin/execlineb -P\n/bin/start-vm" }
+  if { chmod +x ${name}/run }
 
   if {
     elglob -0 paths ${dir}/shared-dirs/*
