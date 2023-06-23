@@ -31,8 +31,8 @@ foreground {
 background {
   # Wait for the VM to be up.
   foreground { s6-rc -bu change ext-rc-init }
-  if { s6-svwait -U /run/service/ext-netvm }
+  if { s6-svwait -U /run/service/ext-vm-netvm }
 
-  ch-remote --api-socket /run/service/ext-netvm/env/cloud-hypervisor.sock
+  ch-remote --api-socket /run/service/ext-vm-netvm/env/cloud-hypervisor.sock
     add-device path=/sys${devpath}
 }

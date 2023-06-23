@@ -10,34 +10,34 @@ if {
   forx -po0 -E dir { $dirs }
   backtick -E name { basename -- $dir }
 
-  if { mkdir -- $name ${name}/data ${name}/dependencies.d ${name}/env }
-  if { ln -s $dir ${name}/data/config }
-  if { redirfd -w 1 ${name}/type echo longrun }
-  if { redirfd -w 1 ${name}/notification-fd echo 3 }
-  if { redirfd -w 1 ${name}/run printf "#!/bin/execlineb -P\n/bin/start-vm" }
-  if { chmod +x ${name}/run }
+  if { mkdir vm-${name} vm-${name}/data vm-${name}/dependencies.d vm-${name}/env }
+  if { ln -s $dir vm-${name}/data/config }
+  if { redirfd -w 1 vm-${name}/type echo longrun }
+  if { redirfd -w 1 vm-${name}/notification-fd echo 3 }
+  if { redirfd -w 1 vm-${name}/run printf "#!/bin/execlineb -P\n/bin/start-vm" }
+  if { chmod +x vm-${name}/run }
 
   if {
     elglob -0 paths ${dir}/shared-dirs/*
     forx -po0 -E path { $paths }
     backtick -E fsname { basename -- $path }
-    if { cp -R -- /etc/template/fs ${name}-fs-${fsname} }
-    if { mkdir -- ${name}-fs-${fsname}/data ${name}-fs-${fsname}/env }
-    if { cp -P -- ${path}/dir ${name}-fs-${fsname}/data/shared-dir }
-    touch -- ${name}/dependencies.d/${name}-fs-${fsname}
+    if { cp -R /etc/template/fs fs-${name}-${fsname} }
+    if { mkdir fs-${name}-${fsname}/data fs-${name}-${fsname}/env }
+    if { cp -P ${path}/dir fs-${name}-${fsname}/data/shared-dir }
+    touch vm-${name}/dependencies.d/fs-${name}-${fsname}
   }
 
   if {
     if -t { test -e ${dir}/wayland }
-    if { cp -R -- /etc/template/gpu ${name}-gpu }
-    if { mkdir -- ${name}-gpu/env }
-    touch -- ${name}/dependencies.d/${name}-gpu
+    if { cp -R -- /etc/template/gpu gpu-${name} }
+    if { mkdir -- gpu-${name}/env }
+    touch -- vm-${name}/dependencies.d/gpu-${name}
   }
 
   elglob -0 paths /ext/svc/data/${name}/providers/net/*
   forx -po0 -E path { $paths }
   backtick -E dep { basename -- $path }
-  touch -- ${name}/dependencies.d/${dep}
+  touch vm-${name}/dependencies.d/vm-${dep}
 }
 
 if { s6-rc-compile /run/s6-rc.ext.db /run/s6-rc.ext.src }

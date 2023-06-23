@@ -10,7 +10,7 @@ use test_helper::TempDir;
 fn main() -> std::io::Result<()> {
     let tmp_dir = TempDir::new()?;
 
-    let service_dir = tmp_dir.path().join("testvm");
+    let service_dir = tmp_dir.path().join("vm-testvm");
 
     let kernel_path = service_dir.join("data/config/vmlinux");
     let image_path = service_dir.join("data/config/blk/root.img");

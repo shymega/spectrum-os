@@ -50,11 +50,18 @@ pub fn create_api_socket() -> Result<UnixListener, String> {
 pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
     let vm_name = dir
         .file_name()
-        .ok_or_else(|| "directory has no name".to_string())?;
+        .ok_or_else(|| "directory has no name".to_string())?
+        .as_bytes();
 
-    if vm_name.as_bytes().contains(&b',') {
+    if !vm_name.starts_with(b"vm-") {
+        return Err("not running from a VM service directory".to_string());
+    }
+
+    if vm_name.contains(&b',') {
         return Err(format!("VM name may not contain a comma: {:?}", vm_name));
     }
+
+    let vm_name = OsStr::from_bytes(&vm_name[3..]);
 
     let config_dir = dir.join("data/config");
 
@@ -130,9 +137,9 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
 
     if config_dir.join("wayland").exists() {
         command.arg("--gpu").arg({
-            let mut gpu = OsString::from("socket=../");
+            let mut gpu = OsString::from("socket=../gpu-");
             gpu.push(vm_name);
-            gpu.push("-gpu/env/crosvm.sock");
+            gpu.push("/env/crosvm.sock");
             gpu
         });
     }
@@ -151,9 +158,9 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
 
                 let mut arg = OsString::from("tag=");
                 arg.push(&entry);
-                arg.push(",socket=../");
+                arg.push(",socket=../fs-");
                 arg.push(vm_name);
-                arg.push("-fs-");
+                arg.push("-");
                 arg.push(&entry);
                 arg.push("/env/virtiofsd.sock");
                 command.arg(arg);
@@ -179,7 +186,7 @@ mod tests {
 
     #[test]
     fn test_vm_name_comma() {
-        assert!(vm_command(Path::new("/v,m"), -1)
+        assert!(vm_command(Path::new("/vm-,"), -1)
             .unwrap_err()
             .contains("comma"));
     }

@@ -12,7 +12,7 @@ use test_helper::TempDir;
 fn main() -> std::io::Result<()> {
     let tmp_dir = TempDir::new()?;
 
-    let service_dir = tmp_dir.path().join("testvm");
+    let service_dir = tmp_dir.path().join("vm-testvm");
     let vm_config = service_dir.join("data/config");
 
     create_dir_all(&vm_config)?;

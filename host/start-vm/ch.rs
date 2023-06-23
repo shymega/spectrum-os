@@ -14,7 +14,7 @@ const EPERM: NonZeroI32 = unsafe { NonZeroI32::new_unchecked(1) };
 const EPROTO: NonZeroI32 = unsafe { NonZeroI32::new_unchecked(71) };
 
 fn command(vm_name: &OsStr, s: impl AsRef<OsStr>) -> Command {
-    let mut api_socket_path = OsString::from("/run/service/ext-");
+    let mut api_socket_path = OsString::from("/run/service/ext-vm-");
     api_socket_path.push(vm_name);
     api_socket_path.push("/env/cloud-hypervisor.sock");
 
