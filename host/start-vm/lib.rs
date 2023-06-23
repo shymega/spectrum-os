@@ -49,9 +49,6 @@ pub fn vm_command(
     config_root: &Path,
     api_socket_fd: RawFd,
 ) -> Result<Command, String> {
-    let dir = dir.into_os_string().into_vec();
-    let dir = PathBuf::from(OsString::from_vec(dir));
-
     let vm_name = dir
         .file_name()
         .ok_or_else(|| "directory has no name".to_string())?;
