@@ -2,7 +2,8 @@
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-if { mkdir -p /run/s6-rc.ext.src }
+if { mkdir -p /run/s6-rc.ext.src/ok-vmm/contents.d }
+if { redirfd -w 1 /run/s6-rc.ext.src/ok-vmm/type echo bundle }
 cd /run/s6-rc.ext.src
 
 if {
@@ -16,8 +17,9 @@ if {
   if { mkdir vm-${name} vm-${name}/dependencies.d vm-${name}/env }
   if { redirfd -w 1 vm-${name}/type echo longrun }
   if { redirfd -w 1 vm-${name}/notification-fd echo 3 }
-  if { redirfd -w 1 vm-${name}/run printf "#!/bin/execlineb -P\n/bin/start-vm" }
+  if { redirfd -w 1 vm-${name}/run printf "#!/bin/execlineb -P\n/bin/start-vmm" }
   if { chmod +x vm-${name}/run }
+  if { touch ok-vmm/contents.d/vm-${name} }
 
   if {
     elglob -0 paths ${dir}/shared-dirs/*
@@ -43,4 +45,5 @@ if {
 }
 
 if { s6-rc-compile /run/s6-rc.ext.db /run/s6-rc.ext.src }
-s6-rc-init -c /run/s6-rc.ext.db -l /run/s6-rc.ext -p ext- /run/service
+if { s6-rc-init -c /run/s6-rc.ext.db -l /run/s6-rc.ext -p ext- /run/service }
+s6-rc -ul /run/s6-rc.ext change ok-vmm

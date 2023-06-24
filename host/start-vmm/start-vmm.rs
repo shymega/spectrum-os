@@ -6,7 +6,7 @@ use std::os::unix::prelude::*;
 use std::path::Path;
 use std::process::exit;
 
-use start_vm::{create_api_socket, notify_readiness, prog_name, vm_command};
+use start_vmm::{create_api_socket, create_vm, prog_name, vm_command};
 
 /// # Safety
 ///
@@ -22,11 +22,11 @@ unsafe fn run() -> String {
         Err(e) => return e,
     };
 
-    if let Err(e) = notify_readiness() {
+    if let Err(e) = create_vm(&dir, Path::new("/run/vm")) {
         return e;
     }
 
-    match vm_command(&dir, Path::new("/run/vm"), api_socket.into_raw_fd()) {
+    match vm_command(api_socket.into_raw_fd()) {
         Ok(mut command) => format!("failed to exec: {}", command.exec()),
         Err(e) => e,
     }

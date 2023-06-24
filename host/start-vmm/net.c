@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 #include "ch.h"
 #include "net-util.h"
@@ -51,12 +51,15 @@ static int client_net_setup(const char *bridge_name)
 static int router_net_setup(const char *bridge_name, const char *router_vm_name,
                             const uint8_t mac[6], struct ch_device **out)
 {
-	int e, fd = setup_tap(bridge_name, "router");
-	if (fd == -1)
+	struct net_config net;
+	int e;
+
+	memcpy(&net.mac, mac, sizeof net.mac);
+	if ((net.fd = setup_tap(bridge_name, "router")) == -1)
 		return -1;
 
-	e = ch_add_net(router_vm_name, fd, mac, out);
-	close(fd);
+	e = ch_add_net(router_vm_name, &net, out);
+	close(net.fd);
 	if (!e)
 		return 0;
 	errno = e;
@@ -148,11 +151,6 @@ static int exit_listener_setup(const char *router_vm_name,
 		return 0;
 	}
 }
-
-struct net_config {
-	int fd;
-	char mac[6];
-};
 
 struct net_config net_setup(const char *router_vm_name)
 {

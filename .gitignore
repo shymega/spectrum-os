@@ -1,7 +1,11 @@
 # SPDX-License-Identifier: CC0-1.0
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 /config.nix
 build/
 result
 result-*
+
+**/subprojects/*
+!**/subprojects/*.wrap
+!**/subprojects/packagefiles

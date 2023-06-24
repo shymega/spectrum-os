@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+
+# The GitHub archive is used so that mini_internal is included,
+# and can be built with the same meson.build,
+# to avoid exposing it as a dependency.
+[wrap-file]
+directory = miniserde-0.1.37
+source_url = https://github.com/dtolnay/miniserde/archive/0.1.37.tar.gz
+source_filename = miniserde-0.1.37.tar.gz
+source_hash = cc4e1663ab88ffb3fb35a2726f669902748bd6b052ab9840b71dbad79d6a5049
+depth = 1
+patch_directory = miniserde

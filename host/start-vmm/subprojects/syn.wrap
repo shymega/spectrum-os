@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+
+[wrap-file]
+directory = syn-2.0.41
+source_url = https://crates.io/api/v1/crates/syn/2.0.41/download
+source_filename = syn-2.0.41.tar.gz
+source_hash = 44c8b28c477cc3bf0e7966561e3460130e1255f7a1cf71931075f1c5e7a7e269
+patch_directory = syn

@@ -1,0 +1,9 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+
+[wrap-file]
+directory = ryu-1.0.17
+source_url = https://crates.io/api/v1/crates/ryu/1.0.17/download
+source_filename = ryu-1.0.17.tar.gz
+source_hash = e86697c916019a8588c99b5fac3cead74ec0b4b819707a682fd4d23fa0ce1ba1
+patch_directory = ryu

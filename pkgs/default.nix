@@ -7,7 +7,15 @@ let
   config = import ../lib/config.nix args;
   pkgs = import ./overlaid.nix ({ elaboratedConfig = config; } // args);
 
-  inherit (pkgs.lib) cleanSource fileset makeScope optionalAttrs;
+  inherit (pkgs.lib) cleanSource fileset makeScope optionalAttrs sourceByRegex;
+
+  subprojects =
+    project:
+    let dir = project + "/subprojects"; in
+    fileset.difference dir (fileset.fromSource (sourceByRegex dir [
+      ".*\.wrap"
+      "packagefiles(/.*)?"
+    ]));
 
   makeScopeWithSplicing = pkgs: pkgs.makeScopeWithSplicing' {
     otherSplices = {
@@ -29,7 +37,7 @@ let
 
     lseek = self.callSpectrumPackage ../tools/lseek {};
     rootfs = self.callSpectrumPackage ../host/rootfs {};
-    start-vm = self.callSpectrumPackage ../host/start-vm {};
+    start-vmm = self.callSpectrumPackage ../host/start-vmm {};
     run-spectrum-vm = self.callSpectrumPackage ../scripts/run-spectrum-vm.nix {};
 
     # Packages from the overlay, so it's possible to build them from
@@ -40,7 +48,9 @@ let
 
     srcWithNix = fileset.difference
       (fileset.fromSource (cleanSource ../.))
-      (fileset.unions (map fileset.maybeMissing [
+      (fileset.unions ([
+        (subprojects ../host/start-vmm)
+      ] ++ map fileset.maybeMissing [
         ../Documentation/.jekyll-cache
         ../Documentation/_site
         ../Documentation/diagrams/stack.svg

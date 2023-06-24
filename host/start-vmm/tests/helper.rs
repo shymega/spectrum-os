@@ -9,7 +9,7 @@ use std::os::unix::prelude::*;
 use std::path::{Path, PathBuf};
 use std::sync::OnceLock;
 
-use start_vm::prog_name;
+use start_vmm::prog_name;
 
 extern "C" {
     fn mkdtemp(template: *mut c_char) -> *mut c_char;
@@ -31,7 +31,7 @@ impl TempDir {
         });
 
         let mut dirname = tmpdir.clone().into_os_string().into_vec();
-        dirname.extend_from_slice(b"/spectrum-start-vm-test-");
+        dirname.extend_from_slice(b"/spectrum-start-vmm-test-");
         dirname.extend_from_slice(&prog_name().into_bytes());
         dirname.extend_from_slice(b".XXXXXX\0");
 

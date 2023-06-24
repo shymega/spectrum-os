@@ -161,8 +161,8 @@ int main(void)
 	if (fd != 3)
 		close(fd);
 
-	if ((fd = open(START_VM_PATH, O_PATH|O_CLOEXEC)) == -1)
-		err(EXIT_FAILURE, "open " START_VM_PATH);
+	if ((fd = open(START_VMM_PATH, O_PATH|O_CLOEXEC)) == -1)
+		err(EXIT_FAILURE, "open " START_VMM_PATH);
 
 	if (unshare(CLONE_NEWUSER|CLONE_NEWNS) == -1)
 		err(EXIT_FAILURE, "unshare");
@@ -177,6 +177,6 @@ int main(void)
 	if (chroot(dir_path) == -1)
 		err(EXIT_FAILURE, "chroot");
 
-	fexecve(fd, (char *const []){"start-vm", NULL}, (char *const []){"PATH=/bin", NULL});
-	err(EXIT_FAILURE, "exec " START_VM_PATH);
+	fexecve(fd, (char *const []){"start-vmm", NULL}, (char *const []){"PATH=/bin", NULL});
+	err(EXIT_FAILURE, "exec " START_VMM_PATH);
 }

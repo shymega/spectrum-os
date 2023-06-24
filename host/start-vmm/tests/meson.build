@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 rust_helper = static_library('test_helper', 'helper.rs',
-  link_with : [c_lib, rust_lib])
+  dependencies : rust_lib_dep)
 
 test('if_up', executable('if_up', 'if_up.c', '../net-util.c'))
 test('if_rename', executable('if_rename', 'if_rename.c', '../net-util.c'))
@@ -30,8 +30,14 @@ test('tap_open (name too long)', executable('tap_open-name-too-long',
   'tap_open-name-too-long.c', '../net-util.c'))
 
 test('vm_command-basic', executable('vm_command-basic',
-  'vm_command-basic.rs', link_with : [rust_lib, rust_helper]))
+  'vm_command-basic.rs',
+  dependencies : rust_lib_dep,
+  link_with : rust_helper))
 test('vm_command-multiple-disks', executable('vm_command-multiple-disks',
-  'vm_command-multiple-disks.rs', link_with : [rust_lib, rust_helper]))
+  'vm_command-multiple-disks.rs',
+  dependencies : rust_lib_dep,
+  link_with : rust_helper))
 test('vm_command-shared-dir', executable('vm_command-shared-dir',
-  'vm_command-shared-dir.rs', link_with : [rust_lib, rust_helper]))
+  'vm_command-shared-dir.rs',
+  dependencies : rust_lib_dep,
+  link_with : rust_helper))

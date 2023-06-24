@@ -3,3 +3,5 @@
 #
 core
 ext
+kvm
+static-nodes

@@ -4,7 +4,7 @@
 { run ? ../vm/app/poweroff.nix, ... } @ args:
 
 import ../lib/call-package.nix (
-{ callSpectrumPackage, start-vm
+{ callSpectrumPackage, start-vmm
 , lib, runCommand, runCommandCC, clang-tools, cloud-hypervisor, virtiofsd
 }:
 
@@ -14,7 +14,7 @@ let
     ''-DAPPVM_PATH="${callSpectrumPackage ../img/app {}}"''
     ''-DCONFIG_PATH="${callSpectrumPackage run {}}"''
     ''-DCLOUD_HYPERVISOR_PATH="${lib.getExe cloud-hypervisor}"''
-    ''-DSTART_VM_PATH="${lib.getExe start-vm}"''
+    ''-DSTART_VMM_PATH="${lib.getExe start-vmm}"''
     ''-DVIRTIOFSD_PATH="${lib.getExe virtiofsd}"''
   ];
 in
