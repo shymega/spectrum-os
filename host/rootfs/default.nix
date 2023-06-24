@@ -32,17 +32,6 @@ let
     systemd = final.libudev-zero;
     systemdMinimal = final.libudev-zero;
 
-    colord = super.colord.overrideAttrs ({ mesonFlags ? [], ... }: {
-      mesonFlags = mesonFlags ++ [
-        "-Dsystemd=false"
-        "-Dudev_rules=false"
-      ];
-    });
-
-    polkit = super.polkit.override {
-      useSystemd = false;
-    };
-
     seatd = super.seatd.override {
       systemdSupport = false;
     };
