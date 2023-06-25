@@ -7,7 +7,7 @@ cd /run/s6-rc.ext.src
 
 if {
   elglob -0 dirs /ext/svc/data/*/
-  forx -o0 -E dir { $dirs }
+  forx -po0 -E dir { $dirs }
   backtick -E name { basename -- $dir }
 
   if { mkdir -- ${name} ${name}/dependencies.d ${name}/env }
