@@ -116,7 +116,7 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
 
                     Ok(FsConfig {
                         tag: entry.to_string(),
-                        socket: format!("../fs-{vm_name}-{entry}/env/virtiofsd.sock"),
+                        socket: format!("../fs-{vm_name}:{entry}/env/virtiofsd.sock"),
                     })
                 })
                 .collect::<Result<_, String>>()?,
@@ -207,6 +207,10 @@ pub fn create_vm(dir: &Path, config_root: &Path) -> Result<(), String> {
         return Err("not running from a VM service directory".to_string());
     }
 
+    if vm_name.contains(':') {
+        return Err(format!("VM name may not contain a colon: {:?}", vm_name));
+    }
+
     let vm_name = &vm_name[3..];
     let config = vm_config(vm_name, config_root)?;
 
@@ -227,4 +231,15 @@ pub fn vm_command(api_socket_fd: RawFd) -> Result<Command, String> {
     command.args(["--api-socket", &format!("fd={api_socket_fd}")]);
 
     Ok(command)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_vm_name_colon() {
+        let e = create_vm(Path::new("/vm-:"), Path::new("/")).unwrap_err();
+        assert!(e.contains("colon"), "unexpected error: {:?}", e);
+    }
 }

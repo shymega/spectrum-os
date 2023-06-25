@@ -25,10 +25,10 @@ if {
     elglob -0 paths ${dir}/shared-dirs/*
     forx -po0 -E path { $paths }
     backtick -E fsname { basename -- $path }
-    if { cp -R /etc/template/fs fs-${name}-${fsname} }
-    if { mkdir fs-${name}-${fsname}/data fs-${name}-${fsname}/env }
-    if { cp -P ${path}/dir fs-${name}-${fsname}/data/shared-dir }
-    touch vm-${name}/dependencies.d/fs-${name}-${fsname}
+    if { cp -R /etc/template/fs fs-${name}:${fsname} }
+    if { mkdir fs-${name}:${fsname}/data fs-${name}:${fsname}/env }
+    if { cp -P ${path}/dir fs-${name}:${fsname}/data/shared-dir }
+    touch vm-${name}/dependencies.d/fs-${name}:${fsname}
   }
 
   if {
