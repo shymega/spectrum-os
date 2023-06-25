@@ -3,13 +3,12 @@
 # SPDX-FileCopyrightText: 2022 Unikie
 
 if { mkdir -p /run/s6-rc.ext.src }
+cd /run/s6-rc.ext.src
 
 if {
   elglob -0 dirs /ext/svc/data/*/
   forx -E dir { $dirs }
   backtick -E name { basename -- $dir }
-
-  cd /run/s6-rc.ext.src
 
   if { mkdir -- ${name} ${name}/dependencies.d ${name}/env }
   if { redirfd -w 1 ${name}/type echo longrun }
