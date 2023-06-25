@@ -73,7 +73,7 @@ pub struct VmConfig {
 }
 
 fn command(vm_name: &str, s: impl AsRef<OsStr>) -> Command {
-    let mut api_socket_path = OsString::from("/run/service/ext-vm-");
+    let mut api_socket_path = OsString::from("/run/service/vmm/instance/");
     api_socket_path.push(vm_name);
     api_socket_path.push("/env/cloud-hypervisor.sock");
 

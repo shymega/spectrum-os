@@ -41,7 +41,7 @@ fn main() -> std::io::Result<()> {
     assert_eq!(actual_tags, expected_tags);
 
     let expected_sockets = (1..=2)
-        .map(|i| format!("../fs-testvm:dir{i}/env/virtiofsd.sock"))
+        .map(|i| format!("/run/service/vhost-user-fs/instance/testvm:dir{i}/env/virtiofsd.sock"))
         .collect();
     assert_eq!(actual_sockets, expected_sockets);
 

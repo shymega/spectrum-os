@@ -4,7 +4,7 @@
 
 backtick -E pty {
   pipeline -w { jq -r .config.console.file }
-  ch-remote --api-socket /run/service/ext-vm-${1}/env/cloud-hypervisor.sock info
+  ch-remote --api-socket /run/service/vmm/instance/${1}/env/cloud-hypervisor.sock info
 }
 
 foreground {

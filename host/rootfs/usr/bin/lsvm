@@ -11,7 +11,7 @@ if -n {
   redirfd -w 2 /dev/null
   backtick -E state {
     pipeline -w { jq -r .state }
-    ch-remote --api-socket /run/service/ext-vm-${vm}/env/cloud-hypervisor.sock info
+    ch-remote --api-socket /run/service/vmm/instance/${vm}/env/cloud-hypervisor.sock info
   }
   case -s $state {
     Created { echo "[31mSTOPPED[0m" }

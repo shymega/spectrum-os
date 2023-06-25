@@ -1,0 +1,12 @@
+#!/bin/execlineb -S1
+# SPDX-License-Identifier: EUPL-1.2+
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+
+s6-ipcserver-socketbinder -a 0700 -B env/virtiofsd.sock
+
+if { fdmove 1 3 echo }
+fdclose 3
+
+export TMPDIR /run
+backtick -E shared_dir { /etc/shared-dir -v servicename=${1} }
+virtiofsd --fd 0 --shared-dir $shared_dir

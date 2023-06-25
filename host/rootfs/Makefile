@@ -23,25 +23,55 @@ FILES = \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
 	etc/s6-linux-init/run-image/service/getty-tty4/run \
 	etc/s6-linux-init/run-image/service/getty-ttyS0/run \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/notification-fd \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/run \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/template/notification-fd \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/template/run \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/notification-fd \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/run \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/template/data/check \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/template/notification-fd \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/template/run \
+	etc/s6-linux-init/run-image/service/vmm/notification-fd \
+	etc/s6-linux-init/run-image/service/vmm/run \
+	etc/s6-linux-init/run-image/service/vmm/template/notification-fd \
 	etc/s6-linux-init/scripts/rc.init \
-	etc/template/fs/notification-fd \
-	etc/template/fs/run \
-	etc/template/fs/type \
-	etc/template/gpu/data/check \
-	etc/template/gpu/notification-fd \
-	etc/template/gpu/run \
-	etc/template/gpu/type \
+	etc/shared-dir \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
 	usr/bin/lsvm \
 	usr/bin/vm-console \
 	usr/bin/vm-start \
 	usr/bin/vm-stop
-DIRS = dev etc/s6-linux-init/env etc/s6-linux-init/run-image/vm ext run proc sys
+
+DIRS = \
+	dev \
+	etc/s6-linux-init/env \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/instance \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/instances \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/template/data \
+	etc/s6-linux-init/run-image/service/vhost-user-fs/template/env \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/instance \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/instances \
+	etc/s6-linux-init/run-image/service/vhost-user-gpu/template/env \
+	etc/s6-linux-init/run-image/service/vmm/instance \
+	etc/s6-linux-init/run-image/service/vmm/instances \
+	etc/s6-linux-init/run-image/service/vmm/template/data \
+	etc/s6-linux-init/run-image/service/vmm/template/env \
+	etc/s6-linux-init/run-image/vm \
+	ext \
+	run \
+	proc \
+	sys
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
-LINKS = bin etc/s6-linux-init/run-image/opengl-driver lib sbin
+LINKS = \
+	bin \
+	etc/s6-linux-init/run-image/opengl-driver \
+	etc/s6-linux-init/run-image/service/vmm/template/run \
+	lib \
+	sbin
 
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 

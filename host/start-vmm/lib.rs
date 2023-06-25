@@ -116,7 +116,7 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
 
                     Ok(FsConfig {
                         tag: entry.to_string(),
-                        socket: format!("../fs-{vm_name}:{entry}/env/virtiofsd.sock"),
+                        socket: format!("/run/service/vhost-user-fs/instance/{vm_name}:{entry}/env/virtiofsd.sock"),
                     })
                 })
                 .collect::<Result<_, String>>()?,
@@ -125,7 +125,7 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
         },
         gpu: match wayland_path.try_exists() {
             Ok(true) => vec![GpuConfig {
-                socket: format!("../gpu-{vm_name}/env/crosvm.sock"),
+                socket: format!("/run/service/vhost-user-gpu/instance/{vm_name}/env/crosvm.sock"),
             }],
             Ok(false) => vec![],
             Err(e) => return Err(format!("checking for existence of {:?}: {e}", wayland_path)),
@@ -203,15 +203,10 @@ pub fn create_vm(dir: &Path, config_root: &Path) -> Result<(), String> {
         .to_str()
         .ok_or_else(|| format!("VM name {:?} is not valid UTF-8", vm_name))?;
 
-    if !vm_name.starts_with("vm-") {
-        return Err("not running from a VM service directory".to_string());
-    }
-
     if vm_name.contains(':') {
         return Err(format!("VM name may not contain a colon: {:?}", vm_name));
     }
 
-    let vm_name = &vm_name[3..];
     let config = vm_config(vm_name, config_root)?;
 
     // SAFETY: safe because we ensure we don't violate any invariants
@@ -239,7 +234,7 @@ mod tests {
 
     #[test]
     fn test_vm_name_colon() {
-        let e = create_vm(Path::new("/vm-:"), Path::new("/")).unwrap_err();
+        let e = create_vm(Path::new("/:vm"), Path::new("/")).unwrap_err();
         assert!(e.contains("colon"), "unexpected error: {:?}", e);
     }
 }

@@ -12,4 +12,4 @@ foreground {
   vm-start $provider
 }
 
-ch-remote --api-socket /run/service/ext-vm-${1}/env/cloud-hypervisor.sock boot
+ch-remote --api-socket /run/service/vmm/instance/${1}/env/cloud-hypervisor.sock boot

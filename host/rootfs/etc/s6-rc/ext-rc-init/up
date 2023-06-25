@@ -2,48 +2,34 @@
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-if { mkdir -p /run/s6-rc.ext.src/ok-vmm/contents.d }
-if { redirfd -w 1 /run/s6-rc.ext.src/ok-vmm/type echo bundle }
-cd /run/s6-rc.ext.src
+cd /ext/svc/data
+elglob -0 names *
 
 if {
-  elglob -0 dirs /ext/svc/data/*/
-  forx -po0 -E dir { $dirs }
-  backtick -E name { basename -- $dir }
+  forx -po0 -E name { $names }
 
   if { mkdir /run/vm/${name} }
-  if { ln -s $dir /run/vm/${name}/config }
-
-  if { mkdir vm-${name} vm-${name}/dependencies.d vm-${name}/env }
-  if { redirfd -w 1 vm-${name}/type echo longrun }
-  if { redirfd -w 1 vm-${name}/notification-fd echo 3 }
-  if { redirfd -w 1 vm-${name}/run printf "#!/bin/execlineb -P\n/bin/start-vmm" }
-  if { chmod +x vm-${name}/run }
-  if { touch ok-vmm/contents.d/vm-${name} }
+  if { ln -s /ext/svc/data/${name} /run/vm/${name}/config }
 
   if {
-    elglob -0 paths ${dir}/shared-dirs/*
-    forx -po0 -E path { $paths }
-    backtick -E fsname { basename -- $path }
-    if { cp -R /etc/template/fs fs-${name}:${fsname} }
-    if { mkdir fs-${name}:${fsname}/data fs-${name}:${fsname}/env }
-    if { cp -P ${path}/dir fs-${name}:${fsname}/data/shared-dir }
-    touch vm-${name}/dependencies.d/fs-${name}:${fsname}
+    if -t { test -e ${name}/shared-dirs }
+    cd ${name}/shared-dirs
+    elglob -0 fsnames *
+
+    if {
+      forx -po0 -E fsname { $fsnames }
+      s6-instance-create /run/service/vhost-user-fs ${name}:${fsname}
+    }
+    s6-svwait -U /run/service/vhost-user-fs/instance/${name}:${fsnames}
   }
 
   if {
-    if -t { test -e ${dir}/wayland }
-    if { cp -R -- /etc/template/gpu gpu-${name} }
-    if { mkdir -- gpu-${name}/env }
-    touch -- vm-${name}/dependencies.d/gpu-${name}
+    if -t { test -e ${name}/wayland }
+    if { s6-instance-create /run/service/vhost-user-gpu $name }
+    s6-svwait -U /run/service/vhost-user-gpu/instance/${name}
   }
 
-  elglob -0 paths /ext/svc/data/${name}/providers/net/*
-  forx -po0 -E path { $paths }
-  backtick -E dep { basename -- $path }
-  touch vm-${name}/dependencies.d/vm-${dep}
+  s6-instance-create /run/service/vmm $name
 }
 
-if { s6-rc-compile /run/s6-rc.ext.db /run/s6-rc.ext.src }
-if { s6-rc-init -c /run/s6-rc.ext.db -l /run/s6-rc.ext -p ext- /run/service }
-s6-rc -ul /run/s6-rc.ext change ok-vmm
+s6-svwait -U /run/service/vmm/instance/${names}
