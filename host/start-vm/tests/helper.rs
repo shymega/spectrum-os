@@ -7,6 +7,7 @@ use std::mem::{forget, swap};
 use std::os::raw::c_char;
 use std::os::unix::prelude::*;
 use std::path::{Path, PathBuf};
+use std::sync::OnceLock;
 
 use start_vm::prog_name;
 
@@ -20,20 +21,22 @@ extern "C" {
     fn mkdtemp(template: *mut c_char) -> *mut c_char;
 }
 
-// FIXME: once OnceCell is in the standard library, we won't need a
-// function for this any more.
-// https://github.com/rust-lang/rust/issues/74465
-fn tmpdir() -> std::path::PathBuf {
-    std::env::var_os("TMPDIR")
-        .unwrap_or_else(|| OsString::from("/tmp"))
-        .into()
-}
+static TMPDIR: OnceLock<PathBuf> = OnceLock::new();
 
 pub struct TempDir(PathBuf);
 
 impl TempDir {
     pub fn new() -> std::io::Result<Self> {
-        let mut dirname = tmpdir().into_os_string().into_vec();
+        // FIXME: once LazyLock is in the standard library, we can do
+        // the initalization in the declaration.
+        // https://github.com/rust-lang/rust/issues/109736
+        let tmpdir = TMPDIR.get_or_init(|| {
+            std::env::var_os("TMPDIR")
+                .unwrap_or_else(|| OsString::from("/tmp"))
+                .into()
+        });
+
+        let mut dirname = tmpdir.clone().into_os_string().into_vec();
         dirname.extend_from_slice(b"/spectrum-start-vm-test-");
         dirname.extend_from_slice(&prog_name().into_bytes());
         dirname.extend_from_slice(b".XXXXXX\0");
