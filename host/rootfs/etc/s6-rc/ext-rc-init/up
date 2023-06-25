@@ -7,7 +7,7 @@ cd /run/s6-rc.ext.src
 
 if {
   elglob -0 dirs /ext/svc/data/*/
-  forx -E dir { $dirs }
+  forx -o0 -E dir { $dirs }
   backtick -E name { basename -- $dir }
 
   if { mkdir -- ${name} ${name}/dependencies.d ${name}/env }
@@ -18,7 +18,7 @@ if {
 
   if {
     elglob -0 paths ${dir}/shared-dirs/*
-    forx -pE path { $paths }
+    forx -po0 -E path { $paths }
     backtick -E fsname { basename -- $path }
     if { cp -R -- /etc/template/fs ${name}-fs-${fsname} }
     if { mkdir -- ${name}-fs-${fsname}/data ${name}-fs-${fsname}/env }
@@ -27,7 +27,7 @@ if {
   }
 
   elglob -0 paths /ext/svc/data/${name}/providers/net/*
-  forx -pE path { $paths }
+  forx -po0 -E path { $paths }
   backtick -E dep { basename -- $path }
   touch -- ${name}/dependencies.d/${dep}
 }
