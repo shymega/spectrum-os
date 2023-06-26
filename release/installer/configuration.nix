@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 { lib, modulesPath, pkgs, ... }:
 
@@ -33,6 +33,10 @@ in
   services.cage.enable = true;
   services.cage.program =
     "${pkgs.callPackage ./app {}}/bin/gnome-image-installer";
+
+  # Force eos-installer to stop artificially constraining its size.
+  systemd.services.cage-tty1.environment.GIS_SMALL_SCREEN = "1";
+
   users.users.demo = { group = "demo"; isSystemUser = true; };
   users.groups.demo = {};
   security.polkit.extraConfig = readFile ./seat.rules;
