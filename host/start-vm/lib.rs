@@ -9,6 +9,7 @@ mod unix;
 use std::borrow::Cow;
 use std::env::args_os;
 use std::ffi::{CString, OsStr, OsString};
+use std::fs::remove_file;
 use std::io::{self, ErrorKind};
 use std::os::unix::net::UnixListener;
 use std::os::unix::prelude::*;
@@ -32,6 +33,7 @@ pub fn prog_name() -> String {
 }
 
 pub fn create_api_socket() -> Result<UnixListener, String> {
+    let _ = remove_file("env/cloud-hypervisor.sock");
     let api_socket = UnixListener::bind("env/cloud-hypervisor.sock")
         .map_err(|e| format!("creating API socket: {e}"))?;
 
