@@ -24,4 +24,4 @@ foreground { clear }
 unexport ?
 
 foreground { /run/ext/run }
-exec -l sh
+s6-linux-init-shutdown -p now

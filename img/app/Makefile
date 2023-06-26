@@ -44,12 +44,17 @@ VM_FILES = \
 	etc/s6-linux-init/env/NIX_XDG_DESKTOP_PORTAL_DIR \
 	etc/s6-linux-init/env/WAYLAND_DISPLAY \
 	etc/s6-linux-init/env/XDG_RUNTIME_DIR \
+	etc/s6-linux-init/run-image/service/s6-linux-init-shutdownd/notification-fd \
+	etc/s6-linux-init/run-image/service/s6-linux-init-shutdownd/run \
 	etc/s6-linux-init/scripts/rc.init \
+	etc/s6-linux-init/scripts/rc.shutdown \
+	etc/s6-linux-init/scripts/rc.shutdown.final \
 	etc/xdg/xdg-desktop-portal/portals.conf
 VM_DIRS = dev run proc sys \
 	etc/s6-linux-init/env \
 	etc/s6-linux-init/run-image/ext \
 	etc/s6-linux-init/run-image/service
+VM_FIFOS = etc/s6-linux-init/run-image/service/s6-linux-init-shutdownd/fifo
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
@@ -57,15 +62,20 @@ VM_LINKS = bin etc/ssl/certs/ca-certificates.crt
 
 VM_BUILD_FILES = build/etc/s6-rc
 
+build/fifo:
+	mkdir -p build
+	mkfifo -m 0600 $@
+
 build/empty:
 	mkdir -p $@
 
-build/rootfs.erofs: ../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) build/empty
+build/rootfs.erofs: ../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) build/empty build/fifo
 	( \
 	    cat $$PACKAGES ;\
 	    for file in $(VM_FILES) $(VM_LINKS); do printf '%s\n%s\n' $$file $$file; done ;\
 	    for file in $(VM_BUILD_FILES); do printf '%s\n%s\n' $$file $${file#build/}; done ;\
 	    printf 'build/empty\n%s\n' $(VM_DIRS) ;\
+	    printf 'build/fifo\n%s\n' $(VM_FIFOS) ;\
 	) | ../../scripts/make-erofs.sh $@
 
 VM_S6_RC_FILES = \
