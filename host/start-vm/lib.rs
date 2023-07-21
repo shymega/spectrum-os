@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022 Unikie
 
 mod ch;
 mod net;
@@ -125,6 +126,15 @@ pub fn vm_command(
             }
         }
         Err(e) => return Err(format!("reading directory {:?}: {}", blk_dir, e)),
+    }
+
+    if config_dir.join("wayland").exists() {
+        command.arg("--gpu").arg({
+            let mut gpu = OsString::from("socket=../");
+            gpu.push(vm_name);
+            gpu.push("-gpu/env/crosvm.sock");
+            gpu
+        });
     }
 
     let shared_dirs_dir = config_dir.join("shared-dirs");

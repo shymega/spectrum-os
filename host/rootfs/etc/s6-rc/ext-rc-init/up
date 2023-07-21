@@ -26,6 +26,13 @@ if {
     touch -- ${name}/dependencies.d/${name}-fs-${fsname}
   }
 
+  if {
+    if -t { test -e ${dir}/wayland }
+    if { cp -R -- /etc/template/gpu ${name}-gpu }
+    if { mkdir -- ${name}-gpu/env }
+    touch -- ${name}/dependencies.d/${name}-gpu
+  }
+
   elglob -0 paths /ext/svc/data/${name}/providers/net/*
   forx -po0 -E path { $paths }
   backtick -E dep { basename -- $path }

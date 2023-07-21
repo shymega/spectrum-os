@@ -46,8 +46,8 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor e2fsprogs execline jq kmod mdevd s6 s6-linux-init s6-rc
-    socat start-vm virtiofsd
+    cloud-hypervisor e2fsprogs execline jq kmod mdevd
+    s6 s6-linux-init s6-rc socat start-vm virtiofsd
 
     (cryptsetup.override {
       programs = {
@@ -73,7 +73,7 @@ let
         CONFIG_RMMOD n
       '';
     })
-  ] ++ (with pkgsGui; [ foot westonLite ]);
+  ] ++ (with pkgsGui; [ crosvm foot westonLite ]);
 
   nixosAllHardware = nixos ({ modulesPath, ... }: {
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];

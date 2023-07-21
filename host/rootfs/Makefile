@@ -27,6 +27,10 @@ FILES = \
 	etc/template/fs/notification-fd \
 	etc/template/fs/run \
 	etc/template/fs/type \
+	etc/template/gpu/data/check \
+	etc/template/gpu/notification-fd \
+	etc/template/gpu/run \
+	etc/template/gpu/type \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
 	usr/bin/lsvm \
