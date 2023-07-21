@@ -33,7 +33,8 @@ runCommand "spectrum-vm" {
   mkdir -p "$out"/{blk,providers,shared-dirs}
 
   ${../scripts/make-erofs.sh} -L ext -- "$out/blk/run.img" ${run} run \
-      $(comm -23 <(sort ${writeReferencesToFile run}) \
+      ${pkgs.pkgsMusl.mesa.drivers} / \
+      $(comm -23 <(sort ${writeReferencesToFile run} ${writeReferencesToFile pkgs.pkgsMusl.mesa.drivers}) \
           <(sort ${writeReferencesToFile basePaths}) | sed p)
 
   pushd "$out"
