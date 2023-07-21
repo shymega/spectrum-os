@@ -15,7 +15,7 @@ with config.pkgs;
     # so we have to list virtiofsd first.
     virtiofsd
 
-    cloud-hypervisor execline jq qemu_kvm reuse s6
+    cloud-hypervisor crosvm execline jq qemu_kvm reuse s6
   ];
 
   runDef = import run { inherit config; };

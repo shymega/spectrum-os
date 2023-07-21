@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
 
 include ../../lib/common.mk
 
@@ -77,6 +78,15 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
+start-vhost-user-gpu:
+	rm -f build/vhost-user-gpu.sock
+	$(CROSVM_DEVICE_GPU) \
+	    --socket build/vhost-user-gpu.sock \
+	    --wayland-sock "$$XDG_RUNTIME_DIR/$$WAYLAND_DISPLAY" \
+	    --params '{"context-types":"cross-domain"}' &
+	while ! [ -S build/vhost-user-gpu.sock ] && sleep .1; do :; done
+.PHONY: start-vhost-user-gpu
+
 start-virtiofsd:
 	mkdir -p build
 	$(S6_IPCSERVER_SOCKETBINDER) -B build/virtiofsd.sock \
@@ -100,7 +110,7 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	    -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
-run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-virtiofsd
+run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
 	rm -f build/vmm.sock
 	@../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
@@ -108,6 +118,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
 	    --disk path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
+	    --gpu socket=build/vhost-user-gpu.sock \
 	    --kernel $(KERNEL) \
 	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
