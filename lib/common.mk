@@ -13,6 +13,7 @@ CPIO = cpio
 CPIOFLAGS = --reproducible -R +0:+0 -H newc
 CROSVM = crosvm
 CROSVM_DEVICE_GPU = $(CROSVM) device gpu
+CROSVM_RUN = $(CROSVM) run
 MCOPY = mcopy
 MKFS_FAT = mkfs.fat
 MMD = mmd

@@ -119,6 +119,17 @@ run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	    --serial pty
 .PHONY: run-cloud-hypervisor
 
+run-crosvm: build/host/data/netvm/blk/root.img
+	$(CROSVM_RUN) \
+	    --disk build/host/data/netvm/blk/root.img \
+	    -p "console=ttyS0 root=PARTLABEL=root" \
+	    --net tap-name=tap0 \
+	    --net tap-name=tap1,mac=0A:B3:EC:80:00:00 \
+	    --serial type=file,hardware=serial,path=build/crosvm.log \
+	    --serial type=stdout,hardware=virtio-console,stdin=true \
+	    $(KERNEL)
+.PHONY: run-crosvm
+
 run: run-$(VMM)
 .PHONY: run
 
