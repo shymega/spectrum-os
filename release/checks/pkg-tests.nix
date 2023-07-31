@@ -8,4 +8,7 @@ import ../../lib/eval-config.nix ({ config, ... }:
 
   lseek = config.pkgs.lib.recurseIntoAttrs
     (import ../../tools/lseek { inherit config; }).tests;
+
+  start-vm = config.pkgs.lib.recurseIntoAttrs
+    (import ../../host/start-vm { inherit config; }).tests;
 })
