@@ -77,6 +77,8 @@ let
 
   nixosAllHardware = nixos ({ modulesPath, ... }: {
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
+
+    system.stateVersion = lib.trivial.release;
   });
 
   kernel = pkgs.linux_latest;
