@@ -41,7 +41,7 @@ DIRS = dev etc/s6-linux-init/env ext run proc sys
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
-LINKS = bin etc/s6-linux-init/run-image/opengl-driver sbin
+LINKS = bin etc/s6-linux-init/run-image/opengl-driver lib sbin
 
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 

@@ -90,19 +90,19 @@ let
 
   # Packages that should be fully linked into /usr,
   # (not just their bin/* files).
-  usrPackages = [ appvm pkgsGui.mesa.drivers pkgsGui.dejavu_fonts ];
+  usrPackages = [
+    appvm kernel firmware pkgsGui.mesa.drivers pkgsGui.dejavu_fonts
+  ];
 
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
   } ''
-    mkdir -p $out/lib $out/usr/bin
+    mkdir -p $out/usr/bin
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
 
     for pkg in ${lib.escapeShellArgs usrPackages}; do
         lndir -silent "$pkg" "$out/usr"
     done
-
-    ln -s ${kernel}/lib/modules ${firmware}/lib/firmware $out/lib
 
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
