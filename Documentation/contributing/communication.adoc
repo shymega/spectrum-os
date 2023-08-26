@@ -3,7 +3,7 @@
 :page-nav_order: 1
 :page-parent: Contributing
 
-// SPDX-FileCopyrightText: 2019-2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2019-2023 Alyssa Ross <hi@alyssa.is>
 // SPDX-FileCopyrightText: 2023 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
@@ -32,6 +32,7 @@ https://spectrum-os.org/git/[source repositories], and is discussed on
 spectrum-devel (_devel@spectrum-os.org_).
 
 
+[#irc]
 == Internet Relay Chat
 
 There is a single Internet Relay Chat (IRC) channel,
@@ -57,27 +58,30 @@ Each list has https://spectrum-os.org/lists/archives/[archives] that
 can also be accessed via the web, NNTP or Atom. You are strongly
 encouraged to mirror them.
 
-[cols="1,1"]
-|===
+[#spectrum-announce]
+=== announce@spectrum-os.org
 
-|announce@spectrum-os.org
-|This is a one-way list where announcements
-from Spectrum's developers will be posted.
+This is a one-way list where announcements from Spectrum's developers
+will be posted.
 
 You can subscribe
 https://spectrum-os.org/lists/mailman3/lists/announce.spectrum-os.org/[on the web],
 or by sending mail to *announce-subscribe@spectrum-os.org*.
 
-|discuss@spectrum-os.org
-|This list contains high-level discussion about the project.
+[#spectrum-discuss]
+=== discuss@spectrum-os.org
+
+This list contains high-level discussion about the project.
 
 You can subscribe
 https://spectrum-os.org/lists/mailman3/lists/discuss.spectrum-os.org/[on the web],
 or by sending mail to *discuss-subscribe@spectrum-os.org*.
 
-|devel@spectrum-os.org
-|This list is where low-level technical discussions happen,
-and where patches are sent.
+[#spectrum-devel]
+=== devel@spectrum-os.org
+
+This list is where low-level technical discussions happen, and where
+patches are sent.
 
 There is a separate guide for the Spectrum development process,
 including how patches are sent to this list and discussed.
@@ -86,5 +90,3 @@ xref:working-with-patches.adoc[Working with Patches].
 
 You can subscribe
 https://spectrum-os.org/lists/mailman3/lists/devel.spectrum-os.org/[on the web], or by sending mail to *devel-subscribe@spectrum-os.org*.
-
-|===
