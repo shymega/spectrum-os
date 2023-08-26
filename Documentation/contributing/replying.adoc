@@ -7,8 +7,7 @@
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 Discussion of Spectrum takes place on
-https://spectrum-os.org/participating.html#mailing-lists[mailing
-lists].
+xref:communication.adoc#mailing-lists[mailing lists].
 
 Make sure to Reply All when replying to messages, so that the message
 is sent to the mailing list and not just to the person you reply to.

@@ -96,6 +96,5 @@ confirmation when this happens.
 
 If you have any questions about the patch submission process, you can
 ask them either on the
-https://spectrum-os.org/participating.html#spectrum-devel[development
-mailing list], or in the
-https://spectrum-os.org/participating.html#irc[IRC/Matrix channel].
+xref:communication.adoc#spectrum-devel[development mailing list], or
+in the xref:communication.adoc#irc[IRC/Matrix channel].

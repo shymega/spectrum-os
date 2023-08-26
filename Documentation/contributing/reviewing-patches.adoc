@@ -7,8 +7,8 @@
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 To review a patch posted to the
-https://spectrum-os.org/participating.html#spectrum-devel[mailing
-list], xref:replying.adoc[reply] to it with your feedback.
+xref:communication.adoc#spectrum-devel[mailing list],
+xref:replying.adoc[reply] to it with your feedback.
 
 If you believe the patch is acceptable and should be included in
 Spectrum, include a line in your reply like this:

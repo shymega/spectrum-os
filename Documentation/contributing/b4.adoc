@@ -8,7 +8,7 @@
 
 https://git.kernel.org/pub/scm/utils/b4/b4.git/about/[b4] is a utility
 for working with patches sent to a mailing list, such as
-https://spectrum-os.org/participating.html#spectrum-devel[devel@spectrum-os.org].
+xref:communication.adoc#spectrum-devel[\devel@spectrum-os.org].
 
 == Installing b4
 

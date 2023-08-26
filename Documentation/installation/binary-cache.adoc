@@ -16,8 +16,8 @@ xref:../development/release.adoc[release build], on the latest NixOS
 unstable, on https://www.vultr.com/[Vultr], and are signed to ensure
 authenticity.  The build infrastructure and signing key are accessible
 by Alyssa Ross and Puck Meerburg.  Storage is provided by Daniel
-Kuehn.  Please https://spectrum-os.org/participating.html[get in
-touch] if you encounter any trouble with it.
+Kuehn.  Please xref:../contributing/communication.adoc[get in touch]
+if you encounter any trouble with it.
 
 == For NixOS
 

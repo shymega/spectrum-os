@@ -8,8 +8,8 @@
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 Potential changes to Spectrum are posted to and discussed on the
-https://spectrum-os.org/participating.html#spectrum-devel[devel@spectrum-os.org]
-mailing list.
+xref:communication.adoc#spectrum-devel[\devel@spectrum-os.org] mailing
+list.
 
 == Apply Patch
 
