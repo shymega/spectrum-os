@@ -97,4 +97,4 @@ confirmation when this happens.
 If you have any questions about the patch submission process, you can
 ask them either on the
 xref:communication.adoc#spectrum-devel[development mailing list], or
-in the xref:communication.adoc#irc[IRC/Matrix channel].
+in the xref:communication.adoc#chat[Matrix/IRC chat].
