@@ -29,6 +29,11 @@ let
   };
 
   pkgsGui = pkgs.pkgsMusl.extend (final: super: {
+    libgudev = super.libgudev.overrideAttrs ({ ... }: {
+      # Tests use umockdev, which is not compatible with libudev-zero.
+      doCheck = false;
+    });
+
     systemd = final.libudev-zero;
     systemdMinimal = final.libudev-zero;
 
