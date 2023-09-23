@@ -106,7 +106,7 @@ let
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
 
     for pkg in ${lib.escapeShellArgs usrPackages}; do
-        lndir -silent "$pkg" "$out/usr"
+        lndir -ignorelinks -silent "$pkg" "$out/usr"
     done
 
     # TODO: this is a hack and we should just build the util-linux
