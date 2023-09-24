@@ -10,7 +10,6 @@ import ../make-vm.nix { inherit config; } {
     { writeScript, hello-wayland }:
     writeScript "run-hello-wayland" ''
       #!/bin/execlineb -P
-      foreground { ln -ns /run/ext /run/opengl-driver }
       foreground { mkdir /run/user }
       foreground {
         umask 077
