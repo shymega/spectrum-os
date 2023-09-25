@@ -8,7 +8,6 @@
 #include <unistd.h>
 
 #include <libweston/libweston.h>
-#include <libweston/zalloc.h>
 
 static void on_commit(struct wl_listener *, struct weston_surface *surface)
 {
