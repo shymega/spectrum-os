@@ -5,7 +5,7 @@ import ../../../lib/eval-config.nix ({ config, ... }:
 
 let
   inherit (import ../../../host/rootfs { inherit config; }) appvm;
-  run = import ../../../vm/app/hello-wayland.nix { inherit config; };
+  run = import ../../../vm/app/foot.nix { inherit config; };
   surface-notify = import ./surface-notify { inherit config; };
 in
 

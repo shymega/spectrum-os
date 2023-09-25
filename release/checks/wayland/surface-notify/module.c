@@ -2,25 +2,24 @@
 // SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
 // A Weston module that sends a notification into a fifo when a
-// hello-wayland window appears.
+// window with a specific app ID appears.
 
 #include <fcntl.h>
 #include <unistd.h>
+#include <string.h>
 
-#include <libweston/libweston.h>
+#include <libweston/desktop.h>
+
+static const char APP_ID[] = "foot";
 
 static void on_commit(struct wl_listener *, struct weston_surface *surface)
 {
+	struct weston_desktop_surface *desktop_surface;
 	int fd;
-	int32_t width, height;
 
-	// Use the size of the surface as a heuristic for identifying
-	// hello-wayland.  If we had security contexts[1], we could be
-	// more precise about this.
-	//
-	// [1]: https://gitlab.freedesktop.org/wayland/wayland-protocols/-/merge_requests/68
-	weston_surface_get_content_size(surface, &width, &height);
-	if (!surface->output || width != 128 || height != 128)
+	if (!(desktop_surface = weston_surface_get_desktop_surface(surface)))
+		return;
+	if (strcmp(weston_desktop_surface_get_app_id(desktop_surface), APP_ID))
 		return;
 
 	if ((fd = open("/run/surface-notify", O_WRONLY)) == -1) {
