@@ -9,7 +9,6 @@ import ../make-vm.nix { inherit config; } {
     { writeScript }:
     writeScript "run-foot" ''
       #!/bin/execlineb -P
-      foreground { ln -ns /run/ext /run/opengl-driver }
       foreground { mkdir /run/user }
       foreground {
         umask 077
