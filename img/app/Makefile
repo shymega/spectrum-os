@@ -41,6 +41,7 @@ VM_FILES = \
 	etc/resolv.conf \
 	etc/s6-linux-init/env/DBUS_SESSION_BUS_ADDRESS \
 	etc/s6-linux-init/env/NIX_XDG_DESKTOP_PORTAL_DIR \
+	etc/s6-linux-init/env/XDG_RUNTIME_DIR \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/xdg/xdg-desktop-portal/portals.conf
 VM_DIRS = dev run proc sys \
@@ -67,6 +68,7 @@ build/rootfs.erofs: ../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) bu
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/app/dependencies.d/dbus \
+	etc/s6-rc/app/dependencies.d/wayland-proxy-virtwl \
 	etc/s6-rc/app/run \
 	etc/s6-rc/app/type \
 	etc/s6-rc/dbus/notification-fd \
@@ -78,6 +80,9 @@ VM_S6_RC_FILES = \
 	etc/s6-rc/mdevd/notification-fd \
 	etc/s6-rc/mdevd/run \
 	etc/s6-rc/mdevd/type \
+	etc/s6-rc/wayland-proxy-virtwl/notification-fd \
+	etc/s6-rc/wayland-proxy-virtwl/run \
+	etc/s6-rc/wayland-proxy-virtwl/type \
 	etc/s6-rc/ok-all/contents \
 	etc/s6-rc/ok-all/type
 

@@ -27,6 +27,11 @@ let
         CONFIG_RMMOD n
       '';
     })
+
+    # Some packages can't (currently?) be built statically.
+
+    # https://github.com/nix-ocaml/nix-overlays/issues/698
+    pkgsMusl.wayland-proxy-virtwl
   ];
 
   packagesSysroot = runCommand "packages-sysroot" {
