@@ -6,4 +6,4 @@
 (import ./. args).overrideAttrs ({ hardeningDisable ? [], ... }: {
   # Not compatible with Meson's default -O0.
   hardeningDisable = hardeningDisable ++ [ "fortify" ];
-}))
+})
