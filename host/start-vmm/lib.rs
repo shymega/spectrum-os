@@ -110,7 +110,7 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
             socket: format!("/run/service/vhost-user-gpu/instance/{vm_name}/env/crosvm.sock"),
         }],
         memory: MemoryConfig {
-            size: 256 << 20,
+            size: 1 << 30,
             shared: true,
         },
         net: match net_providers_dir.read_dir() {

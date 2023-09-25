@@ -140,7 +140,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 	rm -f build/vmm.sock build/vsock.sock
 	@../../scripts/with-taps.elb ../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
-	    --memory size=256M,shared=on \
+	    --memory size=1G,shared=on \
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
 	           path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \

@@ -32,7 +32,7 @@ fn main() -> std::io::Result<()> {
     assert_eq!(fs1.socket, expected);
     assert_eq!(PathBuf::from(config.payload.kernel), kernel_path);
     assert_eq!(config.payload.cmdline, "console=ttyS0 root=PARTLABEL=root");
-    assert_eq!(config.memory.size, 0x10000000);
+    assert_eq!(config.memory.size, 0x40000000);
     assert!(config.memory.shared);
     assert_eq!(config.serial.mode, "File");
     assert_eq!(config.serial.file.unwrap(), "/run/testvm.log");

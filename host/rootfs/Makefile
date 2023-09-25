@@ -204,7 +204,7 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	exec 3<>"$$ext" && \
 	rm -f "$$ext" && \
 	truncate -s +10G /proc/self/fd/3 && \
-	exec $(QEMU_KVM) -cpu host -m 2G \
+	exec $(QEMU_KVM) -cpu host -m 4G \
 	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split,initrd=$(INITRAMFS) \
 	    -display gtk,gl=on \
 	    -gdb unix:build/gdb.sock,server,nowait \
