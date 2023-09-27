@@ -6,13 +6,13 @@ import ../../lib/eval-config.nix ({ config, ... }:
 import ../make-vm.nix { inherit config; } {
   providers.net = [ "netvm" ];
   run = config.pkgs.pkgsStatic.callPackage (
-    { writeScript, catgirl }:
+    { lib, writeScript, catgirl }:
     writeScript "run-catgirl" ''
       #!/bin/execlineb -P
       if { /etc/mdev/wait network-online }
       foreground { printf "IRC nick (to join #spectrum): " }
       backtick -E nick { head -1 }
-      ${catgirl}/bin/catgirl -h irc.libera.chat -j "#spectrum" -n $nick
+      ${lib.getExe catgirl} -h irc.libera.chat -j "#spectrum" -n $nick
     ''
   ) { };
 })

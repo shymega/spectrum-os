@@ -31,8 +31,7 @@ in
   fileSystems."/" = { fsType = "tmpfs"; };
 
   services.cage.enable = true;
-  services.cage.program =
-    "${pkgs.callPackage ./app {}}/bin/gnome-image-installer";
+  services.cage.program = lib.getExe (pkgs.callPackage ./app {});
 
   # Force eos-installer to stop artificially constraining its size.
   systemd.services.cage-tty1.environment.GIS_SMALL_SCREEN = "1";

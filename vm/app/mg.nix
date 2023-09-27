@@ -6,11 +6,11 @@
 import ../make-vm.nix { inherit config; } {
   sharedDirs.virtiofs0.path = "/ext";
   run = config.pkgs.pkgsStatic.callPackage (
-    { writeScript, mg }:
+    { lib, writeScript, mg }:
     writeScript "run-mg" ''
       #!/bin/execlineb -P
       if { /etc/mdev/wait virtiofs0 }
-      ${mg}/bin/mg /run/virtiofs/virtiofs0
+      ${lib.getExe mg} /run/virtiofs/virtiofs0
     ''
   ) { };
 }

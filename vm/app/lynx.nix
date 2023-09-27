@@ -6,11 +6,11 @@ import ../../lib/eval-config.nix ({ config, ... }:
 import ../make-vm.nix { inherit config; } {
   providers.net = [ "netvm" ];
   run = config.pkgs.pkgsStatic.callPackage (
-    { writeScript, lynx }:
+    { lib, writeScript, lynx }:
     writeScript "run-lynx" ''
       #!/bin/execlineb -P
       if { /etc/mdev/wait network-online }
-      ${lynx}/bin/lynx https://spectrum-os.org
+      ${lib.getExe lynx} https://spectrum-os.org
     ''
   ) { };
 })

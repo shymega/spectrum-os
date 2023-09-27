@@ -9,7 +9,7 @@ let
   surface-notify = import ./surface-notify { inherit config; };
 in
 
-config.pkgs.nixosTest ({ pkgs, ... }: {
+config.pkgs.nixosTest ({ lib, pkgs, ... }: {
   name = "spectrum-wayland";
 
   nodes.machine = { ... }: {
@@ -18,14 +18,14 @@ config.pkgs.nixosTest ({ pkgs, ... }: {
     systemd.services.cloud-hypervisor = {
       after = [ "crosvm-gpu.service" "weston.service" ];
       requires = [ "crosvm-gpu.service" "weston.service" ];
-      serviceConfig.ExecStart = "${pkgs.cloud-hypervisor}/bin/cloud-hypervisor --memory shared=on --disk path=${appvm}/img/appvm/blk/root.img,readonly=on --disk path=${run}/blk/run.img,readonly=on --cmdline \"console=ttyS0 root=PARTLABEL=root\" --gpu socket=/run/crosvm-gpu.sock --serial tty --console null --kernel ${appvm}/img/appvm/vmlinux";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.cloud-hypervisor} --memory shared=on --disk path=${appvm}/img/appvm/blk/root.img,readonly=on --disk path=${run}/blk/run.img,readonly=on --cmdline \"console=ttyS0 root=PARTLABEL=root\" --gpu socket=/run/crosvm-gpu.sock --serial tty --console null --kernel ${appvm}/img/appvm/vmlinux";
     };
 
     systemd.services.crosvm = {
       after = [ "crosvm-gpu.service" "weston.service" ];
       requires = [ "crosvm-gpu.service" "weston.service" ];
-      serviceConfig.ExecStart = "${pkgs.crosvm}/bin/crosvm run -s /run/crosvm --disk ${appvm}/img/appvm/blk/root.img --disk ${run}/blk/run.img -p \"console=ttyS0 root=PARTLABEL=root\" --vhost-user-gpu /run/crosvm-gpu.sock --serial type=stdout,hardware=virtio-console,stdin=true ${appvm}/img/appvm/vmlinux";
-      serviceConfig.ExecStop = "${pkgs.crosvm}/bin/crosvm stop /run/crosvm";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.crosvm} run -s /run/crosvm --disk ${appvm}/img/appvm/blk/root.img --disk ${run}/blk/run.img -p \"console=ttyS0 root=PARTLABEL=root\" --vhost-user-gpu /run/crosvm-gpu.sock --serial type=stdout,hardware=virtio-console,stdin=true ${appvm}/img/appvm/vmlinux";
+      serviceConfig.ExecStop = "${lib.getExe pkgs.crosvm} stop /run/crosvm";
     };
 
     systemd.services.crosvm-gpu = {
@@ -38,7 +38,7 @@ config.pkgs.nixosTest ({ pkgs, ... }: {
             done
             systemd-notify --ready --no-block
         ) &
-        exec ${pkgs.crosvm}/bin/crosvm device gpu \
+        exec ${lib.getExe pkgs.crosvm} device gpu \
             --socket /run/crosvm-gpu.sock \
             --wayland-sock /run/wayland-1 \
             --params '{"context-types":"cross-domain"}'
@@ -58,7 +58,7 @@ config.pkgs.nixosTest ({ pkgs, ... }: {
       requires = [ "surface-notify-socket.service" ];
       environment.XDG_RUNTIME_DIR = "/run";
       environment.WAYLAND_DEBUG = "server";
-      serviceConfig.ExecStart = "${pkgs.westonLite}/bin/weston --modules ${surface-notify}/lib/weston/surface-notify.so,systemd-notify.so";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.westonLite} --modules ${surface-notify}/lib/weston/surface-notify.so,systemd-notify.so";
       serviceConfig.TTYPath = "/dev/tty7";
       serviceConfig.Type = "notify";
     };
