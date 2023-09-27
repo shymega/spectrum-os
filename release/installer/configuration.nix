@@ -14,6 +14,8 @@ in
   boot.kernelParams = [ "udev.log_priority=5" ];
   boot.initrd.verbose = false;
 
+  boot.kernelPackages = pkgs.linuxPackages_latest;
+
   boot.plymouth.enable = true;
   boot.plymouth.logo = pkgs.callPackage (
     { runCommand, fetchurl, inkscape }:
