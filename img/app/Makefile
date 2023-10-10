@@ -78,6 +78,13 @@ build/etc/s6-rc: $(VM_S6_RC_FILES)
 	    s6-rc-compile $@ $$dir; \
 	    exit=$$?; rm -r $$dir; exit $$exit
 
+debug:
+	$(GDB) -q \
+	    -ex 'set substitute-path .. $(LINUX_SRC)' \
+	    -ex 'target remote build/gdb.sock' \
+	    $(VMLINUX)
+.PHONY: debug
+
 start-vhost-user-gpu:
 	rm -f build/vhost-user-gpu.sock
 	$(CROSVM_DEVICE_GPU) \

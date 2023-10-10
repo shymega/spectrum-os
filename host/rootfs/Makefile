@@ -135,6 +135,13 @@ build/live.img: ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh build/roo
 	    $(dest):4f68bce3-e8cd-4db1-96e7-fbcaf984b709:$$(../../scripts/format-uuid.sh "$$(head -c 32 build/rootfs.verity.roothash)")
 	mv $@.tmp $@
 
+debug:
+	$(GDB) -q \
+	    -ex 'set substitute-path .. $(LINUX_SRC)' \
+	    -ex 'target remote build/gdb.sock' \
+	    $(VMLINUX)
+.PHONY: debug
+
 run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	@set -x && \
 	ext="$$(mktemp build/spectrum-rootfs-extfs.XXXXXXXXXX.img)" && \

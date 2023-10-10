@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/eval-config.nix (
 { config, run ? ../../vm/app/mg.nix, ... }:
@@ -7,7 +7,7 @@ import ../../lib/eval-config.nix (
 with config.pkgs;
 
 (import ./. { inherit config; }).overrideAttrs (
-{ nativeBuildInputs ? [], shellHook ? "", ... }:
+{ nativeBuildInputs ? [], shellHook ? "", passthru ? {}, ... }:
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
@@ -22,4 +22,7 @@ with config.pkgs;
   shellHook = shellHook + ''
     export RUN_IMG="$(printf "%s\n" "$runDef"/blk/run.img)"
   '';
+
+  LINUX_SRC = srcOnly passthru.kernel;
+  VMLINUX = "${passthru.kernel.dev}/vmlinux";
 }))
