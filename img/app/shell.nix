@@ -11,11 +11,7 @@ with config.pkgs;
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
-    # Both QEMU and virtiofsd come with a virtiofsd executable,
-    # so we have to list virtiofsd first.
-    virtiofsd
-
-    cloud-hypervisor crosvm execline jq qemu_kvm reuse s6
+    cloud-hypervisor crosvm execline jq qemu_kvm reuse s6 virtiofsd
   ];
 
   runDef = import run { inherit config; };
