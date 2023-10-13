@@ -47,11 +47,7 @@ pub fn create_api_socket() -> Result<UnixListener, String> {
     Ok(api_socket)
 }
 
-pub fn vm_command(
-    dir: PathBuf,
-    config_root: &Path,
-    api_socket_fd: RawFd,
-) -> Result<Command, String> {
+pub fn vm_command(dir: PathBuf, api_socket_fd: RawFd) -> Result<Command, String> {
     let vm_name = dir
         .file_name()
         .ok_or_else(|| "directory has no name".to_string())?;
@@ -60,7 +56,7 @@ pub fn vm_command(
         return Err(format!("VM name may not contain a comma: {:?}", vm_name));
     }
 
-    let config_dir = config_root.join(vm_name);
+    let config_dir = dir.join("data/config");
 
     let mut command = Command::new("cloud-hypervisor");
     command.args(["--api-socket", &format!("fd={api_socket_fd}")]);
@@ -175,8 +171,6 @@ mod tests {
 
     #[test]
     fn test_vm_name_comma() {
-        assert!(vm_command("/v,m".into(), Path::new("/"), -1)
-            .unwrap_err()
-            .contains("comma"));
+        assert!(vm_command("/v,m".into(), -1).unwrap_err().contains("comma"));
     }
 }

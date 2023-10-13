@@ -12,22 +12,24 @@ fn main() -> std::io::Result<()> {
     let tmp_dir = TempDir::new()?;
 
     let service_dir = tmp_dir.path().join("testvm");
-    let vm_config = tmp_dir.path().join("svc/data/testvm");
+    let vm_config = service_dir.join("data/config");
 
-    create_dir(&service_dir)?;
     create_dir_all(&vm_config)?;
     File::create(vm_config.join("vmlinux"))?;
     create_dir(vm_config.join("blk"))?;
-    symlink("/dev/null", vm_config.join("blk/disk1.img"))?;
-    symlink("/dev/null", vm_config.join("blk/disk2.img"))?;
 
-    let command = vm_command(service_dir, &tmp_dir.path().join("svc/data"), -1).unwrap();
+    let image_paths: Vec<_> = (1..=2)
+        .map(|n| vm_config.join(format!("blk/disk{n}.img")))
+        .collect();
+
+    for image_path in &image_paths {
+        symlink("/dev/null", image_path)?;
+    }
+
+    let command = vm_command(service_dir, -1).unwrap();
     let args: Box<[_]> = command.get_args().collect();
 
-    for i in 1..=2 {
-        let image_path = tmp_dir
-            .path()
-            .join(format!("svc/data/testvm/blk/disk{i}.img"));
+    for image_path in &image_paths {
         let mut expected_disk_arg = OsString::from("path=");
         expected_disk_arg.push(image_path);
         expected_disk_arg.push(",readonly=on");

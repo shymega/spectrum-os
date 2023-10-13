@@ -13,15 +13,14 @@ fn main() -> std::io::Result<()> {
     let service_dir = tmp_dir.path().join("testvm");
     create_dir(&service_dir)?;
 
-    let kernel_path = tmp_dir.path().join("svc/data/testvm/vmlinux");
-    let image_path = tmp_dir.path().join("svc/data/testvm/blk/root.img");
+    let kernel_path = service_dir.join("data/config/vmlinux");
+    let image_path = service_dir.join("data/config/blk/root.img");
 
-    create_dir_all(kernel_path.parent().unwrap())?;
     create_dir_all(image_path.parent().unwrap())?;
     File::create(&kernel_path)?;
     File::create(&image_path)?;
 
-    let command = vm_command(service_dir, &tmp_dir.path().join("svc/data"), 4).unwrap();
+    let command = vm_command(service_dir, 4).unwrap();
     assert_eq!(command.get_program(), "cloud-hypervisor");
 
     let mut expected_disk_arg = OsString::from("path=");

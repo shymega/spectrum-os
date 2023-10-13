@@ -10,7 +10,8 @@ if {
   forx -po0 -E dir { $dirs }
   backtick -E name { basename -- $dir }
 
-  if { mkdir -- ${name} ${name}/dependencies.d ${name}/env }
+  if { mkdir -- $name ${name}/data ${name}/dependencies.d ${name}/env }
+  if { ln -s $dir ${name}/data/config }
   if { redirfd -w 1 ${name}/type echo longrun }
   if { redirfd -w 1 ${name}/notification-fd echo 3 }
   if { redirfd -w 1 ${name}/run printf "#!/bin/execlineb -P\n/bin/start-vm" }
