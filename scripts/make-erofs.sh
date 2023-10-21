@@ -56,4 +56,4 @@ if [ -z "${img-}" ]; then
 	ex_usage
 fi
 
-mkfs.erofs "$@" "$img" "$root"
+mkfs.erofs -b4096 "$@" "$img" "$root"
