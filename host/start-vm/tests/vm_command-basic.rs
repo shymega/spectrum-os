@@ -8,18 +8,19 @@ use start_vm::vm_command;
 use test_helper::TempDir;
 
 fn main() -> std::io::Result<()> {
-    let tmp_dir = TempDir::new()?;
+    let service_dir_parent = TempDir::new()?;
+    let service_dir = service_dir_parent.path().join("vm-testvm");
 
-    let service_dir = tmp_dir.path().join("vm-testvm");
+    let vm_dir = TempDir::new()?;
 
-    let kernel_path = service_dir.join("data/config/vmlinux");
-    let image_path = service_dir.join("data/config/blk/root.img");
+    let kernel_path = vm_dir.path().join("testvm/config/vmlinux");
+    let image_path = vm_dir.path().join("testvm/config/blk/root.img");
 
     create_dir_all(image_path.parent().unwrap())?;
     File::create(&kernel_path)?;
     File::create(&image_path)?;
 
-    let command = vm_command(&service_dir, 4).unwrap();
+    let command = vm_command(&service_dir, vm_dir.path(), 4).unwrap();
     assert_eq!(command.get_program(), "cloud-hypervisor");
 
     let mut expected_disk_arg = OsString::from("path=");

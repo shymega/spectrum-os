@@ -3,6 +3,7 @@
 
 use std::env::current_dir;
 use std::os::unix::prelude::*;
+use std::path::Path;
 use std::process::exit;
 
 use start_vm::{create_api_socket, notify_readiness, prog_name, vm_command};
@@ -25,7 +26,7 @@ unsafe fn run() -> String {
         return e;
     }
 
-    match vm_command(&dir, api_socket.into_raw_fd()) {
+    match vm_command(&dir, Path::new("/run/vm"), api_socket.into_raw_fd()) {
         Ok(mut command) => format!("failed to exec: {}", command.exec()),
         Err(e) => e,
     }

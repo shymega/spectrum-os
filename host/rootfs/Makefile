@@ -37,7 +37,7 @@ FILES = \
 	usr/bin/vm-console \
 	usr/bin/vm-start \
 	usr/bin/vm-stop
-DIRS = dev etc/s6-linux-init/env ext run proc sys
+DIRS = dev etc/s6-linux-init/env etc/s6-linux-init/run-image/vm ext run proc sys
 
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.

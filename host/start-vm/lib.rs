@@ -47,8 +47,12 @@ pub fn create_api_socket() -> Result<UnixListener, String> {
     Ok(api_socket)
 }
 
-pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
-    let vm_name = dir
+pub fn vm_command(
+    service_dir: &Path,
+    vm_dir: &Path,
+    api_socket_fd: RawFd,
+) -> Result<Command, String> {
+    let vm_name = service_dir
         .file_name()
         .ok_or_else(|| "directory has no name".to_string())?
         .as_bytes();
@@ -63,7 +67,7 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
 
     let vm_name = OsStr::from_bytes(&vm_name[3..]);
 
-    let config_dir = dir.join("data/config");
+    let config_dir = vm_dir.join(vm_name).join("config");
 
     let mut command = Command::new("cloud-hypervisor");
     command.args(["--api-socket", &format!("fd={api_socket_fd}")]);
@@ -186,7 +190,7 @@ mod tests {
 
     #[test]
     fn test_vm_name_comma() {
-        assert!(vm_command(Path::new("/vm-,"), -1)
+        assert!(vm_command(Path::new("/vm-,"), Path::new(""), -1)
             .unwrap_err()
             .contains("comma"));
     }

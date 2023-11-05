@@ -10,10 +10,11 @@ use start_vm::vm_command;
 use test_helper::TempDir;
 
 fn main() -> std::io::Result<()> {
-    let tmp_dir = TempDir::new()?;
+    let service_dir_parent = TempDir::new()?;
+    let service_dir = service_dir_parent.path().join("vm-testvm");
 
-    let service_dir = tmp_dir.path().join("vm-testvm");
-    let vm_config = service_dir.join("data/config");
+    let vm_dir = TempDir::new()?;
+    let vm_config = vm_dir.path().join("testvm/config");
 
     create_dir_all(&vm_config)?;
     File::create(vm_config.join("vmlinux"))?;
@@ -28,7 +29,7 @@ fn main() -> std::io::Result<()> {
     create_dir(vm_config.join("shared-dirs/dir2"))?;
     symlink("/", vm_config.join("shared-dirs/dir2/dir"))?;
 
-    let command = vm_command(&service_dir, -1).unwrap();
+    let command = vm_command(&service_dir, vm_dir.path(), -1).unwrap();
     let mut args = command.get_args();
 
     assert!(args.any(|arg| arg == "--fs"));
