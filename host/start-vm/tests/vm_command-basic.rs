@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 use std::ffi::{OsStr, OsString};
-use std::fs::{create_dir, create_dir_all, File};
+use std::fs::{create_dir_all, File};
 
 use start_vm::vm_command;
 use test_helper::TempDir;
@@ -11,7 +11,6 @@ fn main() -> std::io::Result<()> {
     let tmp_dir = TempDir::new()?;
 
     let service_dir = tmp_dir.path().join("testvm");
-    create_dir(&service_dir)?;
 
     let kernel_path = service_dir.join("data/config/vmlinux");
     let image_path = service_dir.join("data/config/blk/root.img");
