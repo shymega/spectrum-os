@@ -25,7 +25,7 @@ unsafe fn run() -> String {
         return e;
     }
 
-    match vm_command(dir, api_socket.into_raw_fd()) {
+    match vm_command(&dir, api_socket.into_raw_fd()) {
         Ok(mut command) => format!("failed to exec: {}", command.exec()),
         Err(e) => e,
     }

@@ -19,7 +19,7 @@ fn main() -> std::io::Result<()> {
     File::create(&kernel_path)?;
     File::create(&image_path)?;
 
-    let command = vm_command(service_dir, 4).unwrap();
+    let command = vm_command(&service_dir, 4).unwrap();
     assert_eq!(command.get_program(), "cloud-hypervisor");
 
     let mut expected_disk_arg = OsString::from("path=");

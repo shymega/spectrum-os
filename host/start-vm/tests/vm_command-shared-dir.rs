@@ -26,7 +26,7 @@ fn main() -> std::io::Result<()> {
     create_dir(vm_config.join("shared-dirs/dir2"))?;
     symlink("/", vm_config.join("shared-dirs/dir2/dir"))?;
 
-    let command = vm_command(service_dir, -1).unwrap();
+    let command = vm_command(&service_dir, -1).unwrap();
     let args: Box<[_]> = command.get_args().collect();
 
     for i in 1..=2 {

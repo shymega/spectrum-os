@@ -26,7 +26,7 @@ fn main() -> std::io::Result<()> {
         symlink("/dev/null", image_path)?;
     }
 
-    let command = vm_command(service_dir, -1).unwrap();
+    let command = vm_command(&service_dir, -1).unwrap();
     let args: Box<[_]> = command.get_args().collect();
 
     for image_path in &image_paths {

@@ -14,7 +14,7 @@ use std::fs::remove_file;
 use std::io::{self, ErrorKind};
 use std::os::unix::net::UnixListener;
 use std::os::unix::prelude::*;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Command;
 
 use net::{format_mac, net_setup, NetConfig};
@@ -47,7 +47,7 @@ pub fn create_api_socket() -> Result<UnixListener, String> {
     Ok(api_socket)
 }
 
-pub fn vm_command(dir: PathBuf, api_socket_fd: RawFd) -> Result<Command, String> {
+pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
     let vm_name = dir
         .file_name()
         .ok_or_else(|| "directory has no name".to_string())?;
@@ -171,6 +171,8 @@ mod tests {
 
     #[test]
     fn test_vm_name_comma() {
-        assert!(vm_command("/v,m".into(), -1).unwrap_err().contains("comma"));
+        assert!(vm_command(Path::new("/v,m"), -1)
+            .unwrap_err()
+            .contains("comma"));
     }
 }
