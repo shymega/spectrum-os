@@ -2,9 +2,9 @@
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 
 project('start-vm', 'rust', 'c',
-  default_options : ['rust_std=2018', 'warning_level=3'])
+  default_options : ['c_std=c2x', 'rust_std=2018', 'warning_level=3'])
 
-add_project_arguments('-D_GNU_SOURCE', language : 'c')
+add_project_arguments('-D_GNU_SOURCE', '-Wno-error=attributes', language : 'c')
 add_project_arguments('-C', 'panic=abort', language : 'rust')
 
 c_lib = static_library('start-vm', 'net.c', 'net-util.c', 'unix.c')

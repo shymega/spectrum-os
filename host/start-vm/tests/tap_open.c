@@ -23,6 +23,6 @@ int main(void)
 	fd = tap_open(name, 0);
 	if (fd == -1 && (errno == EPERM || errno == ENOENT))
 		return 77;
-	assert(!ioctl(fd, TUNGETIFF, &ifr));
+	assert(!ioctl(fd, (unsigned)TUNGETIFF, &ifr));
 	assert(!strcmp(name, ifr.ifr_name));
 }

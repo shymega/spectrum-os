@@ -12,6 +12,8 @@ lib.fix (self: stdenv.mkDerivation {
 
   nativeBuildInputs = [ meson ninja rustc ];
 
+  mesonFlags = [ "-Dwerror=true" ];
+
   doCheck = true;
 
   passthru.tests = {
