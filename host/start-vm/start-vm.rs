@@ -3,7 +3,6 @@
 
 use std::env::current_dir;
 use std::os::unix::prelude::*;
-use std::path::Path;
 use std::process::exit;
 
 use start_vm::{create_api_socket, notify_readiness, prog_name, vm_command};
