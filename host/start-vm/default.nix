@@ -2,9 +2,9 @@
 # SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
-{ lib, stdenv, meson, ninja, rustc, clippy }:
+{ stdenv, meson, ninja, rustc, clippy }:
 
-lib.fix (self: stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   name = "start-vm";
 
   inherit src;
@@ -17,11 +17,14 @@ lib.fix (self: stdenv.mkDerivation {
   doCheck = true;
 
   passthru.tests = {
-    clippy = self.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
-      nativeBuildInputs = nativeBuildInputs ++ [ clippy ];
-      RUSTC = "clippy-driver";
-      postBuild = ''touch $out && exit 0'';
-    });
+    clippy = finalAttrs.finalPackage.overrideAttrs (
+      { nativeBuildInputs ? [], ... }:
+      {
+        nativeBuildInputs = nativeBuildInputs ++ [ clippy ];
+        RUSTC = "clippy-driver";
+        postBuild = ''touch $out && exit 0'';
+      }
+    );
   };
 })
 ) { })
