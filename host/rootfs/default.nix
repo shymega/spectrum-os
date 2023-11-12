@@ -21,32 +21,36 @@ pkgs.pkgsStatic.callPackage (
 }:
 
 let
-  inherit (lib) concatMapStringsSep;
+  inherit (lib) concatMapStringsSep optionalAttrs systems;
   inherit (nixosAllHardware.config.hardware) firmware;
 
   start-vm = import ../start-vm {
     config = config // { pkgs = pkgs.pkgsStatic; };
   };
 
-  pkgsGui = pkgs.pkgsMusl.extend (final: super: {
-    libgudev = super.libgudev.overrideAttrs ({ ... }: {
-      # Tests use umockdev, which is not compatible with libudev-zero.
-      doCheck = false;
-    });
+  pkgsGui = pkgs.pkgsMusl.extend (
+    final: super:
+    (optionalAttrs (systems.equals pkgs.pkgsMusl.stdenv.hostPlatform super.stdenv.hostPlatform) {
+      libgudev = super.libgudev.overrideAttrs ({ ... }: {
+        # Tests use umockdev, which is not compatible with libudev-zero.
+        doCheck = false;
+      });
 
-    systemd = final.libudev-zero;
-    systemdMinimal = final.libudev-zero;
+      systemd = final.libudev-zero;
+      systemdLibs = final.libudev-zero;
+      systemdMinimal = final.libudev-zero;
 
-    seatd = super.seatd.override {
-      systemdSupport = false;
-    };
+      seatd = super.seatd.override {
+        systemdSupport = false;
+      };
 
-    weston = super.weston.overrideAttrs ({ mesonFlags ? [], ... }: {
-      mesonFlags = mesonFlags ++ [
-        "-Dsystemd=false"
-      ];
-    });
-  });
+      weston = super.weston.overrideAttrs ({ mesonFlags ? [], ... }: {
+        mesonFlags = mesonFlags ++ [
+          "-Dsystemd=false"
+        ];
+      });
+    })
+  );
 
   foot = pkgsGui.foot.override { allowPgo = false; };
 
