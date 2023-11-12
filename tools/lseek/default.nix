@@ -5,7 +5,7 @@ import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.pkgsStatic.c
 
 { lib, stdenv, clang-tools }:
 
-lib.fix (self: stdenv.mkDerivation {
+stdenv.mkDerivation (finalAttrs: {
   name = "lseek";
 
   inherit src;
@@ -16,15 +16,18 @@ lib.fix (self: stdenv.mkDerivation {
   enableParallelBuilding = true;
 
   passthru.tests = {
-    clang-tidy = self.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
-      nativeBuildInputs = nativeBuildInputs ++ [ clang-tools ];
-
-      buildPhase = ''
-        clang-tidy --warnings-as-errors='*' lseek.c --
-        touch $out
-        exit 0
-      '';
-    });
+    clang-tidy = finalAttrs.finalPackage.overrideAttrs (
+      { nativeBuildInputs ? [], ... }:
+      {
+        nativeBuildInputs = nativeBuildInputs ++ [ clang-tools ];
+  
+        buildPhase = ''
+          clang-tidy --warnings-as-errors='*' lseek.c --
+          touch $out
+          exit 0
+        '';
+      }
+    );
   };
 
   meta = with lib; {
