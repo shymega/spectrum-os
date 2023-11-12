@@ -11,7 +11,7 @@ import ../../lib/eval-config.nix (
 
 config.pkgs.pkgsStatic.callPackage (
 
-{ lib, stdenvNoCC, runCommand, writeReferencesToFile, buildPackages
+{ lib, stdenvNoCC, runCommand, writeReferencesToFile
 , erofs-utils, jq, s6-rc, util-linux
 , busybox, cacert, execline, kmod, mdevd, s6, s6-linux-init
 }:
@@ -57,7 +57,7 @@ let
     else
       stdenvNoCC.hostPlatform.linux-kernel.target;
 
-  kernel = (buildPackages.linux_latest.override {
+  kernel = (config.pkgs.linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       CMDLINE_BOOL = yes;
       CMDLINE = freeform "console=ttyS0 root=PARTLABEL=root";
