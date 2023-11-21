@@ -29,8 +29,6 @@ fn main() -> std::io::Result<()> {
     let expected_args = vec![
         OsStr::new("--api-socket"),
         OsStr::new("fd=4"),
-        OsStr::new("--cmdline"),
-        OsStr::new("console=ttyS0 root=PARTLABEL=root"),
         OsStr::new("--memory"),
         OsStr::new("size=128M,shared=on"),
         OsStr::new("--console"),
