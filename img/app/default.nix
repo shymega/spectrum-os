@@ -13,7 +13,7 @@ config.pkgs.pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile
 , erofs-utils, jq, s6-rc, util-linux
-, busybox, cacert, execline, kmod, mdevd, s6, s6-linux-init
+, busybox, cacert, execline, kmod, linux_latest, mdevd, s6, s6-linux-init
 }:
 
 let
@@ -57,7 +57,7 @@ let
     else
       stdenvNoCC.hostPlatform.linux-kernel.target;
 
-  kernel = (config.pkgs.linux_latest.override {
+  kernel = (linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
       CMDLINE_BOOL = yes;
       CMDLINE = freeform "console=ttyS0 root=PARTLABEL=root";
