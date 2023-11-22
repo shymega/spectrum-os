@@ -71,6 +71,7 @@ GEM
     webrick (1.7.0)
 
 PLATFORMS
+  aarch64-linux
   x86_64-linux
 
 DEPENDENCIES
@@ -79,4 +80,4 @@ DEPENDENCIES
   just-the-docs (>= 0.4.0.rc1, < 0.5)
 
 BUNDLED WITH
-   2.3.22
+   2.4.22
