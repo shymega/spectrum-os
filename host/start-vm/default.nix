@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
-{ stdenv, meson, ninja, rustc, clippy }:
+import ../../lib/call-package.nix (
+{ src, stdenv, meson, ninja, rustc, clippy }:
 
 stdenv.mkDerivation (finalAttrs: {
   name = "start-vm";
@@ -27,4 +27,4 @@ stdenv.mkDerivation (finalAttrs: {
     );
   };
 })
-) { })
+) (_: {})

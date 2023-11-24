@@ -1,15 +1,16 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../../lib/eval-config.nix ({ config, ... }:
+import ../../../lib/call-package.nix (
+{ callSpectrumPackage, rootfs, nixosTest }:
 
 let
-  inherit (import ../../../host/rootfs { inherit config; }) appvm;
-  run = import ../../../vm/app/foot.nix { inherit config; };
-  surface-notify = import ./surface-notify { inherit config; };
+  inherit (rootfs) appvm;
+  run = callSpectrumPackage ../../../vm/app/foot.nix {};
+  surface-notify = callSpectrumPackage ./surface-notify {};
 in
 
-config.pkgs.nixosTest ({ lib, pkgs, ... }: {
+nixosTest ({ lib, pkgs, ... }: {
   name = "spectrum-wayland";
 
   nodes.machine = { ... }: {
@@ -78,4 +79,4 @@ config.pkgs.nixosTest ({ lib, pkgs, ... }: {
     machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=180)
     machine.screenshot('cloud-hypervisor')
   '';
-}))
+})) (_: {})

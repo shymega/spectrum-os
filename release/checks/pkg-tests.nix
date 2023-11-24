@@ -1,14 +1,13 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }:
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, lseek, start-vm, lib }:
 
 {
   recurseForDerivations = true;
 
-  lseek = config.pkgs.lib.recurseIntoAttrs
-    (import ../../tools/lseek { inherit config; }).tests;
+  lseek = lib.recurseIntoAttrs lseek.tests;
 
-  start-vm = config.pkgs.lib.recurseIntoAttrs
-    (import ../../host/start-vm { inherit config; }).tests;
-})
+  start-vm = lib.recurseIntoAttrs start-vm.tests;
+}) (_: {})

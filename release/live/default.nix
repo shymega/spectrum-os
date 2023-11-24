@@ -2,28 +2,19 @@
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../lib/eval-config.nix (
-
-{ config, src
-, lseek ? import ../../tools/lseek { inherit config; }
-, ...
-}:
-
-config.pkgs.callPackage (
-
-{ stdenvNoCC, cryptsetup, dosfstools, jq, mtools, util-linux, stdenv
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, lseek, rootfs, src, lib, pkgsStatic, stdenvNoCC
+, cryptsetup, dosfstools, jq, mtools, util-linux, stdenv
 , systemd
 }:
 
 let
-  inherit (config) pkgs;
-  inherit (pkgs.lib) toUpper;
+  inherit (lib) toUpper;
 
-  extfs = pkgs.pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
-    inherit config;
+  extfs = pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
+    inherit callSpectrumPackage;
   };
-  rootfs = import ../../host/rootfs { inherit config; };
-  initramfs = import ../../host/initramfs { inherit config rootfs; };
+  initramfs = callSpectrumPackage ../../host/initramfs {};
   efiArch = stdenv.hostPlatform.efiArch;
 in
 
@@ -50,4 +41,4 @@ stdenvNoCC.mkDerivation {
 
   passthru = { inherit initramfs rootfs; };
 }
-) {})
+) (_: {})

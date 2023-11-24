@@ -1,9 +1,10 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021, 2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../../lib/eval-config.nix ({ config, ... }: with config.pkgs;
+import ../../../lib/call-package.nix (
+{ callSpectrumPackage, srcOnly, cloud-hypervisor, crosvm, jq, qemu_kvm, reuse }:
 
-(import ./. { inherit config; }).overrideAttrs (
+(callSpectrumPackage ./. {}).overrideAttrs (
 { nativeBuildInputs ? [], passthru ? {}, ... }:
 
 {
@@ -11,4 +12,4 @@ import ../../../lib/eval-config.nix ({ config, ... }: with config.pkgs;
 
   LINUX_SRC = srcOnly passthru.kernel;
   VMLINUX = "${passthru.kernel.dev}/vmlinux";
-}))
+})) (_: {})

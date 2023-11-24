@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }:
+import ../../lib/call-package.nix ({ callSpectrumPackage, pkgsStatic }:
 
-import ../make-vm.nix { inherit config; } {
+callSpectrumPackage ../make-vm.nix {} {
   providers.net = [ "netvm" ];
-  run = config.pkgs.pkgsStatic.callPackage (
+  run = pkgsStatic.callPackage (
     { lib, writeScript, catgirl }:
     writeScript "run-catgirl" ''
       #!/bin/execlineb -P
@@ -14,5 +14,5 @@ import ../make-vm.nix { inherit config; } {
       backtick -E nick { head -1 }
       ${lib.getExe catgirl} -h irc.libera.chat -j "#spectrum" -n $nick
     ''
-  ) { };
-})
+  ) {};
+}) (_: {})

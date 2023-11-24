@@ -1,20 +1,23 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2021 Yureka <yuka@yuka.dev>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../lib/eval-config.nix ({ config, ... }: with config.pkgs;
+import ../../lib/call-package.nix (
+{ callSpectrumPackage
+, lib, runCommand, stdenv, substituteAll, writeReferencesToFile
+, dosfstools, grub2_efi, jq, libfaketime, mtools, squashfs-tools-ng
+, systemdMinimal, util-linux
+}:
 
 let
   inherit (builtins) storeDir;
-  inherit (pkgs.lib) removePrefix toUpper;
+  inherit (lib) removePrefix toUpper;
 
-  eosimages = import ./eosimages.nix { inherit config; };
+  eosimages = callSpectrumPackage ./eosimages.nix {};
 
   installerPartUuid = "6e23b026-9f1e-479d-8a58-a0cda382e1ce";
-  installer = import ../installer {
-    inherit config;
-
+  installer = callSpectrumPackage ../installer {
     extraConfig = {
       boot.initrd.availableKernelModules = [ "squashfs" ];
 
@@ -113,4 +116,4 @@ runCommand "spectrum-installer" {
   fillPartition $out 0 ${esp}
   fillPartition $out 1 ${rootfs}
   fillPartition $out 2 ${eosimages}
-'')
+'') (_: {})

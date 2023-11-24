@@ -1,13 +1,13 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }:
+import ../../lib/call-package.nix ({ callSpectrumPackage, nixosTest }:
 
 let
-  live = import ../live { inherit config; };
+  live = callSpectrumPackage ../live {};
 in
 
-config.pkgs.nixosTest ({ stdenv, mtools, ... }: {
+nixosTest ({ stdenv, mtools, ... }: {
   name = "try-spectrum-test";
   nodes = {};
 
@@ -48,4 +48,4 @@ config.pkgs.nixosTest ({ stdenv, mtools, ... }: {
     machine.wait_for_console_text("EXT4-fs \(sda4\): mounted filesystem")
     machine.crash()
   '';
-}))
+})) (_: {})

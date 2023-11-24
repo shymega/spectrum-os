@@ -1,15 +1,8 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../../lib/eval-config.nix (
-
-{ config, src
-, lseek ? import ../../../tools/lseek { inherit config; }
-, terminfo ? config.pkgs.foot.terminfo
-, ...
-}:
-
-config.pkgs.pkgsStatic.callPackage (
+import ../../../lib/call-package.nix ({ lseek, src, terminfo, pkgsStatic }:
+pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeReferencesToFile
 , erofs-utils, jq, s6-rc, util-linux, xorg
@@ -124,4 +117,4 @@ stdenvNoCC.mkDerivation {
     platforms = platforms.linux;
   };
 }
-) {})
+) {}) ({ foot }: { inherit (foot) terminfo; })

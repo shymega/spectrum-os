@@ -1,19 +1,17 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }:
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, rootfs, pkgsStatic, stdenv
+, cryptsetup, qemu_kvm, tar2ext4, util-linux
+}:
 
 let
-  inherit (config) pkgs;
-
-  extfs = pkgs.pkgsStatic.callPackage ./extfs.nix {
-    inherit config;
+  extfs = pkgsStatic.callPackage ./extfs.nix {
+    inherit callSpectrumPackage;
   };
-  rootfs = import ../rootfs { inherit config; };
-  initramfs = import ./. { inherit config rootfs; };
+  initramfs = callSpectrumPackage ./. {};
 in
-
-with pkgs;
 
 initramfs.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
   nativeBuildInputs = nativeBuildInputs ++ [
@@ -23,4 +21,4 @@ initramfs.overrideAttrs ({ nativeBuildInputs ? [], ... }: {
   EXT_FS = extfs;
   KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
   ROOT_FS = rootfs;
-}))
+})) (_: {})

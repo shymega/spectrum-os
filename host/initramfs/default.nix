@@ -1,19 +1,13 @@
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-import ../../lib/eval-config.nix (
-
-{ config, src
-, lseek ? import ../../tools/lseek { inherit config; }
-, rootfs ? import ../rootfs { inherit config; }
-, ...
-}:
-
-config.pkgs.callPackage (
-
-{ lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
+import ../../lib/call-package.nix (
+{ src, lseek, rootfs
+, lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
 , pkgsStatic, busybox, cpio, microcodeAmd, microcodeIntel
 }:
+
+pkgsStatic.callPackage ({ execline, kmod, mdevd, cryptsetup, util-linuxMinimal }:
 
 let
   inherit (lib) concatMapStringsSep;
@@ -25,9 +19,9 @@ let
   };
 
   packages = [
-    pkgsStatic.execline pkgsStatic.kmod pkgsStatic.mdevd
+    execline kmod mdevd
 
-    (pkgsStatic.cryptsetup.override {
+    (cryptsetup.override {
       programs = {
         cryptsetup = false;
         cryptsetup-reencrypt = false;
@@ -58,7 +52,7 @@ let
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
-    cp ${pkgsStatic.util-linuxMinimal}/bin/{findfs,lsblk} $out/bin
+    cp ${util-linuxMinimal}/bin/{findfs,lsblk} $out/bin
   '';
 
   microcode = if stdenvNoCC.hostPlatform.isx86_64 then
@@ -98,4 +92,4 @@ stdenvNoCC.mkDerivation {
 
   enableParallelBuilding = true;
 }
-) {})
+) {}) (_: {})

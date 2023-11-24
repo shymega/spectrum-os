@@ -1,9 +1,8 @@
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-import ../../lib/eval-config.nix ({ config, src, ... }: config.pkgs.pkgsStatic.callPackage (
-
-{ lib, stdenv, clang-tools }:
+import ../../lib/call-package.nix ({ src, pkgsStatic }:
+pkgsStatic.callPackage ({ lib, stdenv, clang-tools }:
 
 stdenv.mkDerivation (finalAttrs: {
   name = "lseek";
@@ -38,4 +37,4 @@ stdenv.mkDerivation (finalAttrs: {
   };
 })
 
-) { })
+) {}) (_: {})

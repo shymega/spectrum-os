@@ -1,10 +1,11 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021, 2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }: with config.pkgs;
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, lib, writeShellScript, coreutils, qemu_kvm, stdenv }:
 
 let
-  image = import ./. { inherit config; };
+  image = callSpectrumPackage ./. {};
 in
 
 writeShellScript "run-spectrum-installer-vm.sh" ''
@@ -22,4 +23,4 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
     -drive file=${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd,format=raw,if=pflash,readonly=true \
     -drive file=${image},id=drive1,format=raw,if=none,readonly=true \
     -drive file=/proc/self/fd/3,format=raw,if=virtio
-'')
+'') (_: {})

@@ -1,12 +1,12 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 # This file is built to populate the binary cache.
 
-import lib/eval-config.nix ({ config, ... }: {
-  doc = import ./Documentation { inherit config; };
+import lib/call-package.nix ({ callSpectrumPackage }: {
+  doc = callSpectrumPackage ./Documentation {};
 
-  checks = import release/checks { inherit config; };
+  checks = callSpectrumPackage release/checks {};
 
-  combined = import release/combined/run-vm.nix { inherit config; };
-})
+  combined = callSpectrumPackage release/combined/run-vm.nix {};
+}) (_: {})

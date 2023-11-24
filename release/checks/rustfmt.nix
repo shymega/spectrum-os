@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../lib/eval-config.nix ({ config, src, ... }:
-config.pkgs.callPackage ({ runCommand, rustfmt }:
+import ../../lib/call-package.nix ({ src, runCommand, rustfmt }:
 
 runCommand "spectrum-rustfmt" {
   inherit src;
@@ -11,4 +10,4 @@ runCommand "spectrum-rustfmt" {
   shopt -s globstar
   rustfmt --check $src/**/*.rs
   touch $out
-'') { })
+'') (_: {})

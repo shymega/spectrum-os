@@ -1,19 +1,16 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }:
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, lib, coreutils, qemu_kvm, stdenv, writeShellScript }:
 
 let
   inherit (builtins) storeDir;
-  inherit (config) pkgs;
-  inherit (pkgs) coreutils qemu_kvm stdenv writeShellScript;
-  inherit (pkgs.lib) makeBinPath escapeShellArg;
+  inherit (lib) makeBinPath escapeShellArg;
 
-  eosimages = import ../combined/eosimages.nix { inherit config; };
+  eosimages = callSpectrumPackage ../combined/eosimages.nix {};
 
-  installer = import ./. {
-    inherit config;
-
+  installer = callSpectrumPackage ./. {
     extraConfig = {
       boot.initrd.availableKernelModules = [ "9p" "9pnet_virtio" ];
 
@@ -43,4 +40,4 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
     -kernel ${installer.kernel} \
     -initrd ${installer.initramfs} \
     -append ${escapeShellArg installer.kernelParams}
-'')
+'') (_: {})

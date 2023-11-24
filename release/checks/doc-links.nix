@@ -1,11 +1,11 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../lib/eval-config.nix ({ config, ... }:
-config.pkgs.callPackage ({ runCommand, bozohttpd, wget }:
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, runCommand, bozohttpd, wget }:
 
 runCommand "spectrum-doc-links" {
-  doc = import ../../Documentation { inherit config; };
+  doc = callSpectrumPackage ../../Documentation {};
   nativeBuildInputs = [ bozohttpd wget ];
 } ''
   mkdir root
@@ -14,4 +14,4 @@ runCommand "spectrum-doc-links" {
   wget -r -nv --delete-after --no-parent --retry-connrefused http://localhost:4000/doc/
   touch $out
 ''
-) { })
+) (_: {})

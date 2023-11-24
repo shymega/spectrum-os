@@ -1,15 +1,13 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }:
+import ../../lib/call-package.nix ({ callSpectrumPackage, clippy, rustfmt }:
 
-with config.pkgs;
-
-(import ./. { inherit config; }).overrideAttrs (
+(callSpectrumPackage ./. {}).overrideAttrs (
 { nativeBuildInputs ? [], ... }:
 
 {
   hardeningDisable = [ "fortify" ];
 
   nativeBuildInputs = nativeBuildInputs ++ [ clippy rustfmt ];
-}))
+})) (_: {})

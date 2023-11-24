@@ -1,14 +1,13 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, ... }:
+import ../../lib/call-package.nix ({ callSpectrumPackage, rootfs, nixosTest }:
 
 let
-  rootfs = import ../../host/rootfs { inherit config; };
-  initramfs = import ../../host/initramfs { inherit config rootfs; };
+  initramfs = callSpectrumPackage ../../host/initramfs {};
 in
 
-config.pkgs.nixosTest ({ stdenv, ... }: {
+nixosTest ({ stdenv, ... }: {
   name = "spectrum-test-initramfs-no-roothash";
   nodes = {};
 
@@ -28,4 +27,4 @@ config.pkgs.nixosTest ({ stdenv, ... }: {
     machine.start()
     machine.wait_for_console_text("roothash invalid or missing")
   '';
-}))
+})) (_: {})

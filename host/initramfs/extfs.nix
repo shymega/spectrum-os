@@ -1,18 +1,17 @@
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-{ config, runCommand, e2fsprogs }:
+{ callSpectrumPackage, runCommand, e2fsprogs }:
 
 let
-  netvm = import ../../vm/sys/net {
-    inherit config;
+  netvm = callSpectrumPackage ../../vm/sys/net {
     # inherit (foot) terminfo;
   };
 
-  appvm-catgirl = import ../../vm/app/catgirl.nix { inherit config; };
-  appvm-foot = import ../../vm/app/foot.nix { inherit config; };
-  appvm-lynx = import ../../vm/app/lynx.nix { inherit config; };
-  appvm-mg = import ../../vm/app/mg.nix { inherit config; };
+  appvm-catgirl = callSpectrumPackage ../../vm/app/catgirl.nix {};
+  appvm-foot = callSpectrumPackage ../../vm/app/foot.nix {};
+  appvm-lynx = callSpectrumPackage ../../vm/app/lynx.nix {};
+  appvm-mg = callSpectrumPackage ../../vm/app/mg.nix {};
 in
 
 runCommand "ext.ext4" {

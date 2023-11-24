@@ -1,10 +1,10 @@
-# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 # SPDX-License-Identifier: MIT
 
-import ../lib/eval-config.nix ({ config, src, ... }: config.pkgs.callPackage (
+import ../lib/call-package.nix
 
-{ stdenvNoCC, jekyll, drawio-headless }:
+({ callSpectrumPackage, src, stdenvNoCC, jekyll, drawio-headless }:
 
 stdenvNoCC.mkDerivation {
   name = "spectrum-docs";
@@ -20,10 +20,8 @@ stdenvNoCC.mkDerivation {
 
   dontInstall = true;
 
-  nativeBuildInputs = [ jekyll drawio-headless ];
-
-  passthru = { inherit jekyll; };
-}
-) {
-  jekyll = import ./jekyll.nix { inherit config; };
-})
+  nativeBuildInputs = [
+    (callSpectrumPackage ./jekyll.nix {})
+    drawio-headless
+  ];
+}) (_: {})

@@ -1,8 +1,7 @@
 # SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-import ../lib/eval-config.nix ({ config, ... }: config.pkgs.callPackage (
-
+import ../lib/call-package.nix (
 { bundlerApp }:
 
 bundlerApp {
@@ -10,4 +9,4 @@ bundlerApp {
   gemdir = ./.;
   exes = [ "jekyll" ];
 }
-) { })
+) (_: {})

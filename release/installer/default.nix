@@ -1,8 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ config, extraConfig ? {}, ... }:
-with config.pkgs;
+import ../../lib/call-package.nix ({ extraConfig, nixos, writeReferencesToFile }:
 
 let
   inherit (nixos {
@@ -20,4 +19,4 @@ in
   ] ++ config.boot.kernelParams);
 
   store = writeReferencesToFile config.system.build.toplevel;
-})
+}) (_: { extraConfig = {}; })

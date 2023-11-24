@@ -1,12 +1,14 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix (
-{ config, run ? ../../vm/app/mg.nix, ... }:
+{ run ? ../../vm/app/mg.nix, ... } @ args:
 
-with config.pkgs;
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, srcOnly
+, cloud-hypervisor, crosvm, execline, jq, qemu_kvm, reuse, s6, virtiofsd
+}:
 
-(import ./. { inherit config; }).overrideAttrs (
+(callSpectrumPackage ./. {}).overrideAttrs (
 { nativeBuildInputs ? [], shellHook ? "", passthru ? {}, ... }:
 
 {
@@ -14,11 +16,11 @@ with config.pkgs;
     cloud-hypervisor crosvm execline jq qemu_kvm reuse s6 virtiofsd
   ];
 
-  runDef = import run { inherit config; };
+  runDef = callSpectrumPackage run {};
   shellHook = shellHook + ''
     export RUN_IMG="$(printf "%s\n" "$runDef"/blk/run.img)"
   '';
 
   LINUX_SRC = srcOnly passthru.kernel;
   VMLINUX = "${passthru.kernel.dev}/vmlinux";
-}))
+})) (_: {}) (removeAttrs args [ "run" ])

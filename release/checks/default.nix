@@ -1,26 +1,26 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/eval-config.nix ({ ... } @ args:
+import ../../lib/call-package.nix ({ callSpectrumPackage }:
 
 {
   recurseForDerivations = true;
 
-  doc-links = import ./doc-links.nix args;
+  doc-links = callSpectrumPackage ./doc-links.nix {};
 
-  doc-anchors = import ./doc-anchors.nix args;
+  doc-anchors = callSpectrumPackage ./doc-anchors.nix {};
 
-  pkg-tests = import ./pkg-tests.nix args;
+  pkg-tests = callSpectrumPackage ./pkg-tests.nix {};
 
-  no-roothash = import ./no-roothash.nix args;
+  no-roothash = callSpectrumPackage ./no-roothash.nix {};
 
-  reuse = import ./reuse.nix args;
+  reuse = callSpectrumPackage ./reuse.nix {};
 
-  rustfmt = import ./rustfmt.nix args;
+  rustfmt = callSpectrumPackage ./rustfmt.nix {};
 
-  shellcheck = import ./shellcheck.nix args;
+  shellcheck = callSpectrumPackage ./shellcheck.nix {};
 
-  try = import ./try.nix args;
+  try = callSpectrumPackage ./try.nix {};
 
-  wayland = import ./wayland args;
-})
+  wayland = callSpectrumPackage ./wayland {};
+}) (_: {})

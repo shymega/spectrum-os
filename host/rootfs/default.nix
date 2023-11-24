@@ -2,20 +2,12 @@
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
-import ../../lib/eval-config.nix (
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, lseek, src, pkgsMusl, pkgsStatic, linux_latest }:
+pkgsStatic.callPackage (
 
-{ config, src
-, lseek ? import ../../tools/lseek { inherit config; }
-, ...
-}:
-
-let
-  inherit (config) pkgs;
-in
-
-pkgs.pkgsStatic.callPackage (
-
-{ lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, erofs-utils, s6-rc
+{ start-vm
+, lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, erofs-utils, s6-rc
 , busybox, cloud-hypervisor, cryptsetup, execline, e2fsprogs, jq, kmod
 , mdevd, s6, s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
 }:
@@ -24,13 +16,9 @@ let
   inherit (lib) concatMapStringsSep optionalAttrs systems;
   inherit (nixosAllHardware.config.hardware) firmware;
 
-  start-vm = import ../start-vm {
-    config = config // { pkgs = pkgs.pkgsStatic; };
-  };
-
-  pkgsGui = pkgs.pkgsMusl.extend (
+  pkgsGui = pkgsMusl.extend (
     final: super:
-    (optionalAttrs (systems.equals pkgs.pkgsMusl.stdenv.hostPlatform super.stdenv.hostPlatform) {
+    (optionalAttrs (systems.equals pkgsMusl.stdenv.hostPlatform super.stdenv.hostPlatform) {
       libgudev = super.libgudev.overrideAttrs ({ ... }: {
         # Tests use umockdev, which is not compatible with libudev-zero.
         doCheck = false;
@@ -90,12 +78,9 @@ let
     system.stateVersion = lib.trivial.release;
   });
 
-  kernel = pkgs.linux_latest;
+  kernel = linux_latest;
 
-  appvm = import ../../img/app {
-    inherit config;
-    inherit (foot) terminfo;
-  };
+  appvm = callSpectrumPackage ../../img/app { inherit (foot) terminfo; };
 
   # Packages that should be fully linked into /usr,
   # (not just their bin/* files).
@@ -154,4 +139,4 @@ stdenvNoCC.mkDerivation {
     platforms = platforms.linux;
   };
 }
-) {})
+) {}) (_: {})
