@@ -1,32 +1,17 @@
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-let
-  customConfigPath = builtins.tryEval <spectrum-config>;
-in
-
-{ config ?
-  if customConfigPath.success then import customConfigPath.value
-  else if builtins.pathExists ../config.nix then import ../config.nix
-  else {}
-}:
+{ ... } @ args:
 
 let
-  default = import ../lib/config.default.nix;
-
-  callConfig = config: if builtins.typeOf config == "lambda" then config {
-    inherit default;
-  } else config;
-
-  fullConfig = default // callConfig config;
-
-  pkgs = fullConfig.pkgsFun fullConfig.pkgsArgs;
+  config = import ../lib/config.nix args;
+  pkgs = import ./overlaid.nix ({ elaboratedConfig = config; } // args);
 
   inherit (pkgs.lib)
     cleanSource cleanSourceWith hasSuffix makeScope optionalAttrs;
 
-  scope = self: {
-    config = fullConfig;
+  scope = self: let pkgs = self.callPackage ({ pkgs }: pkgs) {}; in {
+    inherit config;
 
     callSpectrumPackage =
       path: (import path { inherit (self) callPackage; }).override;
@@ -35,9 +20,12 @@ let
     rootfs = self.callSpectrumPackage ../host/rootfs {};
     start-vm = self.callSpectrumPackage ../host/start-vm {};
 
-    pkgsStatic = makeScope
-      (self.callPackage ({ pkgs }: pkgs) {}).pkgsStatic.newScope scope;
-    
+    # Packages from the overlay, so it's possible to build them from
+    # the CLI easily.
+    inherit (pkgs) cloud-hypervisor;
+
+    pkgsStatic = makeScope pkgs.pkgsStatic.newScope scope;
+
     src = cleanSourceWith {
       filter = path: type:
         path != toString ../Documentation/_site &&
