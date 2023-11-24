@@ -6,5 +6,6 @@ let
     removeAttrs attrs [ "override" "overrideDerivation" ];
 in
 
-package: overrides: { pkgs ? import ../pkgs args, ... } @ args:
-pkgs.callPackage package (makeUnoverridable (pkgs.callPackage overrides {}))
+package: overrides:
+{ callPackage ? (import ../pkgs args).callPackage, ... } @ args:
+callPackage package (makeUnoverridable (callPackage overrides {}))

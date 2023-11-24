@@ -27,7 +27,8 @@ let
   scope = self: {
     config = fullConfig;
 
-    callSpectrumPackage = path: (import path { pkgs = self; }).override;
+    callSpectrumPackage =
+      path: (import path { inherit (self) callPackage; }).override;
 
     lseek = self.callSpectrumPackage ../tools/lseek {};
     rootfs = self.callSpectrumPackage ../host/rootfs {};
