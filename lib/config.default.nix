@@ -2,5 +2,6 @@
 # SPDX-License-Identifier: MIT
 
 {
-  pkgs = import ./nixpkgs.default.nix {};
+  pkgsFun = import ./nixpkgs.default.nix;
+  pkgsArgs = {};
 }

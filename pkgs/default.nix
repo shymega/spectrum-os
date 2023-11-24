@@ -20,7 +20,8 @@ let
 
   fullConfig = default // callConfig config;
 
-  inherit (fullConfig) pkgs;
+  pkgs = fullConfig.pkgsFun fullConfig.pkgsArgs;
+
   inherit (pkgs.lib)
     cleanSource cleanSourceWith hasSuffix makeScope optionalAttrs;
 
