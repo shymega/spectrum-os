@@ -3,4 +3,6 @@
 
 (final: super: {
   cloud-hypervisor = import ../pkgs/cloud-hypervisor { inherit final super; };
+
+  foot = import ../pkgs/foot { inherit final super; };
 })
