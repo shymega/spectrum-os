@@ -1,5 +1,5 @@
 #! /usr/bin/env nix-shell
-#! nix-shell -i bash -p curl
+#! nix-shell -i bash -p curl jq
 
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: EUPL-1.2+
@@ -15,10 +15,10 @@ out="$(mktemp -p "$root/lib" -t nixpkgs.default.nix.XXXXXXXXXX)"
 exec > "$out"
 
 rev="$(
-	curl -fsLS https://spectrum-os.org/git/nixpkgs.git/info/refs |
-	awk '$2 == "refs/heads/rootfs" { print $1 }'
+	curl -fsLS https://api.github.com/repos/NixOS/nixpkgs/branches/${1-nixos-unstable} |
+	jq -r .commit.sha
 )"
-url="https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-$rev.tar.gz"
+url="https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz"
 
 cat <<EOF
 # SPDX-License-Identifier: CC0-1.0
