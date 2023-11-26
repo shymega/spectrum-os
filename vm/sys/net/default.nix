@@ -61,8 +61,6 @@ let
 
   kernel = (linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
-      CMDLINE_BOOL = yes;
-      CMDLINE = freeform "console=ttyS0 root=PARTLABEL=root";
       VIRTIO = yes;
       VIRTIO_PCI = yes;
       VIRTIO_BLK = yes;

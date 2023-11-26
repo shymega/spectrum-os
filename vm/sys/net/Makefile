@@ -101,7 +101,7 @@ debug:
 run-qemu: build/host/data/netvm/blk/root.img
 	@../../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	    -append nokaslr \
+	    -append "root=PARTLABEL=root nokaslr" \
 	    -gdb unix:build/gdb.sock,server,nowait \
 	    -netdev user,id=net0 \
 	    -device e1000e,netdev=net0 \
@@ -121,6 +121,7 @@ run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	    --net tap=tap0 \
 	    --net tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
+	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor
@@ -128,6 +129,7 @@ run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 run-crosvm: build/host/data/netvm/blk/root.img
 	$(CROSVM_RUN) \
 	    --disk build/host/data/netvm/blk/root.img \
+	    -p "console=ttyS0 root=PARTLABEL=root" \
 	    --net tap-name=tap0 \
 	    --net tap-name=tap1,mac=0A:B3:EC:80:00:00 \
 	    --serial type=file,hardware=serial,path=build/crosvm.log \

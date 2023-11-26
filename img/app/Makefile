@@ -104,7 +104,7 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	@../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	    -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
-	    -append nokaslr \
+	    -append "root=PARTLABEL=root nokaslr" \
 	    -gdb unix:build/gdb.sock,server,nowait \
 	    -netdev user,id=net0 \
 	    -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
@@ -127,6 +127,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
 	    --gpu socket=build/vhost-user-gpu.sock \
 	    --kernel $(KERNEL) \
+	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
 	    --serial pty
 .PHONY: run-cloud-hypervisor
@@ -135,6 +136,7 @@ run-crosvm: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
 	$(CROSVM_RUN) \
 	    --disk $(imgdir)/appvm/blk/root.img \
 	    --disk $(RUN_IMG) \
+	    -p "console=ttyS0 root=PARTLABEL=root" \
 	    --vhost-user-fs build/virtiofsd.sock:virtiofs0 \
 	    --vhost-user-gpu build/vhost-user-gpu.sock \
 	    --serial type=file,hardware=serial,path=build/crosvm.log \
