@@ -7,7 +7,7 @@ import ../../lib/overlay-package.nix "cloud-hypervisor" ({ final, super }:
 final.rustPlatform.buildRustPackage {
   inherit (super.cloud-hypervisor)
     pname version src separateDebugInfo nativeBuildInputs buildInputs
-    OPENSSL_NO_VENDOR cargoTestFlags meta;
+    propagatedBuildInputs OPENSSL_NO_VENDOR cargoTestFlags meta;
 
   cargoLock = {
     lockFile = ./Cargo.lock;
