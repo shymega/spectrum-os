@@ -15,7 +15,7 @@ out="$(mktemp -p "$root/lib" -t nixpkgs.default.nix.XXXXXXXXXX)"
 exec > "$out"
 
 rev="$(
-	curl -fsLS https://api.github.com/repos/NixOS/nixpkgs/branches/${1-nixos-unstable} |
+	curl -fsLS "https://api.github.com/repos/NixOS/nixpkgs/branches/${1-nixos-unstable}" |
 	jq -r .commit.sha
 )"
 url="https://github.com/NixOS/nixpkgs/archive/$rev.tar.gz"
