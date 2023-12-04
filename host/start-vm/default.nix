@@ -26,5 +26,9 @@ stdenv.mkDerivation (finalAttrs: {
       }
     );
   };
+
+  meta = {
+    mainProgram = "start-vm";
+  };
 })
 ) (_: {})
