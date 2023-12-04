@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
+use std::collections::BTreeSet;
 use std::ffi::{OsStr, OsString};
 use std::fs::{create_dir, create_dir_all, File};
 use std::os::unix::fs::symlink;
 
 use start_vm::vm_command;
-use test_helper::{contains_seq, TempDir};
+use test_helper::TempDir;
 
 fn main() -> std::io::Result<()> {
     let tmp_dir = TempDir::new()?;
@@ -27,16 +28,26 @@ fn main() -> std::io::Result<()> {
     }
 
     let command = vm_command(&service_dir, -1).unwrap();
-    let args: Box<[_]> = command.get_args().collect();
+    let mut args = command.get_args();
 
-    for image_path in &image_paths {
-        let mut expected_disk_arg = OsString::from("path=");
-        expected_disk_arg.push(image_path);
-        expected_disk_arg.push(",readonly=on");
+    assert!(args.any(|arg| arg == "--disk"));
 
-        let expected_args = [OsStr::new("--disk"), &expected_disk_arg];
-        assert!(contains_seq(&args, &expected_args));
-    }
+    let expected_disk_args = image_paths
+        .iter()
+        .map(|image_path| {
+            let mut expected_disk_arg = OsString::from("path=");
+            expected_disk_arg.push(image_path);
+            expected_disk_arg.push(",readonly=on");
+            expected_disk_arg
+        })
+        .collect::<BTreeSet<_>>();
+
+    let disk_args = args
+        .map(OsStr::to_os_string)
+        .take(expected_disk_args.len())
+        .collect::<BTreeSet<_>>();
+
+    assert_eq!(disk_args, expected_disk_args);
 
     Ok(())
 }

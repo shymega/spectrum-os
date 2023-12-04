@@ -100,8 +100,12 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
     }
 
     let blk_dir = config_dir.join("blk");
-    match blk_dir.read_dir() {
-        Ok(entries) => {
+    match blk_dir.read_dir().map(Iterator::peekable) {
+        Ok(mut entries) => {
+            if entries.peek().is_some() {
+                command.arg("--disk");
+            }
+
             for result in entries {
                 let entry = result
                     .map_err(|e| format!("examining directory entry: {}", e))?
@@ -118,7 +122,7 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
                 let mut arg = OsString::from("path=");
                 arg.push(entry);
                 arg.push(",readonly=on");
-                command.arg("--disk").arg(arg);
+                command.arg(arg);
             }
         }
         Err(e) => return Err(format!("reading directory {:?}: {}", blk_dir, e)),
@@ -134,8 +138,12 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
     }
 
     let shared_dirs_dir = config_dir.join("shared-dirs");
-    match shared_dirs_dir.read_dir() {
-        Ok(entries) => {
+    match shared_dirs_dir.read_dir().map(Iterator::peekable) {
+        Ok(mut entries) => {
+            if entries.peek().is_some() {
+                command.arg("--fs");
+            }
+
             for result in entries {
                 let entry = result
                     .map_err(|e| format!("examining directory entry: {}", e))?
@@ -148,7 +156,7 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
                 arg.push("-fs-");
                 arg.push(&entry);
                 arg.push("/env/virtiofsd.sock");
-                command.arg("--fs").arg(arg);
+                command.arg(arg);
             }
         }
         Err(e) if e.kind() == ErrorKind::NotFound => {}

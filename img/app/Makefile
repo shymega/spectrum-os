@@ -123,7 +123,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 	    --api-socket path=build/vmm.sock \
 	    --memory size=256M,shared=on \
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
-	    --disk path=$(RUN_IMG),readonly=on \
+	           path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
 	    --gpu socket=build/vhost-user-gpu.sock \
 	    --net tap=tap0 \

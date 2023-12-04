@@ -19,7 +19,7 @@ nixosTest ({ lib, pkgs, ... }: {
     systemd.services.cloud-hypervisor = {
       after = [ "crosvm-gpu.service" "weston.service" ];
       requires = [ "crosvm-gpu.service" "weston.service" ];
-      serviceConfig.ExecStart = "${lib.getExe pkgs.cloud-hypervisor} --memory shared=on --disk path=${appvm}/img/appvm/blk/root.img,readonly=on --disk path=${run}/blk/run.img,readonly=on --cmdline \"console=ttyS0 root=PARTLABEL=root\" --gpu socket=/run/crosvm-gpu.sock --serial tty --console null --kernel ${appvm}/img/appvm/vmlinux";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.cloud-hypervisor} --memory shared=on --disk path=${appvm}/img/appvm/blk/root.img,readonly=on path=${run}/blk/run.img,readonly=on --cmdline \"console=ttyS0 root=PARTLABEL=root\" --gpu socket=/run/crosvm-gpu.sock --serial tty --console null --kernel ${appvm}/img/appvm/vmlinux";
     };
 
     systemd.services.crosvm = {

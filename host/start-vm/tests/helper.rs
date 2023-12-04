@@ -11,12 +11,6 @@ use std::sync::OnceLock;
 
 use start_vm::prog_name;
 
-pub fn contains_seq<H: PartialEq<N>, N>(haystack: &[H], needle: &[N]) -> bool {
-    let start_indexes = 0..=(haystack.len() - needle.len());
-    let mut candidates = start_indexes.map(|i| &haystack[i..][..needle.len()]);
-    candidates.any(|c| c == needle)
-}
-
 extern "C" {
     fn mkdtemp(template: *mut c_char) -> *mut c_char;
 }

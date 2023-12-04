@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
+use std::collections::BTreeSet;
+use std::ffi::{OsStr, OsString};
 use std::fs::{create_dir, create_dir_all, File};
 use std::os::unix::fs::symlink;
 
 use start_vm::vm_command;
-use test_helper::{contains_seq, TempDir};
+use test_helper::TempDir;
 
 fn main() -> std::io::Result<()> {
     let tmp_dir = TempDir::new()?;
@@ -27,12 +29,21 @@ fn main() -> std::io::Result<()> {
     symlink("/", vm_config.join("shared-dirs/dir2/dir"))?;
 
     let command = vm_command(&service_dir, -1).unwrap();
-    let args: Box<[_]> = command.get_args().collect();
+    let mut args = command.get_args();
 
-    for i in 1..=2 {
-        let expected_fs_arg = format!("tag=dir{i},socket=../testvm-fs-dir{i}/env/virtiofsd.sock");
-        assert!(contains_seq(&args, &["--fs", &expected_fs_arg]));
-    }
+    assert!(args.any(|arg| arg == "--fs"));
+
+    let expected_fs_args = (1..=2)
+        .map(|i| format!("tag=dir{i},socket=../testvm-fs-dir{i}/env/virtiofsd.sock"))
+        .map(OsString::from)
+        .collect::<BTreeSet<_>>();
+
+    let fs_args = args
+        .map(OsStr::to_os_string)
+        .take(expected_fs_args.len())
+        .collect::<BTreeSet<_>>();
+
+    assert_eq!(fs_args, expected_fs_args);
 
     Ok(())
 }
