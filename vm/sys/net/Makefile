@@ -114,7 +114,8 @@ run-qemu: build/host/data/netvm/blk/root.img
 
 run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	rm -f build/vmm.sock
-	@../../../scripts/run-cloud-hypervisor.sh \
+	@../../../scripts/with-taps.elb \
+	    ../../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
 	    --memory size=128M \
 	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
@@ -127,7 +128,7 @@ run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 .PHONY: run-cloud-hypervisor
 
 run-crosvm: build/host/data/netvm/blk/root.img
-	$(CROSVM_RUN) \
+	../../../scripts/with-taps.elb $(CROSVM_RUN) \
 	    --disk build/host/data/netvm/blk/root.img \
 	    -p "console=ttyS0 root=PARTLABEL=root" \
 	    --net tap-name=tap0 \

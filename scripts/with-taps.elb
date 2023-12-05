@@ -1,0 +1,10 @@
+#!/usr/bin/env execlineb
+# SPDX-License-Identifier: EUPL-1.2+
+# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+
+elgetpositionals
+
+unshare -rUn
+if { ip tuntap add tap0 mode tap }
+if { ip tuntap add tap1 mode tap }
+$@
