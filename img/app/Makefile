@@ -130,7 +130,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 	    --kernel $(KERNEL) \
 	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
-	    --serial pty
+	    --serial file=build/serial.log
 .PHONY: run-cloud-hypervisor
 
 run-crosvm: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
@@ -141,7 +141,7 @@ run-crosvm: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
 	    --net tap-name=tap0 \
 	    --vhost-user-fs build/virtiofsd.sock:virtiofs0 \
 	    --vhost-user-gpu build/vhost-user-gpu.sock \
-	    --serial type=file,hardware=serial,path=build/crosvm.log \
+	    --serial type=file,hardware=serial,path=build/serial.log \
 	    --serial type=stdout,hardware=virtio-console,stdin=true \
 	    $(KERNEL)
 .PHONY: run-crosvm
