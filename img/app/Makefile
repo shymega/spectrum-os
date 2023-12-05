@@ -119,13 +119,14 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 
 run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
 	rm -f build/vmm.sock
-	@../../scripts/run-cloud-hypervisor.sh \
+	@../../scripts/with-taps.elb ../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
 	    --memory size=128M,shared=on \
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
 	    --disk path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
 	    --gpu socket=build/vhost-user-gpu.sock \
+	    --net tap=tap0 \
 	    --kernel $(KERNEL) \
 	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
@@ -133,10 +134,11 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 .PHONY: run-cloud-hypervisor
 
 run-crosvm: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
-	$(CROSVM_RUN) \
+	../../scripts/with-taps.elb $(CROSVM_RUN) \
 	    --disk $(imgdir)/appvm/blk/root.img \
 	    --disk $(RUN_IMG) \
 	    -p "console=ttyS0 root=PARTLABEL=root" \
+	    --net tap-name=tap0 \
 	    --vhost-user-fs build/virtiofsd.sock:virtiofs0 \
 	    --vhost-user-gpu build/vhost-user-gpu.sock \
 	    --serial type=file,hardware=serial,path=build/crosvm.log \
