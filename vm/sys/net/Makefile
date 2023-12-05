@@ -99,7 +99,7 @@ debug:
 .PHONY: debug
 
 run-qemu: build/host/data/netvm/blk/root.img
-	@../../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
+	@../../../scripts/run-qemu.sh -m 256 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=build/host/data/netvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	    -append "root=PARTLABEL=root nokaslr" \
 	    -gdb unix:build/gdb.sock,server,nowait \
@@ -117,7 +117,7 @@ run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	@../../../scripts/with-taps.elb \
 	    ../../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
-	    --memory size=128M \
+	    --memory size=256M \
 	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
 	    --net tap=tap0 \
 	    --net tap=tap1,mac=0A:B3:EC:80:00:00 \

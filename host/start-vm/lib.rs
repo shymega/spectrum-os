@@ -61,7 +61,7 @@ pub fn vm_command(dir: &Path, api_socket_fd: RawFd) -> Result<Command, String> {
     let mut command = Command::new("cloud-hypervisor");
     command.args(["--api-socket", &format!("fd={api_socket_fd}")]);
     command.args(["--cmdline", "console=ttyS0 root=PARTLABEL=root"]);
-    command.args(["--memory", "size=128M,shared=on"]);
+    command.args(["--memory", "size=256M,shared=on"]);
     command.args(["--console", "pty"]);
     command.arg("--kernel");
     command.arg(config_dir.join("vmlinux"));

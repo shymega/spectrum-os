@@ -101,7 +101,7 @@ start-virtiofsd:
 .PHONY: start-virtiofsd
 
 run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
-	@../../scripts/run-qemu.sh -m 128 -cpu host -kernel $(KERNEL) -vga none \
+	@../../scripts/run-qemu.sh -m 256 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
 	    -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
 	    -append "root=PARTLABEL=root nokaslr" \
@@ -121,7 +121,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 	rm -f build/vmm.sock
 	@../../scripts/with-taps.elb ../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
-	    --memory size=128M,shared=on \
+	    --memory size=256M,shared=on \
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
 	    --disk path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
