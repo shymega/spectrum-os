@@ -42,6 +42,7 @@ final.rustPlatform.buildRustPackage {
     vhost/0001-vhost-fix-receiving-reply-payloads.patch
     vhost/0002-vhost_user-add-shared-memory-region-support.patch
     vhost/0003-vhost-user-add-protocol-flag-for-shmem.patch
+    vhost/0004-vmm_vhost-renumber-SHARED_MEMORY_REGIONS.patch
   ];
 
   # Don't concatenate versions from super.cloud-hypervisor,

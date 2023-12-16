@@ -2,6 +2,6 @@
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
 import (builtins.fetchTarball {
-  url = "https://github.com/NixOS/nixpkgs/archive/92facb43dc1e3e12373b3779658e27ef836baecd.tar.gz";
-  sha256 = "06vh1jf9hlhbf9jjyaif603s4abac8cga8qidgm3nc462a3vfpiz";
+  url = "https://github.com/NixOS/nixpkgs/archive/eb18da27b9cb7e2006574cd962f8a22baf2955f1.tar.gz";
+  sha256 = "0dr11hb3322w357k71v9psm275liwxcgcx9is1icxypxd63zdgbz";
 })
