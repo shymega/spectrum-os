@@ -50,13 +50,14 @@ nixosTest ({ lib, pkgs, ... }: {
 
     systemd.services.surface-notify-socket = {
       serviceConfig.ExecStart = "${pkgs.coreutils}/bin/mkfifo /run/surface-notify";
+      serviceConfig.ExecStop = "${pkgs.coreutils}/bin/rm -f /run/surface-notify";
       serviceConfig.RemainAfterExit = true;
       serviceConfig.Type = "oneshot";
     };
 
     systemd.services.weston = {
       after = [ "surface-notify-socket.service" ];
-      requires = [ "surface-notify-socket.service" ];
+      wants = [ "surface-notify-socket.service" ];
       environment.XDG_RUNTIME_DIR = "/run";
       environment.WAYLAND_DEBUG = "server";
       serviceConfig.ExecStart = "${lib.getExe pkgs.westonLite} --modules ${surface-notify}/lib/weston/surface-notify.so,systemd-notify.so";
@@ -75,6 +76,8 @@ nixosTest ({ lib, pkgs, ... }: {
     machine.stop_job('crosvm-gpu.service')
     machine.stop_job('crosvm.service')
 
+    machine.systemctl('restart surface-notify-socket')
+    machine.wait_for_unit('surface-notify-socket')
     machine.start_job('cloud-hypervisor.service')
     machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=180)
     machine.screenshot('cloud-hypervisor')
