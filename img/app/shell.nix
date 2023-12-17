@@ -5,7 +5,8 @@
 
 import ../../lib/call-package.nix (
 { callSpectrumPackage, srcOnly
-, cloud-hypervisor, crosvm, execline, jq, qemu_kvm, reuse, s6, virtiofsd
+, cloud-hypervisor, crosvm, execline, jq, iproute2, qemu_kvm, reuse, s6
+, virtiofsd
 }:
 
 (callSpectrumPackage ./. {}).overrideAttrs (
@@ -13,7 +14,7 @@ import ../../lib/call-package.nix (
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
-    cloud-hypervisor crosvm execline jq qemu_kvm reuse s6 virtiofsd
+    cloud-hypervisor crosvm execline jq iproute2 qemu_kvm reuse s6 virtiofsd
   ];
 
   runDef = callSpectrumPackage run {};
