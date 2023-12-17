@@ -80,7 +80,10 @@ stdenvNoCC.mkDerivation {
 
   src = lib.fileset.toSource {
     root = ../..;
-    fileset = src;
+    fileset = lib.fileset.intersection src (lib.fileset.unions [
+      ./.
+      ../../lib/common.mk
+    ]);
   };
   sourceRoot = "source/host/initramfs";
 

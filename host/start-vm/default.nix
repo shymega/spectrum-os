@@ -9,7 +9,7 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = lib.fileset.toSource {
     root = ../..;
-    fileset = src;
+    fileset = lib.fileset.intersection src ./.;
   };
   sourceRoot = "source/host/start-vm";
 
