@@ -9,7 +9,10 @@ import ../../../../lib/call-package.nix (
 stdenv.mkDerivation {
   name = "surface-notify";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../../../..;
+    fileset = src;
+  };
   sourceRoot = "source/release/checks/wayland/surface-notify";
 
   nativeBuildInputs = [ meson ninja pkg-config ];

@@ -86,7 +86,10 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-netvm";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../../..;
+    fileset = src;
+  };
   sourceRoot = "source/vm/sys/net";
 
   nativeBuildInputs = [ erofs-utils jq lseek s6-rc util-linux ];

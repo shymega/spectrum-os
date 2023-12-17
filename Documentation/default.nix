@@ -4,12 +4,15 @@
 
 import ../lib/call-package.nix
 
-({ callSpectrumPackage, src, stdenvNoCC, jekyll, drawio-headless }:
+({ callSpectrumPackage, src, lib, stdenvNoCC, jekyll, drawio-headless }:
 
 stdenvNoCC.mkDerivation {
   name = "spectrum-docs";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../.;
+    fileset = src;
+  };
   sourceRoot = "source/Documentation";
 
   buildPhase = ''

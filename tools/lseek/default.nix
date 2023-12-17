@@ -7,7 +7,10 @@ pkgsStatic.callPackage ({ lib, stdenv, clang-tools }:
 stdenv.mkDerivation (finalAttrs: {
   name = "lseek";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../..;
+    fileset = src;
+  };
   sourceRoot = "source/tools/lseek";
 
   makeFlags = [ "prefix=$(out)" ];

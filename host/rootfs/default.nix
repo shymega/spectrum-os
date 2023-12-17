@@ -108,7 +108,10 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-rootfs";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../..;
+    fileset = src;
+  };
   sourceRoot = "source/host/rootfs";
 
   nativeBuildInputs = [ erofs-utils lseek s6-rc ];

@@ -7,8 +7,7 @@ let
   config = import ../lib/config.nix args;
   pkgs = import ./overlaid.nix ({ elaboratedConfig = config; } // args);
 
-  inherit (pkgs.lib)
-    cleanSource cleanSourceWith hasSuffix makeScope optionalAttrs;
+  inherit (pkgs.lib) cleanSource fileset makeScope optionalAttrs;
 
   scope = self: let pkgs = self.callPackage ({ pkgs }: pkgs) {}; in {
     inherit config;
@@ -26,15 +25,20 @@ let
 
     pkgsStatic = makeScope pkgs.pkgsStatic.newScope scope;
 
-    src = cleanSourceWith {
-      filter = path: type:
-        path != toString ../Documentation/_site &&
-        path != toString ../Documentation/.jekyll-cache &&
-        path != toString ../Documentation/diagrams/stack.svg &&
-        (type == "regular" -> !hasSuffix ".nix" path) &&
-        (type == "directory" -> builtins.baseNameOf path != "build");
-      src = cleanSource ../.;
-    };
+    src = fileset.difference
+      (fileset.intersection
+        (fileset.fileFilter ({ hasExt, ... }: !hasExt "nix") ../.)
+        (fileset.fromSource (cleanSource ../.)))
+      (fileset.unions (map fileset.maybeMissing [
+        ../Documentation/.jekyll-cache
+        ../Documentation/_site
+        ../Documentation/diagrams/stack.svg
+        ../host/initramfs/build
+        ../host/rootfs/build
+        ../img/app/build
+        ../release/live/build
+        ../vm/sys/net/build
+      ]));
   };
 in
 

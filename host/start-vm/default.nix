@@ -2,12 +2,15 @@
 # SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ src, stdenv, meson, ninja, rustc, clippy }:
+{ src, lib, stdenv, meson, ninja, rustc, clippy }:
 
 stdenv.mkDerivation (finalAttrs: {
   name = "start-vm";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../..;
+    fileset = src;
+  };
   sourceRoot = "source/host/start-vm";
 
   nativeBuildInputs = [ meson ninja rustc ];

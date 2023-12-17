@@ -78,7 +78,10 @@ in
 stdenvNoCC.mkDerivation {
   name = "initramfs";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../..;
+    fileset = src;
+  };
   sourceRoot = "source/host/initramfs";
 
   MICROCODE = microcode;

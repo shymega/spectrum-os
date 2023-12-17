@@ -21,7 +21,10 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-live.img";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../..;
+    fileset = src;
+  };
   sourceRoot = "source/release/live";
 
   nativeBuildInputs = [ cryptsetup dosfstools jq lseek mtools util-linux ];

@@ -78,7 +78,10 @@ in
 stdenvNoCC.mkDerivation {
   name = "spectrum-appvm";
 
-  inherit src;
+  src = lib.fileset.toSource {
+    root = ../..;
+    fileset = src;
+  };
   sourceRoot = "source/img/app";
 
   nativeBuildInputs = [ erofs-utils jq lseek s6-rc util-linux ];
