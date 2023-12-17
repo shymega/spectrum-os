@@ -6,6 +6,8 @@ import ../../lib/call-package.nix ({ callSpectrumPackage }:
 {
   recurseForDerivations = true;
 
+  codespell = callSpectrumPackage ./codespell.nix {};
+
   doc-links = callSpectrumPackage ./doc-links.nix {};
 
   doc-anchors = callSpectrumPackage ./doc-anchors.nix {};
