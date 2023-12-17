@@ -22,7 +22,7 @@ https://www.cloudhypervisor.org/[Cloud Hypervisor].
 
 Firecracker does not support other virtio-devices than net or block.
 
-In comparision to crosvm, Cloud Hypervisor has a more flexible IPC mechanisms,
+In comparison to crosvm, Cloud Hypervisor has a more flexible IPC mechanisms,
 better hotplugging support, and a more engaging community as a Linux Foundation
 project.  Cloud Hypervisor additionally has more core features - such as
 snapshotting, live migration. crosvm supports more devices we will also need.

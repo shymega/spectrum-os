@@ -30,7 +30,7 @@ and store user data.
 == Consequences
 
 - LVM may support resizing - both increasing and decreasing with some limitation
-when there's alreay data on volume(s).
+when there's already data on volume(s).
 - Does LVM work with all disk types?
 - We have to implement XBOOTLDR to support EFI system partition
   created by Windows -- to support dual boot.

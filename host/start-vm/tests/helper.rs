@@ -22,7 +22,7 @@ pub struct TempDir(PathBuf);
 impl TempDir {
     pub fn new() -> std::io::Result<Self> {
         // FIXME: once LazyLock is in the standard library, we can do
-        // the initalization in the declaration.
+        // the initialization in the declaration.
         // https://github.com/rust-lang/rust/issues/109736
         let tmpdir = TMPDIR.get_or_init(|| {
             std::env::var_os("TMPDIR")
