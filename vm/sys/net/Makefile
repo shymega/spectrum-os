@@ -119,8 +119,7 @@ run-cloud-hypervisor: build/host/data/netvm/blk/root.img
 	    --api-socket path=build/vmm.sock \
 	    --memory size=256M \
 	    --disk path=build/host/data/netvm/blk/root.img,readonly=on \
-	    --net tap=tap0 \
-	    --net tap=tap1,mac=0A:B3:EC:80:00:00 \
+	    --net tap=tap0 tap=tap1,mac=0A:B3:EC:80:00:00 \
 	    --kernel $(KERNEL) \
 	    --cmdline "root=PARTLABEL=root" \
 	    --console tty \
