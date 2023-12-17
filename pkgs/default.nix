@@ -25,10 +25,8 @@ let
 
     pkgsStatic = makeScope pkgs.pkgsStatic.newScope scope;
 
-    src = fileset.difference
-      (fileset.intersection
-        (fileset.fileFilter ({ hasExt, ... }: !hasExt "nix") ../.)
-        (fileset.fromSource (cleanSource ../.)))
+    srcWithNix = fileset.difference
+      (fileset.fromSource (cleanSource ../.))
       (fileset.unions (map fileset.maybeMissing [
         ../Documentation/.jekyll-cache
         ../Documentation/_site
@@ -39,6 +37,10 @@ let
         ../release/live/build
         ../vm/sys/net/build
       ]));
+
+    src = fileset.difference
+      self.srcWithNix
+      (fileset.fileFilter ({ hasExt, ... }: hasExt "nix") ../.);
   };
 in
 
