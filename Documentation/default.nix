@@ -4,7 +4,7 @@
 
 import ../lib/call-package.nix
 
-({ callSpectrumPackage, src, lib, stdenvNoCC, jekyll, drawio-headless }:
+({ callSpectrumPackage, src, lib, stdenvNoCC, drawio-headless }:
 
 stdenvNoCC.mkDerivation {
   name = "spectrum-docs";
