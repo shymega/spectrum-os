@@ -7,14 +7,14 @@ pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeClosure
 , erofs-utils, jq, s6-rc, util-linux
-, busybox, cacert, execline, kmod, linux_latest, mdevd, s6, s6-linux-init
+, busybox, cacert, dbus, execline, kmod, linux_latest, mdevd, s6, s6-linux-init
 }:
 
 let
   inherit (lib) concatMapStringsSep;
 
   packages = [
-    execline kmod mdevd s6 s6-linux-init s6-rc
+    dbus execline kmod mdevd s6 s6-linux-init s6-rc
 
     (busybox.override {
       extraConfig = ''
@@ -32,7 +32,7 @@ let
     inherit packages;
     passAsFile = [ "packages" ];
   } ''
-    mkdir -p $out/usr/bin $out/usr/share
+    mkdir -p $out/usr/bin $out/usr/share/dbus-1
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
     ln -s ${kernel}/lib "$out"
     ln -s ${terminfo}/share/terminfo $out/usr/share

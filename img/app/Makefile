@@ -27,6 +27,7 @@ $(imgdir)/appvm/blk/root.img: ../../scripts/make-gpt.sh ../../scripts/sfdisk-fie
 	mv $@.tmp $@
 
 VM_FILES = \
+	etc/dbus-1/session.conf \
 	etc/fstab \
 	etc/init \
 	etc/mdev.conf \
@@ -36,6 +37,7 @@ VM_FILES = \
 	etc/mdev/wait \
 	etc/passwd \
 	etc/resolv.conf \
+	etc/s6-linux-init/env/DBUS_SESSION_BUS_ADDRESS \
 	etc/s6-linux-init/scripts/rc.init
 VM_DIRS = dev run proc sys \
 	etc/s6-linux-init/env \
@@ -60,8 +62,12 @@ build/rootfs.erofs: ../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) bu
 	) | ../../scripts/make-erofs.sh $@
 
 VM_S6_RC_FILES = \
+	etc/s6-rc/app/dependencies.d/dbus \
 	etc/s6-rc/app/run \
 	etc/s6-rc/app/type \
+	etc/s6-rc/dbus/notification-fd \
+	etc/s6-rc/dbus/run \
+	etc/s6-rc/dbus/type \
 	etc/s6-rc/mdevd-coldplug/dependencies \
 	etc/s6-rc/mdevd-coldplug/type \
 	etc/s6-rc/mdevd-coldplug/up \
