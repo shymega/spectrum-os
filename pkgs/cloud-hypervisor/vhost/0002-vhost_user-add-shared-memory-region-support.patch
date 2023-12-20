@@ -1,4 +1,4 @@
-From d639bc15129a07a2844b417cb8ead155bf714368 Mon Sep 17 00:00:00 2001
+From 09cbe50dc01c46522f19bf3ab880e978a64a17a3 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
 Subject: [PATCH 2/4] vhost_user: add shared memory region support
@@ -29,16 +29,16 @@ Tested-by: kokoro <noreply+kokoro@google.com>
 Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
 ---
  crates/vhost-user-backend/src/handler.rs      |  10 +-
- crates/vhost/src/vhost_user/dummy_slave.rs    |   4 +
- crates/vhost/src/vhost_user/master.rs         |  25 ++++
- .../src/vhost_user/master_req_handler.rs      |  57 ++++++--
+ crates/vhost/src/vhost_user/backend_req.rs    |  20 ++-
+ .../src/vhost_user/backend_req_handler.rs     |  15 ++
+ crates/vhost/src/vhost_user/dummy_backend.rs  |   4 +
+ crates/vhost/src/vhost_user/frontend.rs       |  25 ++++
+ .../src/vhost_user/frontend_req_handler.rs    |  53 ++++++-
  crates/vhost/src/vhost_user/message.rs        | 136 +++++++++++++++++-
- crates/vhost/src/vhost_user/slave_req.rs      |  20 ++-
- .../vhost/src/vhost_user/slave_req_handler.rs |  15 ++
- 7 files changed, 247 insertions(+), 20 deletions(-)
+ 7 files changed, 247 insertions(+), 16 deletions(-)
 
 diff --git a/crates/vhost-user-backend/src/handler.rs b/crates/vhost-user-backend/src/handler.rs
-index 262bf6c..73402b2 100644
+index 8be4768..e141e07 100644
 --- a/crates/vhost-user-backend/src/handler.rs
 +++ b/crates/vhost-user-backend/src/handler.rs
 @@ -11,9 +11,9 @@ use std::sync::Arc;
@@ -53,8 +53,8 @@ index 262bf6c..73402b2 100644
 +    VhostUserVringAddrFlags, VhostUserVringState,
  };
  use vhost::vhost_user::{
-     Error as VhostUserError, Result as VhostUserResult, Slave, VhostUserSlaveReqHandlerMut,
-@@ -602,6 +602,10 @@ where
+     Backend, Error as VhostUserError, Result as VhostUserResult, VhostUserBackendReqHandlerMut,
+@@ -597,6 +597,10 @@ where
  
          Ok(())
      }
@@ -64,12 +64,100 @@ index 262bf6c..73402b2 100644
 +    }
  }
  
- impl<S, V, B: Bitmap> Drop for VhostUserHandler<S, V, B> {
-diff --git a/crates/vhost/src/vhost_user/dummy_slave.rs b/crates/vhost/src/vhost_user/dummy_slave.rs
-index ae728a0..00a1ae8 100644
---- a/crates/vhost/src/vhost_user/dummy_slave.rs
-+++ b/crates/vhost/src/vhost_user/dummy_slave.rs
-@@ -291,4 +291,8 @@ impl VhostUserSlaveReqHandlerMut for DummySlaveReqHandler {
+ impl<T: VhostUserBackend> Drop for VhostUserHandler<T> {
+diff --git a/crates/vhost/src/vhost_user/backend_req.rs b/crates/vhost/src/vhost_user/backend_req.rs
+index b43982f..948e1b2 100644
+--- a/crates/vhost/src/vhost_user/backend_req.rs
++++ b/crates/vhost/src/vhost_user/backend_req.rs
+@@ -46,12 +46,16 @@ impl BackendInternal {
+         }
+         self.sock.send_message(&hdr, body, fds)?;
+ 
+-        self.wait_for_ack(&hdr)
++        self.wait_for_reply(&hdr)
+     }
+ 
+-    fn wait_for_ack(&mut self, hdr: &VhostUserMsgHeader<BackendReq>) -> Result<u64> {
++    fn wait_for_reply(&mut self, hdr: &VhostUserMsgHeader<BackendReq>) -> Result<u64> {
+         self.check_state()?;
+-        if !self.reply_ack_negotiated {
++        if !matches!(
++            hdr.get_code(),
++            Ok(BackendReq::SHMEM_MAP | BackendReq::SHMEM_UNMAP)
++        ) && !self.reply_ack_negotiated
++        {
+             return Ok(0);
+         }
+ 
+@@ -129,6 +133,16 @@ impl Backend {
+ }
+ 
+ impl VhostUserFrontendReqHandler for Backend {
++    /// Handle shared memory region mapping requests.
++    fn shmem_map(&self, req: &VhostUserShmemMapMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
++        self.send_message(BackendReq::SHMEM_MAP, req, Some(&[fd.as_raw_fd()]))
++    }
++
++    /// Handle shared memory region unmapping requests.
++    fn shmem_unmap(&self, req: &VhostUserShmemUnmapMsg) -> HandlerResult<u64> {
++        self.send_message(BackendReq::SHMEM_UNMAP, req, None)
++    }
++
+     /// Forward vhost-user-fs map file requests to the backend.
+     fn fs_backend_map(&self, fs: &VhostUserFSBackendMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
+         self.send_message(BackendReq::FS_MAP, fs, Some(&[fd.as_raw_fd()]))
+diff --git a/crates/vhost/src/vhost_user/backend_req_handler.rs b/crates/vhost/src/vhost_user/backend_req_handler.rs
+index 7b4cbe9..84486aa 100644
+--- a/crates/vhost/src/vhost_user/backend_req_handler.rs
++++ b/crates/vhost/src/vhost_user/backend_req_handler.rs
+@@ -70,6 +70,7 @@ pub trait VhostUserBackendReqHandler {
+     fn get_max_mem_slots(&self) -> Result<u64>;
+     fn add_mem_region(&self, region: &VhostUserSingleMemoryRegion, fd: File) -> Result<()>;
+     fn remove_mem_region(&self, region: &VhostUserSingleMemoryRegion) -> Result<()>;
++    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>>;
+ }
+ 
+ /// Services provided to the frontend by the backend without interior mutability.
+@@ -118,6 +119,7 @@ pub trait VhostUserBackendReqHandlerMut {
+     fn get_max_mem_slots(&mut self) -> Result<u64>;
+     fn add_mem_region(&mut self, region: &VhostUserSingleMemoryRegion, fd: File) -> Result<()>;
+     fn remove_mem_region(&mut self, region: &VhostUserSingleMemoryRegion) -> Result<()>;
++    fn get_shared_memory_regions(&mut self) -> Result<Vec<VhostSharedMemoryRegion>>;
+ }
+ 
+ impl<T: VhostUserBackendReqHandlerMut> VhostUserBackendReqHandler for Mutex<T> {
+@@ -226,6 +228,10 @@ impl<T: VhostUserBackendReqHandlerMut> VhostUserBackendReqHandler for Mutex<T> {
+     fn remove_mem_region(&self, region: &VhostUserSingleMemoryRegion) -> Result<()> {
+         self.lock().unwrap().remove_mem_region(region)
+     }
++
++    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>> {
++        self.lock().unwrap().get_shared_memory_regions()
++    }
+ }
+ 
+ /// Server to handle service requests from frontends from the frontend communication channel.
+@@ -519,6 +525,15 @@ impl<S: VhostUserBackendReqHandler> BackendReqHandler<S> {
+                 let res = self.backend.remove_mem_region(&msg);
+                 self.send_ack_message(&hdr, res)?;
+             }
++            Ok(FrontendReq::GET_SHARED_MEMORY_REGIONS) => {
++                let regions = self.backend.get_shared_memory_regions()?;
++                let mut buf = Vec::new();
++                let msg = VhostUserU64::new(regions.len() as u64);
++                for r in regions {
++                    buf.extend_from_slice(r.as_slice())
++                }
++                self.send_reply_with_payload(&hdr, &msg, buf.as_slice())?;
++            }
+             _ => {
+                 return Err(Error::InvalidMessage);
+             }
+diff --git a/crates/vhost/src/vhost_user/dummy_backend.rs b/crates/vhost/src/vhost_user/dummy_backend.rs
+index 060a344..aab5ee1 100644
+--- a/crates/vhost/src/vhost_user/dummy_backend.rs
++++ b/crates/vhost/src/vhost_user/dummy_backend.rs
+@@ -291,4 +291,8 @@ impl VhostUserBackendReqHandlerMut for DummyBackendReqHandler {
      fn remove_mem_region(&mut self, _region: &VhostUserSingleMemoryRegion) -> Result<()> {
          Ok(())
      }
@@ -78,11 +166,11 @@ index ae728a0..00a1ae8 100644
 +        Ok(Vec::new())
 +    }
  }
-diff --git a/crates/vhost/src/vhost_user/master.rs b/crates/vhost/src/vhost_user/master.rs
-index 89aec20..6808cb0 100644
---- a/crates/vhost/src/vhost_user/master.rs
-+++ b/crates/vhost/src/vhost_user/master.rs
-@@ -72,6 +72,9 @@ pub trait VhostUserMaster: VhostBackend {
+diff --git a/crates/vhost/src/vhost_user/frontend.rs b/crates/vhost/src/vhost_user/frontend.rs
+index 4068dd6..0d572f3 100644
+--- a/crates/vhost/src/vhost_user/frontend.rs
++++ b/crates/vhost/src/vhost_user/frontend.rs
+@@ -72,6 +72,9 @@ pub trait VhostUserFrontend: VhostBackend {
  
      /// Remove a guest memory mapping from vhost.
      fn remove_mem_region(&mut self, region: &VhostUserMemoryRegionInfo) -> Result<()>;
@@ -92,14 +180,14 @@ index 89aec20..6808cb0 100644
  }
  
  fn error_code<T>(err: VhostUserError) -> Result<T> {
-@@ -513,6 +516,28 @@ impl VhostUserMaster for Master {
-         let hdr = node.send_request_with_body(MasterReq::REM_MEM_REG, &body, None)?;
+@@ -517,6 +520,28 @@ impl VhostUserFrontend for Frontend {
+         let hdr = node.send_request_with_body(FrontendReq::REM_MEM_REG, &body, None)?;
          node.wait_for_ack(&hdr).map_err(|e| e.into())
      }
 +
 +    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>> {
 +        let mut node = self.node();
-+        let hdr = node.send_request_header(MasterReq::GET_SHARED_MEMORY_REGIONS, None)?;
++        let hdr = node.send_request_header(FrontendReq::GET_SHARED_MEMORY_REGIONS, None)?;
 +        let (body_reply, buf_reply, rfds) = node.recv_reply_with_payload::<VhostUserU64>(&hdr)?;
 +        let struct_size = mem::size_of::<VhostSharedMemoryRegion>();
 +        if rfds.is_some() || buf_reply.len() != body_reply.value as usize * struct_size {
@@ -120,12 +208,12 @@ index 89aec20..6808cb0 100644
 +    }
  }
  
- impl AsRawFd for Master {
-diff --git a/crates/vhost/src/vhost_user/master_req_handler.rs b/crates/vhost/src/vhost_user/master_req_handler.rs
-index c9c528b..3d01542 100644
---- a/crates/vhost/src/vhost_user/master_req_handler.rs
-+++ b/crates/vhost/src/vhost_user/master_req_handler.rs
-@@ -33,6 +33,16 @@ pub trait VhostUserMasterReqHandler {
+ impl AsRawFd for Frontend {
+diff --git a/crates/vhost/src/vhost_user/frontend_req_handler.rs b/crates/vhost/src/vhost_user/frontend_req_handler.rs
+index fb2dc16..cd4f604 100644
+--- a/crates/vhost/src/vhost_user/frontend_req_handler.rs
++++ b/crates/vhost/src/vhost_user/frontend_req_handler.rs
+@@ -33,6 +33,16 @@ pub trait VhostUserFrontendReqHandler {
          Err(std::io::Error::from_raw_os_error(libc::ENOSYS))
      }
  
@@ -140,9 +228,9 @@ index c9c528b..3d01542 100644
 +    }
 +
      /// Handle virtio-fs map file requests.
-     fn fs_slave_map(&self, _fs: &VhostUserFSSlaveMsg, _fd: &dyn AsRawFd) -> HandlerResult<u64> {
+     fn fs_backend_map(&self, _fs: &VhostUserFSBackendMsg, _fd: &dyn AsRawFd) -> HandlerResult<u64> {
          Err(std::io::Error::from_raw_os_error(libc::ENOSYS))
-@@ -66,6 +76,16 @@ pub trait VhostUserMasterReqHandlerMut {
+@@ -66,6 +76,16 @@ pub trait VhostUserFrontendReqHandlerMut {
          Err(std::io::Error::from_raw_os_error(libc::ENOSYS))
      }
  
@@ -157,9 +245,9 @@ index c9c528b..3d01542 100644
 +    }
 +
      /// Handle virtio-fs map file requests.
-     fn fs_slave_map(&mut self, _fs: &VhostUserFSSlaveMsg, _fd: &dyn AsRawFd) -> HandlerResult<u64> {
-         Err(std::io::Error::from_raw_os_error(libc::ENOSYS))
-@@ -95,6 +115,14 @@ impl<S: VhostUserMasterReqHandlerMut> VhostUserMasterReqHandler for Mutex<S> {
+     fn fs_backend_map(
+         &mut self,
+@@ -103,6 +123,14 @@ impl<S: VhostUserFrontendReqHandlerMut> VhostUserFrontendReqHandler for Mutex<S>
          self.lock().unwrap().handle_config_change()
      }
  
@@ -171,30 +259,30 @@ index c9c528b..3d01542 100644
 +        self.lock().unwrap().shmem_unmap(req)
 +    }
 +
-     fn fs_slave_map(&self, fs: &VhostUserFSSlaveMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
-         self.lock().unwrap().fs_slave_map(fs, fd)
+     fn fs_backend_map(&self, fs: &VhostUserFSBackendMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
+         self.lock().unwrap().fs_backend_map(fs, fd)
      }
-@@ -222,6 +250,19 @@ impl<S: VhostUserMasterReqHandler> MasterReqHandler<S> {
+@@ -230,6 +258,19 @@ impl<S: VhostUserFrontendReqHandler> FrontendReqHandler<S> {
                      .handle_config_change()
                      .map_err(Error::ReqHandlerError)
              }
-+            Ok(SlaveReq::SHMEM_MAP) => {
++            Ok(BackendReq::SHMEM_MAP) => {
 +                let msg = self.extract_msg_body::<VhostUserShmemMapMsg>(&hdr, size, &buf)?;
 +                // check_attached_files() has validated files
 +                self.backend
 +                    .shmem_map(&msg, &files.unwrap()[0])
 +                    .map_err(Error::ReqHandlerError)
 +            }
-+            Ok(SlaveReq::SHMEM_UNMAP) => {
++            Ok(BackendReq::SHMEM_UNMAP) => {
 +                let msg = self.extract_msg_body::<VhostUserShmemUnmapMsg>(&hdr, size, &buf)?;
 +                self.backend
 +                    .shmem_unmap(&msg)
 +                    .map_err(Error::ReqHandlerError)
 +            }
-             Ok(SlaveReq::FS_MAP) => {
-                 let msg = self.extract_msg_body::<VhostUserFSSlaveMsg>(&hdr, size, &buf)?;
+             Ok(BackendReq::FS_MAP) => {
+                 let msg = self.extract_msg_body::<VhostUserFSBackendMsg>(&hdr, size, &buf)?;
                  // check_attached_files() has validated files
-@@ -251,7 +292,7 @@ impl<S: VhostUserMasterReqHandler> MasterReqHandler<S> {
+@@ -259,7 +300,7 @@ impl<S: VhostUserFrontendReqHandler> FrontendReqHandler<S> {
              _ => Err(Error::InvalidMessage),
          };
  
@@ -203,39 +291,39 @@ index c9c528b..3d01542 100644
  
          res
      }
-@@ -285,7 +326,7 @@ impl<S: VhostUserMasterReqHandler> MasterReqHandler<S> {
+@@ -293,7 +334,7 @@ impl<S: VhostUserFrontendReqHandler> FrontendReqHandler<S> {
          files: &Option<Vec<File>>,
      ) -> Result<()> {
          match hdr.get_code() {
--            Ok(SlaveReq::FS_MAP | SlaveReq::FS_IO) => {
-+            Ok(SlaveReq::SHMEM_MAP | SlaveReq::FS_MAP | SlaveReq::FS_IO) => {
+-            Ok(BackendReq::FS_MAP | BackendReq::FS_IO) => {
++            Ok(BackendReq::SHMEM_MAP | BackendReq::FS_MAP | BackendReq::FS_IO) => {
                  // Expect a single file is passed.
                  match files {
                      Some(files) if files.len() == 1 => Ok(()),
-@@ -327,12 +368,12 @@ impl<S: VhostUserMasterReqHandler> MasterReqHandler<S> {
+@@ -335,12 +376,16 @@ impl<S: VhostUserFrontendReqHandler> FrontendReqHandler<S> {
          ))
      }
  
 -    fn send_ack_message(
--        &mut self,
--        req: &VhostUserMsgHeader<SlaveReq>,
--        res: &Result<u64>,
--    ) -> Result<()> {
++    fn send_reply(
+         &mut self,
+         req: &VhostUserMsgHeader<BackendReq>,
+         res: &Result<u64>,
+     ) -> Result<()> {
 -        if self.reply_ack_negotiated && req.is_need_reply() {
-+    fn send_reply(&mut self, req: &VhostUserMsgHeader<SlaveReq>, res: &Result<u64>) -> Result<()> {
 +        if matches!(
 +            req.get_code(),
-+            Ok(SlaveReq::SHMEM_MAP | SlaveReq::SHMEM_UNMAP)
++            Ok(BackendReq::SHMEM_MAP | BackendReq::SHMEM_UNMAP)
 +        ) || (self.reply_ack_negotiated && req.is_need_reply())
 +        {
              let hdr = self.new_reply_header::<VhostUserU64>(req)?;
              let def_err = libc::EINVAL;
              let val = match res {
 diff --git a/crates/vhost/src/vhost_user/message.rs b/crates/vhost/src/vhost_user/message.rs
-index bbd8eb9..be24992 100644
+index df7edcd..21b0943 100644
 --- a/crates/vhost/src/vhost_user/message.rs
 +++ b/crates/vhost/src/vhost_user/message.rs
-@@ -146,8 +146,10 @@ pub enum MasterReq {
+@@ -146,8 +146,10 @@ pub enum FrontendReq {
      /// Query the backend for its device status as defined in the VIRTIO
      /// specification.
      GET_STATUS = 40,
@@ -246,8 +334,8 @@ index bbd8eb9..be24992 100644
 +    MAX_CMD = 42,
  }
  
- impl From<MasterReq> for u32 {
-@@ -178,16 +180,20 @@ pub enum SlaveReq {
+ impl From<FrontendReq> for u32 {
+@@ -178,16 +180,20 @@ pub enum BackendReq {
      VRING_CALL = 4,
      /// Indicate that an error occurred on the specific vring.
      VRING_ERR = 5,
@@ -272,13 +360,13 @@ index bbd8eb9..be24992 100644
 +    MAX_CMD = 12,
  }
  
- impl From<SlaveReq> for u32 {
-@@ -972,6 +978,99 @@ impl VhostUserMsgValidator for VhostUserFSSlaveMsg {
+ impl From<BackendReq> for u32 {
+@@ -978,6 +984,99 @@ impl VhostUserMsgValidator for VhostUserFSBackendMsg {
      }
  }
  
 +bitflags! {
-+    #[derive(Default)]
++    #[derive(Default, Copy, Clone)]
 +    /// Flags for SHMEM_MAP messages.
 +    pub struct VhostUserShmemMapMsgFlags: u8 {
 +        /// Empty permission.
@@ -290,7 +378,7 @@ index bbd8eb9..be24992 100644
 +    }
 +}
 +
-+/// Slave request message to map a file into a shared memory region.
++/// Backend request message to map a file into a shared memory region.
 +#[repr(C, packed)]
 +#[derive(Default, Copy, Clone)]
 +pub struct VhostUserShmemMapMsg {
@@ -311,7 +399,7 @@ index bbd8eb9..be24992 100644
 +
 +impl VhostUserMsgValidator for VhostUserShmemMapMsg {
 +    fn is_valid(&self) -> bool {
-+        (self.flags.bits() & !VhostUserFSSlaveMsgFlags::all().bits() as u8) == 0
++        (self.flags.bits() & !VhostUserFSBackendMsgFlags::all().bits() as u8) == 0
 +            && self.fd_offset.checked_add(self.len).is_some()
 +            && self.shm_offset.checked_add(self.len).is_some()
 +    }
@@ -337,7 +425,7 @@ index bbd8eb9..be24992 100644
 +    }
 +}
 +
-+/// Slave request message to unmap part of a shared memory region.
++/// Backend request message to unmap part of a shared memory region.
 +#[repr(C, packed)]
 +#[derive(Default, Copy, Clone)]
 +pub struct VhostUserShmemUnmapMsg {
@@ -373,7 +461,7 @@ index bbd8eb9..be24992 100644
  /// Inflight I/O descriptor state for split virtqueues
  #[repr(packed)]
  #[derive(Clone, Copy, Default)]
-@@ -1103,6 +1202,31 @@ impl QueueRegionPacked {
+@@ -1109,6 +1208,31 @@ impl QueueRegionPacked {
      }
  }
  
@@ -405,94 +493,6 @@ index bbd8eb9..be24992 100644
  #[cfg(test)]
  mod tests {
      use super::*;
-diff --git a/crates/vhost/src/vhost_user/slave_req.rs b/crates/vhost/src/vhost_user/slave_req.rs
-index ade1e91..b7ecd20 100644
---- a/crates/vhost/src/vhost_user/slave_req.rs
-+++ b/crates/vhost/src/vhost_user/slave_req.rs
-@@ -46,12 +46,16 @@ impl SlaveInternal {
-         }
-         self.sock.send_message(&hdr, body, fds)?;
- 
--        self.wait_for_ack(&hdr)
-+        self.wait_for_reply(&hdr)
-     }
- 
--    fn wait_for_ack(&mut self, hdr: &VhostUserMsgHeader<SlaveReq>) -> Result<u64> {
-+    fn wait_for_reply(&mut self, hdr: &VhostUserMsgHeader<SlaveReq>) -> Result<u64> {
-         self.check_state()?;
--        if !self.reply_ack_negotiated {
-+        if !matches!(
-+            hdr.get_code(),
-+            Ok(SlaveReq::SHMEM_MAP | SlaveReq::SHMEM_UNMAP)
-+        ) && !self.reply_ack_negotiated
-+        {
-             return Ok(0);
-         }
- 
-@@ -129,6 +133,16 @@ impl Slave {
- }
- 
- impl VhostUserMasterReqHandler for Slave {
-+    /// Handle shared memory region mapping requests.
-+    fn shmem_map(&self, req: &VhostUserShmemMapMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
-+        self.send_message(SlaveReq::SHMEM_MAP, req, Some(&[fd.as_raw_fd()]))
-+    }
-+
-+    /// Handle shared memory region unmapping requests.
-+    fn shmem_unmap(&self, req: &VhostUserShmemUnmapMsg) -> HandlerResult<u64> {
-+        self.send_message(SlaveReq::SHMEM_UNMAP, req, None)
-+    }
-+
-     /// Forward vhost-user-fs map file requests to the slave.
-     fn fs_slave_map(&self, fs: &VhostUserFSSlaveMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
-         self.send_message(SlaveReq::FS_MAP, fs, Some(&[fd.as_raw_fd()]))
-diff --git a/crates/vhost/src/vhost_user/slave_req_handler.rs b/crates/vhost/src/vhost_user/slave_req_handler.rs
-index e998339..b84feca 100644
---- a/crates/vhost/src/vhost_user/slave_req_handler.rs
-+++ b/crates/vhost/src/vhost_user/slave_req_handler.rs
-@@ -70,6 +70,7 @@ pub trait VhostUserSlaveReqHandler {
-     fn get_max_mem_slots(&self) -> Result<u64>;
-     fn add_mem_region(&self, region: &VhostUserSingleMemoryRegion, fd: File) -> Result<()>;
-     fn remove_mem_region(&self, region: &VhostUserSingleMemoryRegion) -> Result<()>;
-+    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>>;
- }
- 
- /// Services provided to the master by the slave without interior mutability.
-@@ -118,6 +119,7 @@ pub trait VhostUserSlaveReqHandlerMut {
-     fn get_max_mem_slots(&mut self) -> Result<u64>;
-     fn add_mem_region(&mut self, region: &VhostUserSingleMemoryRegion, fd: File) -> Result<()>;
-     fn remove_mem_region(&mut self, region: &VhostUserSingleMemoryRegion) -> Result<()>;
-+    fn get_shared_memory_regions(&mut self) -> Result<Vec<VhostSharedMemoryRegion>>;
- }
- 
- impl<T: VhostUserSlaveReqHandlerMut> VhostUserSlaveReqHandler for Mutex<T> {
-@@ -226,6 +228,10 @@ impl<T: VhostUserSlaveReqHandlerMut> VhostUserSlaveReqHandler for Mutex<T> {
-     fn remove_mem_region(&self, region: &VhostUserSingleMemoryRegion) -> Result<()> {
-         self.lock().unwrap().remove_mem_region(region)
-     }
-+
-+    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>> {
-+        self.lock().unwrap().get_shared_memory_regions()
-+    }
- }
- 
- /// Server to handle service requests from masters from the master communication channel.
-@@ -519,6 +525,15 @@ impl<S: VhostUserSlaveReqHandler> SlaveReqHandler<S> {
-                 let res = self.backend.remove_mem_region(&msg);
-                 self.send_ack_message(&hdr, res)?;
-             }
-+            Ok(MasterReq::GET_SHARED_MEMORY_REGIONS) => {
-+                let regions = self.backend.get_shared_memory_regions()?;
-+                let mut buf = Vec::new();
-+                let msg = VhostUserU64::new(regions.len() as u64);
-+                for r in regions {
-+                    buf.extend_from_slice(r.as_slice())
-+                }
-+                self.send_reply_with_payload(&hdr, &msg, buf.as_slice())?;
-+            }
-             _ => {
-                 return Err(Error::InvalidMessage);
-             }
 -- 
 2.42.0
 

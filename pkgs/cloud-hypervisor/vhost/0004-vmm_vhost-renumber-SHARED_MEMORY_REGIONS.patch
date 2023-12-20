@@ -1,4 +1,4 @@
-From ca160417c77eaf0b70f53568b34917c16a72e25a Mon Sep 17 00:00:00 2001
+From da75b10ab1512d215a7c2ff6c439601547a8217c Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <hi@alyssa.is>
 Date: Sat, 29 Jul 2023 12:03:18 +0000
 Subject: [PATCH 4/4] vmm_vhost: renumber SHARED_MEMORY_REGIONS
@@ -29,10 +29,10 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/crates/vhost/src/vhost_user/message.rs b/crates/vhost/src/vhost_user/message.rs
-index 5fb2fb8..8ea19d3 100644
+index 6764d6d..0be6b1a 100644
 --- a/crates/vhost/src/vhost_user/message.rs
 +++ b/crates/vhost/src/vhost_user/message.rs
-@@ -435,8 +435,8 @@ bitflags! {
+@@ -437,8 +437,8 @@ bitflags! {
          const STATUS = 0x0001_0000;
          /// Support Xen mmap.
          const XEN_MMAP = 0x0002_0000;

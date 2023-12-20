@@ -16,11 +16,11 @@ final.rustPlatform.buildRustPackage {
       "igvm-0.1.0" = "sha256-l+Qyhdy3b8h8hPLHg5M0os8aSkjM55hAP5nqi0AGmjo=";
       "kvm-bindings-0.6.0" = "sha256-wGdAuPwsgRIqx9dh0m+hC9A/Akz9qg9BM+p06Fi5ACM=";
       "kvm-ioctls-0.13.0" = "sha256-jHnFGwBWnAa2lRu4a5eRNy1Y26NX5MV8alJ86VR++QE=";
-      "micro_http-0.1.0" = "sha256-wX35VsrO1vxQcGbOrP+yZm9vG0gcTZLe7gH7xuAa12w=";
-      "mshv-bindings-0.1.1" = "sha256-vyNaKp89THzZ/UpfocEwaCUzCuQnBMyv/icuZEghZEQ=";
+      "micro_http-0.1.0" = "sha256-Ov75Gs+wSmsxOHJu024nWtOJp0cKpS8bkxJJGW6jiKw=";
+      "mshv-bindings-0.1.1" = "sha256-4ADpLvi9hmHsMyGtqDQ2Msa3aMZmJsi4BPW7B5ZfAMw=";
       "versionize_derive-0.1.4" = "sha256-oGuREJ5+FDs8ihmv99WmjIPpL2oPdOr4REk6+7cV/7o=";
-      "vfio-bindings-0.4.0" = "sha256-hGhfOE9q9sf/tzPuaAHOca+JKCutcm1Myu1Tt9spaIQ=";
-      "vfio_user-0.1.0" = "sha256-fAqvy3YTDKXQqtJR+R2nBCWIYe89zTwtbgvJfPLqs1Q=";
+      "vfio-bindings-0.4.0" = "sha256-grOV+7W1tB4YDRAFbDNQp5nQ1WaivH+N+qHTIj4WA+E=";
+      "vfio_user-0.1.0" = "sha256-Vi6dBu1mUwyWh7ryKDOBS6GeUD2sqqIrt/bth/LDW6s=";
       "vm-fdt-0.2.0" = "sha256-lKW4ZUraHomSDyxgNlD5qTaBTZqM0Fwhhh/08yhrjyE=";
     };
   };
@@ -29,8 +29,8 @@ final.rustPlatform.buildRustPackage {
     name = "vhost";
     owner = "rust-vmm";
     repo = "vhost";
-    rev = "vhost-user-backend-v0.10.1";
-    hash = "sha256-pq545s7sqE0GFFkEkAvKwFKLuRArNThmRFqEYS3nNVo=";
+    rev = "vhost-user-backend-v0.11.0";
+    hash = "sha256-VLKlvyHUrMrwJALUP7OeVeHIogu8rfoP4sgyUMCIBzU=";
   };
 
   cargoPatches = super.cloud-hypervisor.cargoPatches or [] ++ [
