@@ -1,7 +1,7 @@
-From 89ffceed4b74502b2d806115a8d45b93fea903fd Mon Sep 17 00:00:00 2001
+From 465b7c191a4149f4536384e24dc127eaae70a803 Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <hi@alyssa.is>
 Date: Sat, 29 Jul 2023 12:03:18 +0000
-Subject: [PATCH 4/4] vmm_vhost: renumber SHARED_MEMORY_REGIONS
+Subject: [PATCH 4/4] vhost_user: renumber SHARED_MEMORY_REGIONS
 SPDX-FileCopyrightText: 2019-2021 Alibaba Cloud. All rights reserved.
 SPDX-FileCopyrightText: The Chromium OS Authors
 SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
