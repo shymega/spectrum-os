@@ -1,4 +1,4 @@
-From 09cbe50dc01c46522f19bf3ab880e978a64a17a3 Mon Sep 17 00:00:00 2001
+From f6295a94fbecabf29ffae4f7189dfa57bdf79447 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
 Subject: [PATCH 2/4] vhost_user: add shared memory region support
@@ -32,10 +32,10 @@ Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
  crates/vhost/src/vhost_user/backend_req.rs    |  20 ++-
  .../src/vhost_user/backend_req_handler.rs     |  15 ++
  crates/vhost/src/vhost_user/dummy_backend.rs  |   4 +
- crates/vhost/src/vhost_user/frontend.rs       |  25 ++++
+ crates/vhost/src/vhost_user/frontend.rs       |  24 ++++
  .../src/vhost_user/frontend_req_handler.rs    |  53 ++++++-
  crates/vhost/src/vhost_user/message.rs        | 136 +++++++++++++++++-
- 7 files changed, 247 insertions(+), 16 deletions(-)
+ 7 files changed, 246 insertions(+), 16 deletions(-)
 
 diff --git a/crates/vhost-user-backend/src/handler.rs b/crates/vhost-user-backend/src/handler.rs
 index 8be4768..e141e07 100644
@@ -167,7 +167,7 @@ index 060a344..aab5ee1 100644
 +    }
  }
 diff --git a/crates/vhost/src/vhost_user/frontend.rs b/crates/vhost/src/vhost_user/frontend.rs
-index 4068dd6..0d572f3 100644
+index 4068dd6..47ace8f 100644
 --- a/crates/vhost/src/vhost_user/frontend.rs
 +++ b/crates/vhost/src/vhost_user/frontend.rs
 @@ -72,6 +72,9 @@ pub trait VhostUserFrontend: VhostBackend {
@@ -180,7 +180,7 @@ index 4068dd6..0d572f3 100644
  }
  
  fn error_code<T>(err: VhostUserError) -> Result<T> {
-@@ -517,6 +520,28 @@ impl VhostUserFrontend for Frontend {
+@@ -517,6 +520,27 @@ impl VhostUserFrontend for Frontend {
          let hdr = node.send_request_with_body(FrontendReq::REM_MEM_REG, &body, None)?;
          node.wait_for_ack(&hdr).map_err(|e| e.into())
      }
@@ -198,9 +198,8 @@ index 4068dd6..0d572f3 100644
 +        for _ in 0..body_reply.value {
 +            regions.push(
 +                // Can't fail because the input is the correct size.
-+                VhostSharedMemoryRegion::from_slice(&buf_reply[offset..(offset + struct_size)])
-+                    .unwrap()
-+                    .clone(),
++                *VhostSharedMemoryRegion::from_slice(&buf_reply[offset..(offset + struct_size)])
++                    .unwrap(),
 +            );
 +            offset += struct_size;
 +        }
