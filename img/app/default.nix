@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ lseek, src, terminfo, pkgsStatic }:
+{ lseek, src, terminfo, pkgsMusl, pkgsStatic }:
 pkgsStatic.callPackage (
 
 { lib, stdenvNoCC, runCommand, writeClosure
@@ -32,8 +32,10 @@ let
     inherit packages;
     passAsFile = [ "packages" ];
   } ''
-    mkdir -p $out/usr/bin $out/usr/share/dbus-1
+    mkdir -p $out/usr/bin $out/usr/share/dbus-1/services
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
+    ln -s ${pkgsMusl.xdg-desktop-portal}/share/dbus-1/services/*.service \
+        $out/usr/share/dbus-1/services
     ln -s ${kernel}/lib "$out"
     ln -s ${terminfo}/share/terminfo $out/usr/share
     ln -s ${cacert}/etc/ssl $out/usr/share
