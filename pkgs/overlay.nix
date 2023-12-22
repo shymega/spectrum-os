@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: MIT
 
 (final: super: {
-  cloud-hypervisor = import ../pkgs/cloud-hypervisor { inherit final super; };
+  cloud-hypervisor = import ./cloud-hypervisor { inherit final super; };
 
-  foot = import ../pkgs/foot { inherit final super; };
+  foot = import ./foot { inherit final super; };
 })
