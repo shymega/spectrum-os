@@ -34,8 +34,10 @@ let
   } ''
     mkdir -p $out/usr/bin $out/usr/share/dbus-1/services
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
-    ln -s ${pkgsMusl.xdg-desktop-portal}/share/dbus-1/services/*.service \
-        $out/usr/share/dbus-1/services
+    ln -st $out/usr/share/dbus-1/services \
+        ${pkgsMusl.xdg-desktop-portal}/share/dbus-1/services/*.service \
+        ${pkgsMusl.xdg-desktop-portal-gtk}/share/dbus-1/services/*.service
+    ln -s ${pkgsMusl.xdg-desktop-portal-gtk}/share/xdg-desktop-portal $out/usr/share
     ln -s ${kernel}/lib "$out"
     ln -s ${terminfo}/share/terminfo $out/usr/share
     ln -s ${cacert}/etc/ssl $out/usr/share
