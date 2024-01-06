@@ -5,10 +5,10 @@
 # SPDX-License-Identifier: EUPL-1.2+
 
 substr () {
-    str=$1
-    beg=$2
-    end=$3
-    echo "$str" | cut -c "$beg-$end"
+	str=$1
+	beg=$2
+	end=$3
+	echo "$str" | cut -c "$beg-$end"
 }
 
 u1=$(substr "$1" 1 8)

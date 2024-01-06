@@ -13,7 +13,7 @@ trap 'rm -f -- "$documented_uuids"' EXIT
 
 grep -Eio "$PATTERN" "$UUID_REFERENCE_PATH" | sort -u >"$documented_uuids"
 git ls-files -coz --exclude-standard |
-    grep -Fxvz "$UUID_REFERENCE_PATH" |
-    xargs -0 git grep -Ehio --no-index --no-line-number "$PATTERN" -- |
-    sort -u |
-    comm -23 - "$documented_uuids"
+	grep -Fxvz "$UUID_REFERENCE_PATH" |
+	xargs -0 git grep -Ehio --no-index --no-line-number "$PATTERN" -- |
+	sort -u |
+	comm -23 - "$documented_uuids"
