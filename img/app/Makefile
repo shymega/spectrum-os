@@ -110,6 +110,7 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	    -device virtio-net,netdev=net0,mac=0A:B3:EC:00:00:00 \
 	    -chardev socket,id=virtiofsd,path=build/virtiofsd.sock \
 	    -device vhost-user-fs-pci,chardev=virtiofsd,tag=virtiofs0 \
+	    -device virtio-gpu-rutabaga-pci,cross-domain=on,hostmem=8G \
 	    -object memory-backend-memfd,id=mem,size=256M,share=on \
 	    -numa node,memdev=mem \
 	    -chardev vc,id=virtiocon0 \
