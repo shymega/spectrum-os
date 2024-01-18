@@ -50,10 +50,6 @@ If you are interested in participating in the project, or even just
 following along with it, the best thing to do is subscribe to one or
 more of the Spectrum mailing lists.
 
-If mailing lists are not your thing, that is okay! Try the
-https://spectrum-os.org/lists/hyperkitty/[Web UI], which allows you to
-interact with the mailing lists much like a modern web forum.
-
 Each list has https://spectrum-os.org/lists/archives/[archives] that
 can also be accessed via the web, NNTP or Atom. You are strongly
 encouraged to mirror them.
@@ -64,18 +60,16 @@ encouraged to mirror them.
 This is a one-way list where announcements from Spectrum's developers
 will be posted.
 
-You can subscribe
-https://spectrum-os.org/lists/mailman3/lists/announce.spectrum-os.org/[on the web],
-or by sending mail to *announce-subscribe@spectrum-os.org*.
+Subscribe by sending a message to announce-subscribe@spectrum-os.org.
+Unsubscribe by sending a message to announce-unsubscribe@spectrum-os.org.
 
 [#spectrum-discuss]
 === discuss@spectrum-os.org
 
 This list contains high-level discussion about the project.
 
-You can subscribe
-https://spectrum-os.org/lists/mailman3/lists/discuss.spectrum-os.org/[on the web],
-or by sending mail to *discuss-subscribe@spectrum-os.org*.
+Subscribe by sending a message to discuss-subscribe@spectrum-os.org.
+Unsubscribe by sending a message to discuss-unsubscribe@spectrum-os.org.
 
 [#spectrum-devel]
 === devel@spectrum-os.org
@@ -88,5 +82,5 @@ including how patches are sent to this list and discussed.
 For more information, see
 xref:working-with-patches.adoc[Working with Patches].
 
-You can subscribe
-https://spectrum-os.org/lists/mailman3/lists/devel.spectrum-os.org/[on the web], or by sending mail to *devel-subscribe@spectrum-os.org*.
+Subscribe by sending a message to devel-subscribe@spectrum-os.org.
+Unsubscribe by sending a message to devel-unsubscribe@spectrum-os.org.
