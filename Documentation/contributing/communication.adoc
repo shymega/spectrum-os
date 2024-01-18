@@ -57,8 +57,8 @@ Unsubscribe by sending a message to discuss-unsubscribe@spectrum-os.org.
 [#spectrum-devel]
 === devel@spectrum-os.org
 
-This list is where low-level technical discussions happen, and where
-patches are sent.
+This list is where low-level technical discussions happen, bugs are
+reported, and patches are sent.
 
 There is a separate guide for the Spectrum development process,
 including how patches are sent to this list and discussed.
