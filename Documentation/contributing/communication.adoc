@@ -41,7 +41,7 @@ capacity to mirror them, please do!
 === announce@spectrum-os.org
 
 This is a one-way list where announcements from Spectrum's developers
-will be posted.
+will be posted, once the system is ready for real-world use.
 
 Subscribe by sending a message to announce-subscribe@spectrum-os.org.
 Unsubscribe by sending a message to announce-unsubscribe@spectrum-os.org.
