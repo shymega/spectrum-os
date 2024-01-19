@@ -61,10 +61,6 @@ let
 
   kernel = (linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
-      VIRTIO = yes;
-      VIRTIO_PCI = yes;
-      VIRTIO_BLK = yes;
-      VIRTIO_CONSOLE = yes;
       EROFS_FS = yes;
       EXPERT = yes;
       FONTS = lib.mkForce unset;
@@ -74,6 +70,10 @@ let
       FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER = lib.mkForce unset;
       FRAMEBUFFER_CONSOLE_DETECT_PRIMARY = lib.mkForce unset;
       FRAMEBUFFER_CONSOLE_ROTATION = lib.mkForce unset;
+      VIRTIO = yes;
+      VIRTIO_BLK = yes;
+      VIRTIO_CONSOLE = yes;
+      VIRTIO_PCI = yes;
       VT = no;
     };
   }).overrideAttrs ({ installFlags ? [], ... }: {
