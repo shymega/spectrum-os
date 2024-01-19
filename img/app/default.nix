@@ -53,6 +53,7 @@ let
 
   kernel = (linux_latest.override {
     structuredExtraConfig = with lib.kernel; {
+      DRM_FBDEV_EMULATION = lib.mkForce no;
       EROFS_FS = yes;
       EXPERT = yes;
       FONTS = lib.mkForce unset;
