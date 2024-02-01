@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
 { ... } @ args:
@@ -8,6 +8,18 @@ let
   pkgs = import ./overlaid.nix ({ elaboratedConfig = config; } // args);
 
   inherit (pkgs.lib) cleanSource fileset makeScope optionalAttrs;
+
+  makeScopeWithSplicing = pkgs: pkgs.makeScopeWithSplicing' {
+    otherSplices = {
+      selfBuildBuild = makeScope pkgs.pkgsBuildBuild.newScope scope;
+      selfBuildHost = makeScope pkgs.pkgsBuildHost.newScope scope;
+      selfBuildTarget = makeScope pkgs.pkgsBuildTarget.newScope scope;
+      selfHostHost = makeScope pkgs.pkgsHostHost.newScope scope;
+      selfTargetTarget = optionalAttrs (pkgs.pkgsTargetTarget ? newScope)
+        (makeScope pkgs.pkgsTargetTarget.newScope scope);
+    };
+    f = scope;
+  };
 
   scope = self: let pkgs = self.callPackage ({ pkgs }: pkgs) {}; in {
     inherit config;
@@ -23,7 +35,7 @@ let
     # the CLI easily.
     inherit (pkgs) cloud-hypervisor foot;
 
-    pkgsStatic = makeScope pkgs.pkgsStatic.newScope scope;
+    pkgsStatic = makeScopeWithSplicing pkgs.pkgsStatic;
 
     srcWithNix = fileset.difference
       (fileset.fromSource (cleanSource ../.))
@@ -44,14 +56,4 @@ let
   };
 in
 
-pkgs.makeScopeWithSplicing' {
-  otherSplices = {
-    selfBuildBuild = makeScope pkgs.pkgsBuildBuild.newScope scope;
-    selfBuildHost = makeScope pkgs.pkgsBuildHost.newScope scope;
-    selfBuildTarget = makeScope pkgs.pkgsBuildTarget.newScope scope;
-    selfHostHost = makeScope pkgs.pkgsHostHost.newScope scope;
-    selfTargetTarget = optionalAttrs (pkgs.pkgsTargetTarget ? newScope)
-      (makeScope pkgs.pkgsTargetTarget.newScope scope);
-  };
-  f = scope;
-}
+makeScopeWithSplicing pkgs
