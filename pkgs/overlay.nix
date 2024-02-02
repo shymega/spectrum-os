@@ -5,4 +5,6 @@
   cloud-hypervisor = import ./cloud-hypervisor { inherit final super; };
 
   foot = import ./foot { inherit final super; };
+
+  meson = import ./meson { inherit final super; };
 })
