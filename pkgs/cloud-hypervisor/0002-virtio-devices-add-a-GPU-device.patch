@@ -1,4 +1,4 @@
-From 48bfbd5aa40657cdbd836771c6690b1ed8ff4019 Mon Sep 17 00:00:00 2001
+From 1f7b985c9818c0784dcd677b3bfa5e99187e53c5 Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <alyssa.ross@unikie.com>
 Date: Wed, 7 Sep 2022 14:16:29 +0000
 Subject: [PATCH 2/2] virtio-devices: add a GPU device
@@ -34,6 +34,7 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  virtio-devices/src/vhost_user/gpu.rs          | 415 ++++++++++++++++++
  virtio-devices/src/vhost_user/mod.rs          |   6 +
  .../src/vhost_user/vu_common_ctrl.rs          |   9 +-
+ vmm/src/api/dbus/mod.rs                       |   7 +-
  vmm/src/api/http/http_endpoint.rs             |   9 +-
  vmm/src/api/http/mod.rs                       |  10 +-
  vmm/src/api/mod.rs                            |  47 +-
@@ -43,7 +44,7 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  vmm/src/lib.rs                                |  79 +++-
  vmm/src/vm.rs                                 |  28 +-
  vmm/src/vm_config.rs                          |  10 +
- 17 files changed, 910 insertions(+), 21 deletions(-)
+ 18 files changed, 916 insertions(+), 22 deletions(-)
  create mode 100644 virtio-devices/src/vhost_user/gpu.rs
 
 diff --git a/src/main.rs b/src/main.rs
@@ -659,6 +660,31 @@ index 6f980f23..54511c52 100644
      pub fn negotiate_features_vhost_user(
          &mut self,
          avail_features: u64,
+diff --git a/vmm/src/api/dbus/mod.rs b/vmm/src/api/dbus/mod.rs
+index f8a6b64c..7bd86412 100644
+--- a/vmm/src/api/dbus/mod.rs
++++ b/vmm/src/api/dbus/mod.rs
+@@ -6,7 +6,7 @@ use super::{ApiAction, ApiRequest};
+ #[cfg(all(target_arch = "x86_64", feature = "guest_debug"))]
+ use crate::api::VmCoredump;
+ use crate::api::{
+-    AddDisk, Body, VmAddDevice, VmAddFs, VmAddNet, VmAddPmem, VmAddUserDevice, VmAddVdpa,
++    AddDisk, Body, VmAddDevice, VmAddFs, VmAddGpu, VmAddNet, VmAddPmem, VmAddUserDevice, VmAddVdpa,
+     VmAddVsock, VmBoot, VmCounters, VmCreate, VmDelete, VmInfo, VmPause, VmPowerButton, VmReboot,
+     VmReceiveMigration, VmRemoveDevice, VmResize, VmResizeZone, VmRestore, VmResume,
+     VmSendMigration, VmShutdown, VmSnapshot, VmmPing, VmmShutdown,
+@@ -141,6 +141,11 @@ impl DBusApi {
+         self.vm_action(&VmAddFs, fs_config).await
+     }
+ 
++    async fn vm_add_gpu(&self, gpu_config: String) -> Result<Optional<String>> {
++        let gpu_config = serde_json::from_str(&gpu_config).map_err(api_error)?;
++        self.vm_action(&VmAddGpu, gpu_config).await
++    }
++
+     async fn vm_add_net(&self, net_config: String) -> Result<Optional<String>> {
+         let mut net_config: NetConfig = serde_json::from_str(&net_config).map_err(api_error)?;
+         if net_config.fds.is_some() {
 diff --git a/vmm/src/api/http/http_endpoint.rs b/vmm/src/api/http/http_endpoint.rs
 index 141cc1d0..1cc8786b 100644
 --- a/vmm/src/api/http/http_endpoint.rs
