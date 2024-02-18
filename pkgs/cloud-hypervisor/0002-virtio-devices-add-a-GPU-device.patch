@@ -1,4 +1,4 @@
-From 3bf98eb53f3f9637e4d2ba3d07e62f1ece891788 Mon Sep 17 00:00:00 2001
+From 48bfbd5aa40657cdbd836771c6690b1ed8ff4019 Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <alyssa.ross@unikie.com>
 Date: Wed, 7 Sep 2022 14:16:29 +0000
 Subject: [PATCH 2/2] virtio-devices: add a GPU device
@@ -37,12 +37,13 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  vmm/src/api/http/http_endpoint.rs             |   9 +-
  vmm/src/api/http/mod.rs                       |  10 +-
  vmm/src/api/mod.rs                            |  47 +-
+ vmm/src/api/openapi/cloud-hypervisor.yaml     |  39 ++
  vmm/src/config.rs                             | 108 +++++
  vmm/src/device_manager.rs                     | 135 +++++-
  vmm/src/lib.rs                                |  79 +++-
  vmm/src/vm.rs                                 |  28 +-
  vmm/src/vm_config.rs                          |  10 +
- 16 files changed, 871 insertions(+), 21 deletions(-)
+ 17 files changed, 910 insertions(+), 21 deletions(-)
  create mode 100644 virtio-devices/src/vhost_user/gpu.rs
 
 diff --git a/src/main.rs b/src/main.rs
@@ -799,6 +800,70 @@ index ad74aa9e..142bc870 100644
  pub struct VmAddPmem;
  
  impl ApiAction for VmAddPmem {
+diff --git a/vmm/src/api/openapi/cloud-hypervisor.yaml b/vmm/src/api/openapi/cloud-hypervisor.yaml
+index e8269771..3c5b90af 100644
+--- a/vmm/src/api/openapi/cloud-hypervisor.yaml
++++ b/vmm/src/api/openapi/cloud-hypervisor.yaml
+@@ -259,6 +259,28 @@ paths:
+         500:
+           description: The new device could not be added to the VM instance.
+ 
++  /vm.add-gpu:
++    put:
++      summary: Add a new virtio-gpu device to the VM
++      requestBody:
++        description: The details of the new virtio-gpu
++        content:
++          application/json:
++            schema:
++              $ref: "#/components/schemas/GpuConfig"
++        required: true
++      responses:
++        200:
++          description: The new device was successfully added to the VM instance.
++          content:
++            application/json:
++              schema:
++                $ref: "#/components/schemas/PciDeviceInfo"
++        204:
++          description: The new device was successfully (cold) added to the VM instance.
++        500:
++          description: The new device could not be added to the VM instance.
++
+   /vm.add-pmem:
+     put:
+       summary: Add a new pmem device to the VM
+@@ -574,6 +596,10 @@ components:
+           type: array
+           items:
+             $ref: "#/components/schemas/FsConfig"
++        gpu:
++          type: array
++          items:
++            $ref: "#/components/schemas/GpuConfig"
+         pmem:
+           type: array
+           items:
+@@ -980,6 +1006,19 @@ components:
+         id:
+           type: string
+ 
++    GpuConfig:
++      required:
++        - socket
++      type: object
++      properties:
++        socket:
++          type: string
++        pci_segment:
++          type: integer
++          format: int16
++        id:
++          type: string
++
+     PmemConfig:
+       required:
+         - file
 diff --git a/vmm/src/config.rs b/vmm/src/config.rs
 index 4b4e618a..d21c9655 100644
 --- a/vmm/src/config.rs
