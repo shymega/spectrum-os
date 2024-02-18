@@ -1,4 +1,4 @@
-From 1f7b985c9818c0784dcd677b3bfa5e99187e53c5 Mon Sep 17 00:00:00 2001
+From 4dbb7b2a0ffe3ac55c1c0a0dde992597cd2959e3 Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <alyssa.ross@unikie.com>
 Date: Wed, 7 Sep 2022 14:16:29 +0000
 Subject: [PATCH 2/2] virtio-devices: add a GPU device
@@ -8,7 +8,7 @@ SPDX-FileCopyrightText: 2018 Amazon.com, Inc. or its affiliates. All Rights Rese
 SPDX-FileCopyrightText: 2019-2020 Intel Corporation
 SPDX-FileCopyrightText: 2020, Oracle and/or its affiliates.
 SPDX-FileCopyrightText: 2022 Unikie
-SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 SPDX-License-Identifier: Apache-2.0 AND LicenseRef-BSD-3-Clause-Google
 
 This adds support for exposing a virtio-gpu device to guest by
@@ -26,6 +26,7 @@ Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
 Co-authored-by: Alyssa Ross <hi@alyssa.is>
 Signed-off-by: Alyssa Ross <hi@alyssa.is>
 ---
+ src/bin/ch-remote.rs                          |  44 ++
  src/main.rs                                   |   8 +
  virtio-devices/src/device.rs                  |   4 +-
  virtio-devices/src/lib.rs                     |   4 +-
@@ -44,9 +45,113 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  vmm/src/lib.rs                                |  79 +++-
  vmm/src/vm.rs                                 |  28 +-
  vmm/src/vm_config.rs                          |  10 +
- 18 files changed, 916 insertions(+), 22 deletions(-)
+ 19 files changed, 960 insertions(+), 22 deletions(-)
  create mode 100644 virtio-devices/src/vhost_user/gpu.rs
 
+diff --git a/src/bin/ch-remote.rs b/src/bin/ch-remote.rs
+index 1d5d5d0b..2d528f07 100644
+--- a/src/bin/ch-remote.rs
++++ b/src/bin/ch-remote.rs
+@@ -30,6 +30,7 @@ enum Error {
+     AddDeviceConfig(vmm::config::Error),
+     AddDiskConfig(vmm::config::Error),
+     AddFsConfig(vmm::config::Error),
++    AddGpuConfig(vmm::config::Error),
+     AddPmemConfig(vmm::config::Error),
+     AddNetConfig(vmm::config::Error),
+     AddUserDeviceConfig(vmm::config::Error),
+@@ -53,6 +54,7 @@ impl fmt::Display for Error {
+             AddDeviceConfig(e) => write!(f, "Error parsing device syntax: {e}"),
+             AddDiskConfig(e) => write!(f, "Error parsing disk syntax: {e}"),
+             AddFsConfig(e) => write!(f, "Error parsing filesystem syntax: {e}"),
++            AddGpuConfig(e) => write!(f, "Error parsing GPU syntax: {e}"),
+             AddPmemConfig(e) => write!(f, "Error parsing persistent memory syntax: {e}"),
+             AddNetConfig(e) => write!(f, "Error parsing network syntax: {e}"),
+             AddUserDeviceConfig(e) => write!(f, "Error parsing user device syntax: {e}"),
+@@ -79,6 +81,7 @@ trait DBusApi1 {
+     fn vm_add_device(&self, device_config: &str) -> zbus::Result<Optional<String>>;
+     fn vm_add_disk(&self, disk_config: &str) -> zbus::Result<Optional<String>>;
+     fn vm_add_fs(&self, fs_config: &str) -> zbus::Result<Optional<String>>;
++    fn vm_add_gpu(&self, gpu_config: &str) -> zbus::Result<Optional<String>>;
+     fn vm_add_net(&self, net_config: &str) -> zbus::Result<Optional<String>>;
+     fn vm_add_pmem(&self, pmem_config: &str) -> zbus::Result<Optional<String>>;
+     fn vm_add_user_device(&self, vm_add_user_device: &str) -> zbus::Result<Optional<String>>;
+@@ -151,6 +154,10 @@ impl<'a> DBusApi1ProxyBlocking<'a> {
+         self.print_response(self.vm_add_fs(fs_config))
+     }
+ 
++    fn api_vm_add_gpu(&self, gpu_config: &str) -> ApiResult {
++        self.print_response(self.vm_add_gpu(gpu_config))
++    }
++
+     fn api_vm_add_net(&self, net_config: &str) -> ApiResult {
+         self.print_response(self.vm_add_net(net_config))
+     }
+@@ -377,6 +384,17 @@ fn rest_api_do_command(matches: &ArgMatches, socket: &mut UnixStream) -> ApiResu
+             simple_api_command(socket, "PUT", "add-fs", Some(&fs_config))
+                 .map_err(Error::HttpApiClient)
+         }
++        Some("add-gpu") => {
++            let gpu_config = add_gpu_config(
++                matches
++                    .subcommand_matches("add-gpu")
++                    .unwrap()
++                    .get_one::<String>("gpu_config")
++                    .unwrap(),
++            )?;
++            simple_api_command(socket, "PUT", "add-gpu", Some(&gpu_config))
++                .map_err(Error::HttpApiClient)
++        }
+         Some("add-pmem") => {
+             let pmem_config = add_pmem_config(
+                 matches
+@@ -599,6 +617,16 @@ fn dbus_api_do_command(matches: &ArgMatches, proxy: &DBusApi1ProxyBlocking<'_>)
+             )?;
+             proxy.api_vm_add_fs(&fs_config)
+         }
++        Some("add-gpu") => {
++            let gpu_config = add_gpu_config(
++                matches
++                    .subcommand_matches("add-gpu")
++                    .unwrap()
++                    .get_one::<String>("gpu_config")
++                    .unwrap(),
++            )?;
++            proxy.api_vm_add_gpu(&gpu_config)
++        }
+         Some("add-pmem") => {
+             let pmem_config = add_pmem_config(
+                 matches
+@@ -806,6 +834,13 @@ fn add_fs_config(config: &str) -> Result<String, Error> {
+     Ok(fs_config)
+ }
+ 
++fn add_gpu_config(config: &str) -> Result<String, Error> {
++    let gpu_config = vmm::config::GpuConfig::parse(config).map_err(Error::AddGpuConfig)?;
++    let gpu_config = serde_json::to_string(&gpu_config).unwrap();
++
++    Ok(gpu_config)
++}
++
+ fn add_pmem_config(config: &str) -> Result<String, Error> {
+     let pmem_config = vmm::config::PmemConfig::parse(config).map_err(Error::AddPmemConfig)?;
+     let pmem_config = serde_json::to_string(&pmem_config).unwrap();
+@@ -943,6 +978,15 @@ fn main() {
+                         .help(vmm::config::FsConfig::SYNTAX),
+                 ),
+         )
++        .subcommand(
++            Command::new("add-gpu")
++                .about("Add virtio-gpu backed gpu device")
++                .arg(
++                    Arg::new("gpu_config")
++                        .index(1)
++                        .help(vmm::config::GpuConfig::SYNTAX),
++                ),
++        )
+         .subcommand(
+             Command::new("add-pmem")
+                 .about("Add persistent memory device")
 diff --git a/src/main.rs b/src/main.rs
 index 86d80562..149b4c74 100644
 --- a/src/main.rs
