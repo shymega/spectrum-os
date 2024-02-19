@@ -1,4 +1,4 @@
-From 465b7c191a4149f4536384e24dc127eaae70a803 Mon Sep 17 00:00:00 2001
+From 97de38adff41894ac5b8ed5820a67c8309afda9e Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <hi@alyssa.is>
 Date: Sat, 29 Jul 2023 12:03:18 +0000
 Subject: [PATCH 4/4] vhost_user: renumber SHARED_MEMORY_REGIONS
@@ -25,14 +25,14 @@ Commit-Queue: Daniel Verkamp <dverkamp@chromium.org>
 (cherry-picked from commit 6795b3edf3ddc0b3a2e2b928033f21dabcf8be78)
 Signed-off-by: Alyssa Ross <hi@alyssa.is>
 ---
- crates/vhost/src/vhost_user/message.rs | 4 ++--
+ vhost/src/vhost_user/message.rs | 4 ++--
  1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/crates/vhost/src/vhost_user/message.rs b/crates/vhost/src/vhost_user/message.rs
-index 6764d6d..0be6b1a 100644
---- a/crates/vhost/src/vhost_user/message.rs
-+++ b/crates/vhost/src/vhost_user/message.rs
-@@ -437,8 +437,8 @@ bitflags! {
+diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
+index 7815d3e..c0d8dcc 100644
+--- a/vhost/src/vhost_user/message.rs
++++ b/vhost/src/vhost_user/message.rs
+@@ -440,8 +440,8 @@ bitflags! {
          const STATUS = 0x0001_0000;
          /// Support Xen mmap.
          const XEN_MMAP = 0x0002_0000;
@@ -44,5 +44,5 @@ index 6764d6d..0be6b1a 100644
  }
  
 -- 
-2.42.0
+2.43.0
 

@@ -1,4 +1,4 @@
-From f6295a94fbecabf29ffae4f7189dfa57bdf79447 Mon Sep 17 00:00:00 2001
+From d164b4634073b2efc63a3a9f78aafd5eb40243f5 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
 Subject: [PATCH 2/4] vhost_user: add shared memory region support
@@ -28,19 +28,19 @@ Tested-by: kokoro <noreply+kokoro@google.com>
 (cherry-picked from commit f436e2706011fa5f34dc415972434aa3299ebc43)
 Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
 ---
- crates/vhost-user-backend/src/handler.rs      |  10 +-
- crates/vhost/src/vhost_user/backend_req.rs    |  20 ++-
- .../src/vhost_user/backend_req_handler.rs     |  15 ++
- crates/vhost/src/vhost_user/dummy_backend.rs  |   4 +
- crates/vhost/src/vhost_user/frontend.rs       |  24 ++++
- .../src/vhost_user/frontend_req_handler.rs    |  53 ++++++-
- crates/vhost/src/vhost_user/message.rs        | 136 +++++++++++++++++-
- 7 files changed, 246 insertions(+), 16 deletions(-)
+ vhost-user-backend/src/handler.rs            |  10 +-
+ vhost/src/vhost_user/backend_req.rs          |  20 ++-
+ vhost/src/vhost_user/backend_req_handler.rs  |  15 +++
+ vhost/src/vhost_user/dummy_backend.rs        |   4 +
+ vhost/src/vhost_user/frontend.rs             |  24 ++++
+ vhost/src/vhost_user/frontend_req_handler.rs |  53 +++++++-
+ vhost/src/vhost_user/message.rs              | 132 ++++++++++++++++++-
+ 7 files changed, 244 insertions(+), 14 deletions(-)
 
-diff --git a/crates/vhost-user-backend/src/handler.rs b/crates/vhost-user-backend/src/handler.rs
-index 8be4768..e141e07 100644
---- a/crates/vhost-user-backend/src/handler.rs
-+++ b/crates/vhost-user-backend/src/handler.rs
+diff --git a/vhost-user-backend/src/handler.rs b/vhost-user-backend/src/handler.rs
+index 83f5293..f5a8f0f 100644
+--- a/vhost-user-backend/src/handler.rs
++++ b/vhost-user-backend/src/handler.rs
 @@ -11,9 +11,9 @@ use std::sync::Arc;
  use std::thread;
  
@@ -54,7 +54,7 @@ index 8be4768..e141e07 100644
  };
  use vhost::vhost_user::{
      Backend, Error as VhostUserError, Result as VhostUserResult, VhostUserBackendReqHandlerMut,
-@@ -597,6 +597,10 @@ where
+@@ -617,6 +617,10 @@ where
  
          Ok(())
      }
@@ -65,10 +65,10 @@ index 8be4768..e141e07 100644
  }
  
  impl<T: VhostUserBackend> Drop for VhostUserHandler<T> {
-diff --git a/crates/vhost/src/vhost_user/backend_req.rs b/crates/vhost/src/vhost_user/backend_req.rs
+diff --git a/vhost/src/vhost_user/backend_req.rs b/vhost/src/vhost_user/backend_req.rs
 index b43982f..948e1b2 100644
---- a/crates/vhost/src/vhost_user/backend_req.rs
-+++ b/crates/vhost/src/vhost_user/backend_req.rs
+--- a/vhost/src/vhost_user/backend_req.rs
++++ b/vhost/src/vhost_user/backend_req.rs
 @@ -46,12 +46,16 @@ impl BackendInternal {
          }
          self.sock.send_message(&hdr, body, fds)?;
@@ -106,10 +106,10 @@ index b43982f..948e1b2 100644
      /// Forward vhost-user-fs map file requests to the backend.
      fn fs_backend_map(&self, fs: &VhostUserFSBackendMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
          self.send_message(BackendReq::FS_MAP, fs, Some(&[fd.as_raw_fd()]))
-diff --git a/crates/vhost/src/vhost_user/backend_req_handler.rs b/crates/vhost/src/vhost_user/backend_req_handler.rs
+diff --git a/vhost/src/vhost_user/backend_req_handler.rs b/vhost/src/vhost_user/backend_req_handler.rs
 index 7b4cbe9..84486aa 100644
---- a/crates/vhost/src/vhost_user/backend_req_handler.rs
-+++ b/crates/vhost/src/vhost_user/backend_req_handler.rs
+--- a/vhost/src/vhost_user/backend_req_handler.rs
++++ b/vhost/src/vhost_user/backend_req_handler.rs
 @@ -70,6 +70,7 @@ pub trait VhostUserBackendReqHandler {
      fn get_max_mem_slots(&self) -> Result<u64>;
      fn add_mem_region(&self, region: &VhostUserSingleMemoryRegion, fd: File) -> Result<()>;
@@ -153,10 +153,10 @@ index 7b4cbe9..84486aa 100644
              _ => {
                  return Err(Error::InvalidMessage);
              }
-diff --git a/crates/vhost/src/vhost_user/dummy_backend.rs b/crates/vhost/src/vhost_user/dummy_backend.rs
-index 060a344..aab5ee1 100644
---- a/crates/vhost/src/vhost_user/dummy_backend.rs
-+++ b/crates/vhost/src/vhost_user/dummy_backend.rs
+diff --git a/vhost/src/vhost_user/dummy_backend.rs b/vhost/src/vhost_user/dummy_backend.rs
+index 9d9f977..4d9aef1 100644
+--- a/vhost/src/vhost_user/dummy_backend.rs
++++ b/vhost/src/vhost_user/dummy_backend.rs
 @@ -291,4 +291,8 @@ impl VhostUserBackendReqHandlerMut for DummyBackendReqHandler {
      fn remove_mem_region(&mut self, _region: &VhostUserSingleMemoryRegion) -> Result<()> {
          Ok(())
@@ -166,10 +166,10 @@ index 060a344..aab5ee1 100644
 +        Ok(Vec::new())
 +    }
  }
-diff --git a/crates/vhost/src/vhost_user/frontend.rs b/crates/vhost/src/vhost_user/frontend.rs
-index 4068dd6..47ace8f 100644
---- a/crates/vhost/src/vhost_user/frontend.rs
-+++ b/crates/vhost/src/vhost_user/frontend.rs
+diff --git a/vhost/src/vhost_user/frontend.rs b/vhost/src/vhost_user/frontend.rs
+index 8674be7..4a745a8 100644
+--- a/vhost/src/vhost_user/frontend.rs
++++ b/vhost/src/vhost_user/frontend.rs
 @@ -72,6 +72,9 @@ pub trait VhostUserFrontend: VhostBackend {
  
      /// Remove a guest memory mapping from vhost.
@@ -208,10 +208,10 @@ index 4068dd6..47ace8f 100644
  }
  
  impl AsRawFd for Frontend {
-diff --git a/crates/vhost/src/vhost_user/frontend_req_handler.rs b/crates/vhost/src/vhost_user/frontend_req_handler.rs
+diff --git a/vhost/src/vhost_user/frontend_req_handler.rs b/vhost/src/vhost_user/frontend_req_handler.rs
 index fb2dc16..cd4f604 100644
---- a/crates/vhost/src/vhost_user/frontend_req_handler.rs
-+++ b/crates/vhost/src/vhost_user/frontend_req_handler.rs
+--- a/vhost/src/vhost_user/frontend_req_handler.rs
++++ b/vhost/src/vhost_user/frontend_req_handler.rs
 @@ -33,6 +33,16 @@ pub trait VhostUserFrontendReqHandler {
          Err(std::io::Error::from_raw_os_error(libc::ENOSYS))
      }
@@ -318,49 +318,43 @@ index fb2dc16..cd4f604 100644
              let hdr = self.new_reply_header::<VhostUserU64>(req)?;
              let def_err = libc::EINVAL;
              let val = match res {
-diff --git a/crates/vhost/src/vhost_user/message.rs b/crates/vhost/src/vhost_user/message.rs
-index df7edcd..21b0943 100644
---- a/crates/vhost/src/vhost_user/message.rs
-+++ b/crates/vhost/src/vhost_user/message.rs
-@@ -146,8 +146,10 @@ pub enum FrontendReq {
-     /// Query the backend for its device status as defined in the VIRTIO
-     /// specification.
-     GET_STATUS = 40,
-+    /// Get a list of the device's shared memory regions.
-+    GET_SHARED_MEMORY_REGIONS = 41,
-     /// Upper bound of valid commands.
--    MAX_CMD = 41,
-+    MAX_CMD = 42,
+diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
+index 43e7314..67fc19a 100644
+--- a/vhost/src/vhost_user/message.rs
++++ b/vhost/src/vhost_user/message.rs
+@@ -178,6 +178,8 @@ enum_value! {
+         /// Query the backend for its device status as defined in the VIRTIO
+         /// specification.
+         GET_STATUS = 40,
++        /// Get a list of the device's shared memory regions.
++        GET_SHARED_MEMORY_REGIONS = 41,
+     }
  }
  
- impl From<FrontendReq> for u32 {
-@@ -178,16 +180,20 @@ pub enum BackendReq {
-     VRING_CALL = 4,
-     /// Indicate that an error occurred on the specific vring.
-     VRING_ERR = 5,
-+    /// Indicates a request to map a fd into a shared memory region.
-+    SHMEM_MAP = 6,
-+    /// Indicates a request to unmap part of a shared memory region.
-+    SHMEM_UNMAP = 7,
-     /// Virtio-fs draft: map file content into the window.
--    FS_MAP = 6,
-+    FS_MAP = 8,
-     /// Virtio-fs draft: unmap file content from the window.
--    FS_UNMAP = 7,
-+    FS_UNMAP = 9,
-     /// Virtio-fs draft: sync file content.
--    FS_SYNC = 8,
-+    FS_SYNC = 10,
-     /// Virtio-fs draft: perform a read/write from an fd directly to GPA.
--    FS_IO = 9,
-+    FS_IO = 11,
-     /// Upper bound of valid commands.
--    MAX_CMD = 10,
-+    MAX_CMD = 12,
+@@ -197,14 +199,18 @@ enum_value! {
+         VRING_CALL = 4,
+         /// Indicate that an error occurred on the specific vring.
+         VRING_ERR = 5,
++        /// Indicates a request to map a fd into a shared memory region.
++        SHMEM_MAP = 6,
++        /// Indicates a request to unmap part of a shared memory region.
++        SHMEM_UNMAP = 7,
+         /// Virtio-fs draft: map file content into the window.
+-        FS_MAP = 6,
++        FS_MAP = 8,
+         /// Virtio-fs draft: unmap file content from the window.
+-        FS_UNMAP = 7,
++        FS_UNMAP = 9,
+         /// Virtio-fs draft: sync file content.
+-        FS_SYNC = 8,
++        FS_SYNC = 10,
+         /// Virtio-fs draft: perform a read/write from an fd directly to GPA.
+-        FS_IO = 9,
++        FS_IO = 11,
+     }
  }
  
- impl From<BackendReq> for u32 {
-@@ -978,6 +984,99 @@ impl VhostUserMsgValidator for VhostUserFSBackendMsg {
+@@ -955,6 +961,99 @@ impl VhostUserMsgValidator for VhostUserFSBackendMsg {
      }
  }
  
@@ -458,9 +452,9 @@ index df7edcd..21b0943 100644
 +}
 +
  /// Inflight I/O descriptor state for split virtqueues
- #[repr(packed)]
+ #[repr(C, packed)]
  #[derive(Clone, Copy, Default)]
-@@ -1109,6 +1208,31 @@ impl QueueRegionPacked {
+@@ -1086,6 +1185,31 @@ impl QueueRegionPacked {
      }
  }
  
@@ -493,5 +487,5 @@ index df7edcd..21b0943 100644
  mod tests {
      use super::*;
 -- 
-2.42.0
+2.43.0
 

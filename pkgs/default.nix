@@ -33,7 +33,7 @@ let
 
     # Packages from the overlay, so it's possible to build them from
     # the CLI easily.
-    inherit (pkgs) cloud-hypervisor foot meson;
+    inherit (pkgs) cloud-hypervisor foot;
 
     pkgsStatic = makeScopeWithSplicing pkgs.pkgsStatic;
 

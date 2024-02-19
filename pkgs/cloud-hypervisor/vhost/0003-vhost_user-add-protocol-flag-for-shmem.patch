@@ -1,4 +1,4 @@
-From 6ff8acf9d8bc27a49954c43cf93f36ae18d2f9cb Mon Sep 17 00:00:00 2001
+From d0dfc05aa3789cbc2a1a2057ae4f5aae0913ae3d Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Thu, 13 Oct 2022 10:37:47 +0900
 Subject: [PATCH 3/4] vhost_user: add protocol flag for shmem
@@ -21,14 +21,14 @@ Commit-Queue: David Stevens <stevensd@chromium.org>
 (cherry-picked from commit 60aa43629ae9be2cc3df37c648ab7e0e5ff2172c)
 Signed-off-by: Alyssa Ross <hi@alyssa.is>
 ---
- crates/vhost/src/vhost_user/message.rs | 2 ++
+ vhost/src/vhost_user/message.rs | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/crates/vhost/src/vhost_user/message.rs b/crates/vhost/src/vhost_user/message.rs
-index 21b0943..6764d6d 100644
---- a/crates/vhost/src/vhost_user/message.rs
-+++ b/crates/vhost/src/vhost_user/message.rs
-@@ -437,6 +437,8 @@ bitflags! {
+diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
+index 67fc19a..7815d3e 100644
+--- a/vhost/src/vhost_user/message.rs
++++ b/vhost/src/vhost_user/message.rs
+@@ -440,6 +440,8 @@ bitflags! {
          const STATUS = 0x0001_0000;
          /// Support Xen mmap.
          const XEN_MMAP = 0x0002_0000;
@@ -38,5 +38,5 @@ index 21b0943..6764d6d 100644
  }
  
 -- 
-2.42.0
+2.43.0
 

@@ -1,4 +1,4 @@
-From cb9d39048282bc28d0a5be01be268dd74fbd3408 Mon Sep 17 00:00:00 2001
+From 407b410f3f802d4d5f37a5525fa29c8deaf8998e Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <alyssa.ross@unikie.com>
 Date: Wed, 28 Sep 2022 12:18:19 +0000
 Subject: [PATCH 1/2] build: use local vhost
@@ -14,40 +14,40 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  2 files changed, 2 insertions(+), 4 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 52afc0d1..bef28e85 100644
+index 533a473d..51b33209 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -2371,8 +2371,6 @@ dependencies = [
+@@ -2376,8 +2376,6 @@ dependencies = [
  [[package]]
  name = "vhost"
- version = "0.9.0"
+ version = "0.10.0"
 -source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "289adfce099c71f8310f895932ccd978f352ca494ea47496dbe20d4241888b82"
+-checksum = "2b64e816d0d49769fbfaa1494eb77cc2a3ddc526ead05c7f922cb7d64106286f"
  dependencies = [
   "bitflags 2.4.1",
   "libc",
-@@ -2383,8 +2381,6 @@ dependencies = [
+@@ -2388,8 +2386,6 @@ dependencies = [
  [[package]]
  name = "vhost-user-backend"
- version = "0.11.0"
+ version = "0.13.1"
 -source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "61255322e3ebe93fb77d9f6d99577eca7089bbea4174076c5353a8024a463061"
+-checksum = "72c8c447d076ac508d78cb45664d203df7989e891656dce260a7e93d72352c9a"
  dependencies = [
   "libc",
   "log",
 diff --git a/Cargo.toml b/Cargo.toml
-index ceb1fc67..5d750eba 100644
+index 4ef23821..c0455bed 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -55,6 +55,8 @@ zbus = { version = "3.11.1", optional = true }
- kvm-bindings = { git = "https://github.com/cloud-hypervisor/kvm-bindings", branch = "ch-v0.6.0-tdx" }
- kvm-ioctls = { git = "https://github.com/rust-vmm/kvm-ioctls", branch = "main" }
- versionize_derive = { git = "https://github.com/cloud-hypervisor/versionize_derive", branch = "ch" }
-+vhost = { path = "../vhost/crates/vhost" }
-+vhost-user-backend = { path = "../vhost/crates/vhost-user-backend" }
+@@ -54,6 +54,8 @@ zbus = { version = "3.11.1", optional = true }
+ [patch.crates-io]
+ kvm-bindings = { git = "https://github.com/cloud-hypervisor/kvm-bindings", branch = "ch-v0.7.0" }
+ versionize_derive = { git = "https://github.com/cloud-hypervisor/versionize_derive", branch = "ch-0.1.6" }
++vhost = { path = "../vhost/vhost" }
++vhost-user-backend = { path = "../vhost/vhost-user-backend" }
  
  [dev-dependencies]
  dirs = "5.0.0"
 -- 
-2.42.0
+2.43.0
 
