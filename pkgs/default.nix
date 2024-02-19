@@ -30,6 +30,7 @@ let
     lseek = self.callSpectrumPackage ../tools/lseek {};
     rootfs = self.callSpectrumPackage ../host/rootfs {};
     start-vm = self.callSpectrumPackage ../host/start-vm {};
+    run-spectrum-vm = self.callSpectrumPackage ../scripts/run-spectrum-vm.nix {};
 
     # Packages from the overlay, so it's possible to build them from
     # the CLI easily.

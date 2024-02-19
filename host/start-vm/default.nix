@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ src, lib, stdenv, meson, ninja, rustc, clippy }:
+{ src, lib, stdenv, meson, ninja, rustc, clippy, run-spectrum-vm }:
 
 stdenv.mkDerivation (finalAttrs: {
   name = "start-vm";
@@ -28,6 +28,8 @@ stdenv.mkDerivation (finalAttrs: {
         postBuild = ''touch $out && exit 0'';
       }
     );
+
+    run = run-spectrum-vm.override { start-vm = finalAttrs.finalPackage; };
   };
 
   meta = {
