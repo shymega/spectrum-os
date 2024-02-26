@@ -7,4 +7,4 @@ ryu = static_library('ryu', 'src/lib.rs', rust_crate_type : 'rlib')
 
 ryu_dep = declare_dependency(link_with : ryu)
 
-meson.override_dependency('ryu', ryu_dep)
+meson.override_dependency('ryu-rs', ryu_dep)

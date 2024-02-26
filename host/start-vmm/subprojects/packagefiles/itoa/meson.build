@@ -7,4 +7,4 @@ itoa = static_library('itoa', 'src/lib.rs', rust_crate_type : 'rlib')
 
 itoa_dep = declare_dependency(link_with : itoa)
 
-meson.override_dependency('itoa', itoa_dep)
+meson.override_dependency('itoa-rs', itoa_dep)

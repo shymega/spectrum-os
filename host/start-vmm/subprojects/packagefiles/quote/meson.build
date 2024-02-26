@@ -4,7 +4,7 @@
 project('quote', 'rust', version : '1.0.35',
   default_options : ['build.rust_std=2018', 'rust_std=2018'])
 
-proc_macro2_dep = dependency('proc-macro2', native : true)
+proc_macro2_dep = dependency('proc-macro2-rs', native : true)
 
 quote = static_library('quote', 'src/lib.rs',
   dependencies : proc_macro2_dep,
@@ -16,4 +16,4 @@ quote_dep = declare_dependency(
   dependencies : proc_macro2_dep,
   link_with : quote)
 
-meson.override_dependency('quote', quote_dep, native : true)
+meson.override_dependency('quote-rs', quote_dep, native : true)

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: CC0-1.0
-# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 
 [wrap-file]
 directory = itoa-1.0.10
@@ -7,3 +7,6 @@ source_url = https://crates.io/api/v1/crates/itoa/1.0.10/download
 source_filename = itoa-1.0.10.tar.gz
 source_hash = b1a46d1a171d865aa5f83f92695765caa047a9b4cbae2cbf37dbd613a793fd4c
 patch_directory = itoa
+
+[provide]
+dependency_names = itoa-rs

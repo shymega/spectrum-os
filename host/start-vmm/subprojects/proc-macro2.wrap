@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: CC0-1.0
-# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 
 [wrap-file]
 directory = proc-macro2-1.0.78
@@ -7,3 +7,6 @@ source_url = https://crates.io/api/v1/crates/proc-macro2/1.0.78/download
 source_filename = proc-macro2-1.0.78.tar.gz
 source_hash = e2422ad645d89c99f8f3e6b88a9fdeca7fabeac836b1002371c4367c8f984aae
 patch_directory = proc-macro2
+
+[provide]
+dependency_names = proc-macro2-rs

@@ -6,7 +6,7 @@ project('start-vmm', 'rust', 'c',
 
 add_project_arguments('-D_GNU_SOURCE', '-Wno-error=attributes', language : 'c')
 
-miniserde_dep = dependency('miniserde')
+miniserde_dep = dependency('miniserde-rs')
 
 c_lib = static_library('start-vmm', 'fork.c', 'net.c', 'net-util.c', 'unix.c')
 rust_lib = static_library('start_vmm', 'lib.rs',

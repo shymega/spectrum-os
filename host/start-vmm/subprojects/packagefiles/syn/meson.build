@@ -4,8 +4,8 @@
 project('syn', 'rust', version : '2.0.41',
   default_options : ['build.rust_std=2021', 'rust_std=2021'])
 
-proc_macro2_dep = dependency('proc-macro2', native : true)
-quote_dep = dependency('quote', native : true)
+proc_macro2_dep = dependency('proc-macro2-rs', native : true)
+quote_dep = dependency('quote-rs', native : true)
 
 syn = static_library('syn', 'src/lib.rs',
   dependencies : [proc_macro2_dep, quote_dep],
@@ -24,4 +24,4 @@ syn_dep = declare_dependency(
   dependencies : [proc_macro2_dep, quote_dep],
   link_with : syn)
 
-meson.override_dependency('syn', syn_dep, native : true)
+meson.override_dependency('syn-rs', syn_dep, native : true)

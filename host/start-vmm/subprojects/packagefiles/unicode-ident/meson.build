@@ -11,4 +11,4 @@ unicode_ident = static_library('unicode_ident', 'src/lib.rs',
 
 unicode_ident_dep = declare_dependency(link_with : unicode_ident)
 
-meson.override_dependency('unicode-ident', unicode_ident_dep, native : true)
+meson.override_dependency('unicode-ident-rs', unicode_ident_dep, native : true)
