@@ -15,9 +15,9 @@ let
       hash = "sha256-saRtGhcdhlql+D+SaVdlyqBHqbTLriy/N9vWE6eT/Uw=";
     })
     (fetchurl {
-      name = "miniserde-0.1.37.tar.gz";
-      url = "https://github.com/dtolnay/miniserde/archive/0.1.37.tar.gz";
-      hash = "sha256-zE4WY6uI/7P7NaJyb2aZAnSL1rBSq5hAtx26151qUEk=";
+      name = "miniserde-0.1.38.tar.gz";
+      url = "https://github.com/dtolnay/miniserde/archive/0.1.38.tar.gz";
+      hash = "sha256-QmT40OREY7i8T/Q9movk6gD6xsVhlejxnjFrj86d4TI=";
     })
     (fetchCrate {
       pname = "proc-macro2";

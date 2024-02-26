@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-project('miniserde', 'rust', version : '0.1.37',
+project('miniserde', 'rust', version : '0.1.38',
   default_options : ['build.rust_std=2021', 'rust_std=2021'])
 
 quote_dep = dependency('quote', native : true)
