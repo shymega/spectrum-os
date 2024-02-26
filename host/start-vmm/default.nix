@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ src, lib, stdenv, fetchCrate, fetchFromGitHub, fetchurl, buildPackages
+{ src, lib, stdenv, fetchCrate, fetchurl, buildPackages
 , meson, ninja, rustc, clippy, run-spectrum-vm
 }:
 
