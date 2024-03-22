@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-project('proc-macro2', 'rust', version : '1.0.78',
+project('proc-macro2', 'rust', version : '1.0.79',
   default_options : ['build.rust_std=2021', 'rust_std=2021'])
 
 unicode_ident_dep = dependency('unicode-ident-rs', native : true)
