@@ -39,9 +39,9 @@ let
     })
     (fetchCrate {
       pname = "syn";
-      version = "2.0.41";
+      version = "2.0.53";
       unpack = false;
-      hash = "sha256-RMiyjEd8w78OeWZWHjRgEw4SVfehz3GTEHXxxeen4mk=";
+      hash = "sha256-c4PNDkn/9La5DKVnC/0+nWpzOz+QxoZgWqfuyMSZYDI=";
     })
     (fetchCrate {
       pname = "unicode-ident";
@@ -85,6 +85,8 @@ stdenv.mkDerivation (finalAttrs: {
           mesonFlagsArray+=(
               -Dproc-macro2:werror=false
               -Dproc-macro2:warning_level=0
+              -Dsyn:werror=false
+              -Dsyn:warning_level=0
           )
         '';
         postBuild = ''touch $out && exit 0'';
