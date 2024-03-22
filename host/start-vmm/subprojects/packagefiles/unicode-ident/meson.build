@@ -6,7 +6,6 @@ project('unicode-ident', 'rust', version : '1.0.9',
 
 unicode_ident = static_library('unicode_ident', 'src/lib.rs',
   native : true,
-  rust_args : ['-C', 'panic=unwind'],
   rust_crate_type : 'rlib')
 
 unicode_ident_dep = declare_dependency(link_with : unicode_ident)

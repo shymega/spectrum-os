@@ -69,9 +69,7 @@ stdenv.mkDerivation (finalAttrs: {
     ln -s ${crate} subprojects/packagecache/${crate.name}
   '') packageCache;
 
-  preConfigure = ''
-    mesonFlagsArray+=(-Drust_args="-C panic=abort" -Dtests=false -Dwerror=true)
-  '';
+  mesonFlags = [ "-Dtests=false" "-Dunwind=false" "-Dwerror=true" ];
 
   passthru.tests = {
     clippy = finalAttrs.finalPackage.overrideAttrs (
@@ -85,7 +83,6 @@ stdenv.mkDerivation (finalAttrs: {
           # non-subprojects without enumerating the subprojects.
           # https://github.com/mesonbuild/meson/issues/9398#issuecomment-954094750
           mesonFlagsArray+=(
-              -Dwerror=true
               -Dproc-macro2:werror=false
               -Dproc-macro2:warning_level=0
           )

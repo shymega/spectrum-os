@@ -1,10 +1,14 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 project('start-vmm', 'rust', 'c',
   default_options : ['c_std=c2x', 'rust_std=2018'])
 
 add_project_arguments('-D_GNU_SOURCE', '-Wno-error=attributes', language : 'c')
+
+if not get_option('unwind')
+  add_project_arguments('-C', 'panic=abort', language : 'rust')
+endif
 
 miniserde_dep = dependency('miniserde-rs')
 

@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
+# SPDX-License-Identifier: MIT
+
+option('unwind',
+  type : 'boolean',
+  description : 'Build with -C panic=unwind',
+  yield : true)

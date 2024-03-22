@@ -9,7 +9,6 @@ proc_macro2_dep = dependency('proc-macro2-rs', native : true)
 quote = static_library('quote', 'src/lib.rs',
   dependencies : proc_macro2_dep,
   native : true,
-  rust_args : ['-C', 'panic=unwind'],
   rust_crate_type : 'rlib')
 
 quote_dep = declare_dependency(

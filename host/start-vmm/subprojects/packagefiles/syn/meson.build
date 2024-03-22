@@ -11,7 +11,6 @@ syn = static_library('syn', 'src/lib.rs',
   dependencies : [proc_macro2_dep, quote_dep],
   native : true,
   rust_args : [
-    '-C', 'panic=unwind',
     '--cfg', 'feature="clone-impls"',
     '--cfg', 'feature="derive"',
     '--cfg', 'feature="parsing"',
