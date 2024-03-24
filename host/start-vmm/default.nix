@@ -39,9 +39,9 @@ let
     })
     (fetchCrate {
       pname = "syn";
-      version = "2.0.53";
+      version = "2.0.55";
       unpack = false;
-      hash = "sha256-c4PNDkn/9La5DKVnC/0+nWpzOz+QxoZgWqfuyMSZYDI=";
+      hash = "sha256-ACobPb+Wft+vwyZV0PN3qwu3uZSqHTLIzH6bi/PruPA=";
     })
     (fetchCrate {
       pname = "unicode-ident";
