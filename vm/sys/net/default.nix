@@ -71,6 +71,7 @@ let
       FRAMEBUFFER_CONSOLE_DEFERRED_TAKEOVER = lib.mkForce unset;
       FRAMEBUFFER_CONSOLE_DETECT_PRIMARY = lib.mkForce unset;
       FRAMEBUFFER_CONSOLE_ROTATION = lib.mkForce unset;
+      RC_CORE = lib.mkForce unset;
       VIRTIO = yes;
       VIRTIO_BLK = yes;
       VIRTIO_CONSOLE = yes;
