@@ -55,7 +55,6 @@ let
     structuredExtraConfig = with lib.kernel; {
       DRM_FBDEV_EMULATION = lib.mkForce no;
       EROFS_FS = yes;
-      EXPERT = yes;
       FONTS = lib.mkForce unset;
       FONT_8x8 = lib.mkForce unset;
       FONT_TER16x32 = lib.mkForce unset;
