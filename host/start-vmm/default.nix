@@ -10,9 +10,9 @@ let
   packageCache = [
     (fetchCrate {
       pname = "itoa";
-      version = "1.0.10";
+      version = "1.0.11";
       unpack = false;
-      hash = "sha256-saRtGhcdhlql+D+SaVdlyqBHqbTLriy/N9vWE6eT/Uw=";
+      hash = "sha256-SfHxSHMzVFRQDVlhHxz0pLD3hvmsEfQxKnjkzyVmaVs=";
     })
     (fetchurl {
       name = "miniserde-0.1.38.tar.gz";
