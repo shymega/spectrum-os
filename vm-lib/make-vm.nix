@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022, 2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
 { pkgs ? import <nixpkgs> {}
@@ -35,9 +35,11 @@ runCommand "spectrum-vm" {
 } ''
   mkdir -p "$out"/{blk,providers,shared-dirs}
 
-  ${../scripts/make-erofs.sh} -L ext -- "$out/blk/run.img" ${run} run \
-      $(comm -23 <(sort ${writeReferencesToFile run}) \
-          <(sort ${writeReferencesToFile basePaths}) | sed p)
+  (
+      printf "%s\nrun\n" ${run}
+      comm -23 <(sort ${writeReferencesToFile run}) \
+          <(sort ${writeReferencesToFile basePaths}) | sed p
+  ) | ${../scripts/make-erofs.sh} -L ext "$out/blk/run.img"
 
   pushd "$out"
 

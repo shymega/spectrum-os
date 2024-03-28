@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 include ../../../lib/common.mk
 
@@ -57,10 +57,12 @@ build/empty:
 	mkdir -p $@
 
 build/rootfs.erofs: ../../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) build/empty
-	../../../scripts/make-erofs.sh -- $@ $(PACKAGES) \
-	    $$(for file in $(VM_FILES) $(VM_LINKS); do printf '%s %s ' $$file $$file; done) \
-	    $$(for file in $(VM_BUILD_FILES); do printf '%s %s ' $$file $${file#build/}; done) \
-	    $$(printf 'build/empty %s ' $(VM_DIRS))
+	( \
+	    printf '%s\n' $(PACKAGES) ;\
+	    for file in $(VM_FILES) $(VM_LINKS); do printf '%s\n%s\n' $$file $$file; done ;\
+	    for file in $(VM_BUILD_FILES); do printf '%s\n%s\n' $$file $${file#build/}; done ;\
+	    printf 'build/empty\n%s\n' $(VM_DIRS) ;\
+	) | ../../../scripts/make-erofs.sh $@
 
 VM_S6_RC_FILES = \
 	etc/s6-rc/connman/dependencies \

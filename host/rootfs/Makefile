@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 include ../../lib/common.mk
 
@@ -76,10 +76,12 @@ LINKS = \
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 
 $(dest): ../../scripts/make-erofs.sh $(FILES) $(BUILD_FILES) build/empty
-	../../scripts/make-erofs.sh -- $@ $(PACKAGES) \
-	    $$(for file in $(FILES) $(LINKS); do printf '%s %s ' $$file $$file; done) \
-	    $$(for file in $(BUILD_FILES); do printf '%s %s ' $$file $${file#build/}; done) \
-	    $$(printf 'build/empty %s ' $(DIRS))
+	( \
+	    printf '%s\n' $(PACKAGES) ;\
+	    for file in $(FILES) $(LINKS); do printf '%s\n%s\n' $$file $$file; done ;\
+	    for file in $(BUILD_FILES); do printf '%s\n%s\n' $$file $${file#build/}; done ;\
+	    printf 'build/empty\n%s\n' $(DIRS) ;\
+	) | ../../scripts/make-erofs.sh $@
 
 build/empty:
 	mkdir -p $@
