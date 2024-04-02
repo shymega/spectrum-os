@@ -77,7 +77,7 @@ BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 
 $(dest): ../../scripts/make-erofs.sh $(FILES) $(BUILD_FILES) build/empty
 	( \
-	    printf '%s\n' $(PACKAGES) ;\
+	    printf '%s\n' $$PACKAGES ;\
 	    for file in $(FILES) $(LINKS); do printf '%s\n%s\n' $$file $$file; done ;\
 	    for file in $(BUILD_FILES); do printf '%s\n%s\n' $$file $${file#build/}; done ;\
 	    printf 'build/empty\n%s\n' $(DIRS) ;\
