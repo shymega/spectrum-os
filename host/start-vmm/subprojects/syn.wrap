@@ -2,10 +2,10 @@
 # SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 
 [wrap-file]
-directory = syn-2.0.57
-source_url = https://crates.io/api/v1/crates/syn/2.0.57/download
-source_filename = syn-2.0.57.tar.gz
-source_hash = 11a6ae1e52eb25aab8f3fb9fca13be982a373b8f1157ca14b897a825ba4a2d35
+directory = syn-2.0.58
+source_url = https://crates.io/api/v1/crates/syn/2.0.58/download
+source_filename = syn-2.0.58.tar.gz
+source_hash = 44cfb93f38070beee36b3fef7d4f5a16f27751d94b187b666a5cc5e9b0d30687
 patch_directory = syn
 
 [provide]
