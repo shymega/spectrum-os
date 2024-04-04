@@ -4,6 +4,7 @@
 // A Weston module that sends a notification into a fifo when a
 // window with a specific app ID appears.
 
+#include <errno.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <string.h>
@@ -23,12 +24,12 @@ static void on_commit(struct wl_listener *, struct weston_surface *surface)
 		return;
 
 	if ((fd = open("/run/surface-notify", O_WRONLY)) == -1) {
-		weston_log("opening /run/surface-notify: %m\n");
+		weston_log("opening /run/surface-notify: %s\n", strerror(errno));
 		return;
 	}
 
 	if (write(fd, "\n", 1) == -1)
-		weston_log("writing to /run/surface-notify: %m\n");
+		weston_log("writing to /run/surface-notify: %s\n", strerror(errno));
 
 	close(fd);
 }
