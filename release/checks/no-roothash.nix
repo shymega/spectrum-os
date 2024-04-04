@@ -25,7 +25,7 @@ in {
       "-append", "console=${qemuSerialDevice} panic=-1",
     ]))
 
-    machine = create_machine({"startCommand": flags})
+    machine = create_machine(flags)
 
     machine.start()
     machine.wait_for_console_text("roothash invalid or missing")

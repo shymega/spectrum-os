@@ -42,7 +42,7 @@ nixosTest ({ stdenv, mtools, ... }: {
       "-append", f"panic=-1 {cmdline}",
     ]))
 
-    machine = create_machine({"startCommand": flags})
+    machine = create_machine(flags)
 
     machine.start()
     machine.wait_for_console_text("EXT4-fs \(sda4\): mounted filesystem")
