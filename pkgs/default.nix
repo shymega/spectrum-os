@@ -42,7 +42,7 @@ let
 
     # Packages from the overlay, so it's possible to build them from
     # the CLI easily.
-    inherit (pkgs) cloud-hypervisor foot;
+    inherit (pkgs) cloud-hypervisor;
 
     pkgsStatic = makeScopeWithSplicing pkgs.pkgsStatic;
 

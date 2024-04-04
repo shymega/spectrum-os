@@ -3,6 +3,4 @@
 
 (final: super: {
   cloud-hypervisor = import ./cloud-hypervisor { inherit final super; };
-
-  foot = import ./foot { inherit final super; };
 })
