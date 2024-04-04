@@ -23,7 +23,7 @@ static void on_commit(struct wl_listener *, struct weston_surface *surface)
 	if (strcmp(weston_desktop_surface_get_app_id(desktop_surface), APP_ID))
 		return;
 
-	if ((fd = open("/run/surface-notify", O_WRONLY)) == -1) {
+	if ((fd = open("/run/surface-notify", O_RDWR)) == -1) {
 		weston_log("opening /run/surface-notify: %s\n", strerror(errno));
 		return;
 	}
