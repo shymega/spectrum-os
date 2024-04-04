@@ -12,7 +12,7 @@
 
 pkgs.pkgsStatic.callPackage (
 
-{ lib, runCommand, writeReferencesToFile, erofs-utils }:
+{ lib, runCommand, writeClosure, erofs-utils }:
 
 { run, providers ? {}, sharedDirs ? {}, wayland ? false }:
 
@@ -37,8 +37,8 @@ runCommand "spectrum-vm" {
 
   (
       printf "%s\nrun\n" ${run}
-      comm -23 <(sort ${writeReferencesToFile run}) \
-          <(sort ${writeReferencesToFile basePaths}) | sed p
+      comm -23 <(sort ${writeClosure [ run ]}) \
+          <(sort ${writeClosure [ basePaths ]}) | sed p
   ) | ${../scripts/make-erofs.sh} -L ext "$out/blk/run.img"
 
   pushd "$out"

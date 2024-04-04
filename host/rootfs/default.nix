@@ -7,9 +7,9 @@ import ../../lib/call-package.nix (
 pkgsStatic.callPackage (
 
 { start-vmm
-, lib, stdenvNoCC, nixos, runCommand, writeReferencesToFile, erofs-utils, s6-rc
-, busybox, cloud-hypervisor, cryptsetup, execline, e2fsprogs, jq, kmod
-, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
+, lib, stdenvNoCC, nixos, runCommand, writeClosure, erofs-utils, s6-rc, busybox
+, cloud-hypervisor, cryptsetup, execline, e2fsprogs, jq, kmod, mdevd, s6
+, s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
 }:
 
 let
@@ -122,7 +122,7 @@ stdenvNoCC.mkDerivation {
   PACKAGES = [ packagesSysroot "/" ];
 
   shellHook = ''
-    PACKAGES+=" $(sed p ${writeReferencesToFile packagesSysroot} | tr '\n' ' ')"
+    PACKAGES+=" $(sed p ${writeClosure [ packagesSysroot ]} | tr '\n' ' ')"
   '';
 
   preBuild = ''

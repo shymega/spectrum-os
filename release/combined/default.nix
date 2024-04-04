@@ -5,7 +5,7 @@
 
 import ../../lib/call-package.nix (
 { callSpectrumPackage
-, lib, runCommand, stdenv, substituteAll, writeReferencesToFile
+, lib, runCommand, stdenv, substituteAll, writeClosure
 , dosfstools, grub2_efi, jq, libfaketime, mtools, squashfs-tools-ng
 , systemdMinimal, util-linux
 }:
@@ -30,7 +30,7 @@ let
   rootfs = runCommand "installer.img" {
     nativeBuildInputs = [ squashfs-tools-ng ];
   } ''
-    sed 's,^${storeDir}/,,' ${writeReferencesToFile installer.store} |
+    sed 's,^${storeDir}/,,' ${writeClosure [ installer.store ]} |
         tar -C ${storeDir} -c --verbatim-files-from -T - \
             --owner 0 --group 0 | tar2sqfs $out
   '';

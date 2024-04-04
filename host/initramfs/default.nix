@@ -3,8 +3,8 @@
 
 import ../../lib/call-package.nix (
 { src, lseek, rootfs
-, lib, stdenvNoCC, makeModulesClosure, runCommand, writeReferencesToFile
-, pkgsStatic, busybox, cpio, microcodeAmd, microcodeIntel
+, lib, stdenvNoCC, makeModulesClosure, runCommand, writeClosure, pkgsStatic
+, busybox, cpio, microcodeAmd, microcodeIntel
 }:
 
 pkgsStatic.callPackage ({ execline, kmod, mdevd, cryptsetup, util-linuxMinimal }:
@@ -67,7 +67,7 @@ let
 
   packagesCpio = runCommand "packages.cpio" {
     nativeBuildInputs = [ cpio ];
-    storePaths = writeReferencesToFile packagesSysroot;
+    storePaths = writeClosure [ packagesSysroot ];
   } ''
     cd ${packagesSysroot}
     (printf "/nix\n/nix/store\n" && find . $(< $storePaths)) |

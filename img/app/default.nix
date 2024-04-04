@@ -5,7 +5,7 @@ import ../../lib/call-package.nix (
 { lseek, src, terminfo, pkgsStatic }:
 pkgsStatic.callPackage (
 
-{ lib, stdenvNoCC, runCommand, writeReferencesToFile
+{ lib, stdenvNoCC, runCommand, writeClosure
 , erofs-utils, jq, s6-rc, util-linux
 , busybox, cacert, execline, kmod, linux_latest, mdevd, s6, s6-linux-init
 }:
@@ -97,7 +97,7 @@ stdenvNoCC.mkDerivation {
   KERNEL = "${kernel}/${baseNameOf kernelTarget}";
 
   shellHook = ''
-    PACKAGES+=" $(sed p ${writeReferencesToFile packagesSysroot} | tr '\n' ' ')"
+    PACKAGES+=" $(sed p ${writeClosure [ packagesSysroot ]} | tr '\n' ' ')"
   '';
 
   preBuild = ''

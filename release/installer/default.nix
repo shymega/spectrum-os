@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2022 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/call-package.nix ({ extraConfig, nixos, writeReferencesToFile }:
+import ../../lib/call-package.nix ({ extraConfig, nixos, writeClosure }:
 
 let
   inherit (nixos {
@@ -18,5 +18,5 @@ in
     "init=${config.system.build.toplevel}/init"
   ] ++ config.boot.kernelParams);
 
-  store = writeReferencesToFile config.system.build.toplevel;
+  store = writeClosure [ config.system.build.toplevel ];
 }) (_: { extraConfig = {}; })
