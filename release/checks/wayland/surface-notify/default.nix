@@ -11,7 +11,7 @@ stdenv.mkDerivation {
 
   src = lib.fileset.toSource {
     root = ../../../..;
-    fileset = src;
+    fileset = lib.fileset.intersection src ./.;
   };
   sourceRoot = "source/release/checks/wayland/surface-notify";
 
