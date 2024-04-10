@@ -136,6 +136,7 @@ S6_RC_FILES = \
 	etc/s6-rc/ext-rc/type \
 	etc/s6-rc/ext/type \
 	etc/s6-rc/ext/up \
+	etc/s6-rc/kvm/timeout-up \
 	etc/s6-rc/kvm/type \
 	etc/s6-rc/kvm/up \
 	etc/s6-rc/mdevd-coldplug/dependencies \
