@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 .POSIX:
 
@@ -10,7 +10,7 @@ dest = build/initramfs
 RUN_IMAGE = build/live.img
 
 $(dest): $(MICROCODE) build/local.cpio $(PACKAGES_CPIO)
-	cat $(MICROCODE) > $@
+	cat /dev/null $(MICROCODE) > $@
 	cat build/local.cpio $(PACKAGES_CPIO) | gzip -9n >> $@
 
 # etc/init isn't included in ETC_FILES, because it gets installed to
