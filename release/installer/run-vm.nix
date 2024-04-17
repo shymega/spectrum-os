@@ -17,8 +17,6 @@ let
       fileSystems.${storeDir} = {
         fsType = "9p";
         device = "store";
-        # This can be removed when running Linux ≥5.15.
-        options = [ "msize=131072" ];
       };
     };
   };
