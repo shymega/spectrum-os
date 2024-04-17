@@ -33,7 +33,7 @@ build/host/data/netvm/vmlinux: $(KERNEL)
 build/host/data/netvm/blk/root.img: ../../../scripts/make-gpt.sh ../../../scripts/sfdisk-field.awk build/rootfs.erofs
 	mkdir -p $$(dirname $@)
 	../../../scripts/make-gpt.sh $@.tmp \
-	    build/rootfs.erofs:4f68bce3-e8cd-4db1-96e7-fbcaf984b709:ea21da27-0391-48da-9235-9d2ab2ca7844:root
+	    build/rootfs.erofs:root:ea21da27-0391-48da-9235-9d2ab2ca7844:root
 	mv $@.tmp $@
 
 VM_FILES = \

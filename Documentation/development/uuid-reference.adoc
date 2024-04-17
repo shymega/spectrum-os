@@ -21,9 +21,21 @@ in Spectrum.
 "EFI System Partition", from the https://uefi.org/specifications[UEFI
 Specification].
 
+=== `b921b045-1df0-41c3-af44-4c6f280d3fae`
+
+"Root Partition (64-bit ARM/AArch64)" from the
+https://uapi-group.org/specifications/specs/discoverable_partitions_specification/[Discoverable Partitions
+Specification].
+
 === `4f68bce3-e8cd-4db1-96e7-fbcaf984b709`
 
 "Root Partition (amd64/x86_64)" from the
+https://uapi-group.org/specifications/specs/discoverable_partitions_specification/[Discoverable Partitions
+Specification].
+
+=== `df3300ce-d69f-4c92-978c-9bfb0f38d820`
+
+"Root Verity Partition (64-bit ARM/AArch64)" from the
 https://uapi-group.org/specifications/specs/discoverable_partitions_specification/[Discoverable Partitions
 Specification].
 
