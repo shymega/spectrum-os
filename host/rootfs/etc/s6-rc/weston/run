@@ -2,6 +2,8 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
 
+unexport WAYLAND_DISPLAY
+
 foreground { mkdir /run/user }
 foreground {
   umask 077
@@ -15,7 +17,6 @@ backtick HOME {
   homeof $user
 }
 
-export XDG_RUNTIME_DIR /run/user/0
 redirfd -r 0 /dev/tty1
 
 importas -i home HOME

@@ -18,6 +18,8 @@ FILES = \
 	etc/mdev/wait \
 	etc/parse-devname \
 	etc/passwd \
+	etc/s6-linux-init/env/WAYLAND_DISPLAY \
+	etc/s6-linux-init/env/XDG_RUNTIME_DIR \
 	etc/s6-linux-init/run-image/service/getty-tty1/run \
 	etc/s6-linux-init/run-image/service/getty-tty2/run \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
