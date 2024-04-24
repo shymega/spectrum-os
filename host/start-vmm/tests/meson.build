@@ -37,7 +37,3 @@ test('vm_command-multiple-disks', executable('vm_command-multiple-disks',
   'vm_command-multiple-disks.rs',
   dependencies : rust_lib_dep,
   link_with : rust_helper))
-test('vm_command-shared-dir', executable('vm_command-shared-dir',
-  'vm_command-shared-dir.rs',
-  dependencies : rust_lib_dep,
-  link_with : rust_helper))

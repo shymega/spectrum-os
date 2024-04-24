@@ -2,7 +2,7 @@
 :page-parent: Using Spectrum
 :page-nav_order: 2
 
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022, 2024 Alyssa Ross <hi@alyssa.is>
 // SPDX-FileCopyrightText: 2022 Unikie
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
@@ -20,15 +20,6 @@ vmlinux:: An uncompressed Linux kernel image for the VM to boot.
 blk:: A directory containing disk images (with file names ending in
 ".img") that will be provided to the guest as a virtio-blk device.
 Order is not guaranteed.  At least one image is *required*.
-
-shared-dirs:: A directory whose *subdirectories* each describe a
-directory to be shared with a VM.  The name of each subdirectory is
-used as the virtiofs tag, and the contents are as follows:
-
-  dir::: A symbolic link pointing to the directory to be shared with
-  the VM.  The directory must be on the
-  xref:../development/user-partition.adoc[user data partition].
-  *Required.*
 
 providers/net:: A directory containing a file named for each VM that
 should provide networking to this VM.  The contents of these files are
@@ -92,3 +83,11 @@ network interface named `eth0` has the MAC address `0A:B3:EC:00:A5:46`
 should configure `eth0` with the IPv4 address `100.64.165.70` (because
 `A5` in hexadecimal is `165` in decimal, and `46` in hexadecimal is
 `70` in decimal).
+
+=== Filesystem
+
+Every VM has a virtio-fs device that exposes the /run/vm/_vm name_/fs
+directory on the host, with the tag "virtiofs0".  The VM cannot write
+directly into that directory, but it's possible to create a
+subdirectory on the host and bind mount a directory from a writeable
+filesystem into it to provide the VM with access to shared storage.

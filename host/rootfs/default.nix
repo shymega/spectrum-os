@@ -67,6 +67,7 @@ let
         CONFIG_MKFS_EXT2 n
         CONFIG_MODINFO n
         CONFIG_MODPROBE n
+        CONFIG_MOUNT n
         CONFIG_RMMOD n
       '';
     })
@@ -101,7 +102,7 @@ let
     # TODO: this is a hack and we should just build the util-linux
     # programs we want.
     # https://lore.kernel.org/util-linux/87zgrl6ufb.fsf@alyssa.is/
-    ln -s ${util-linuxMinimal}/bin/{findfs,lsblk} $out/usr/bin
+    ln -s ${util-linuxMinimal}/bin/{findfs,lsblk,mount} $out/usr/bin
   '';
 in
 

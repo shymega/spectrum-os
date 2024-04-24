@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
 cd /ext/svc/data
@@ -11,17 +11,9 @@ if {
   if { mkdir /run/vm/${name} }
   if { ln -s /ext/svc/data/${name} /run/vm/${name}/config }
 
-  if {
-    if -t { test -e ${name}/shared-dirs }
-    cd ${name}/shared-dirs
-    elglob -0 fsnames *
-
-    if {
-      forx -po0 -E fsname { $fsnames }
-      s6-instance-create /run/service/vhost-user-fs ${name}:${fsname}
-    }
-    s6-svwait -U /run/service/vhost-user-fs/instance/${name}:${fsnames}
-  }
+  if { mkdir /run/vm/${name}/fs }
+  if { s6-instance-create /run/service/vhost-user-fs $name }
+  if { s6-svwait -U /run/service/vhost-user-fs/instance/${name} }
 
   if {
     if -t { test -e ${name}/wayland }

@@ -38,7 +38,6 @@ FILES = \
 	etc/s6-linux-init/run-image/service/vmm/run \
 	etc/s6-linux-init/run-image/service/vmm/template/notification-fd \
 	etc/s6-linux-init/scripts/rc.init \
-	etc/shared-dir \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
 	usr/bin/lsvm \

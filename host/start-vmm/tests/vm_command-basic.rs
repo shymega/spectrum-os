@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 use std::fs::{create_dir_all, File};
 use std::path::PathBuf;
@@ -25,6 +25,11 @@ fn main() -> std::io::Result<()> {
     let disk1 = config.disks.pop().unwrap();
     assert_eq!(PathBuf::from(disk1.path), image_path);
     assert!(disk1.readonly);
+    assert_eq!(config.fs.len(), 1);
+    let fs1 = &config.fs[0];
+    assert_eq!(fs1.tag, "virtiofs0");
+    let expected = "/run/service/vhost-user-fs/instance/testvm/env/virtiofsd.sock";
+    assert_eq!(fs1.socket, expected);
     assert_eq!(PathBuf::from(config.payload.kernel), kernel_path);
     assert_eq!(config.payload.cmdline, "console=ttyS0 root=PARTLABEL=root");
     assert_eq!(config.memory.size, 0x10000000);

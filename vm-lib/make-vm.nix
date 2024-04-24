@@ -33,7 +33,7 @@ runCommand "spectrum-vm" {
     (mapAttrsToList (kind: map (vm: "${kind}/${vm}\n")) providers));
   passAsFile = [ "providerDirs" ];
 } ''
-  mkdir -p "$out"/{blk,providers,shared-dirs}
+  mkdir -p "$out"/{blk,providers}
 
   (
       printf "%s\nrun\n" ${run}
@@ -46,13 +46,6 @@ runCommand "spectrum-vm" {
   pushd providers
   xargs -rd '\n' dirname -- < "$providerDirsPath" | xargs -rd '\n' mkdir -p --
   xargs -rd '\n' touch -- < "$providerDirsPath"
-  popd
-
-  pushd shared-dirs
-  ${concatStringsSep "\n" (mapAttrsToList (key: { path }: ''
-    mkdir ${lib.escapeShellArg key}
-    ln -s ${lib.escapeShellArgs [ path "${key}/dir" ]}
-  '') sharedDirs)}
   popd
 
   popd

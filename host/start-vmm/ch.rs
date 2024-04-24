@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 use std::ffi::{CStr, OsStr, OsString};
 use std::io::Write;
@@ -33,7 +33,7 @@ pub struct DiskConfig {
 #[derive(Serialize)]
 pub struct FsConfig {
     pub socket: String,
-    pub tag: String,
+    pub tag: &'static str,
 }
 
 #[derive(Serialize)]
@@ -64,7 +64,7 @@ pub struct PayloadConfig {
 pub struct VmConfig {
     pub console: ConsoleConfig,
     pub disks: Vec<DiskConfig>,
-    pub fs: Vec<FsConfig>,
+    pub fs: [FsConfig; 1],
     pub gpu: Vec<GpuConfig>,
     pub memory: MemoryConfig,
     pub net: Vec<NetConfig>,

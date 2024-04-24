@@ -65,7 +65,6 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
     let blk_dir = config_dir.join("blk");
     let kernel_path = config_dir.join("vmlinux");
     let net_providers_dir = config_dir.join("providers/net");
-    let shared_dirs_dir = config_dir.join("shared-dirs");
     let wayland_path = config_dir.join("wayland");
 
     Ok(VmConfig {
@@ -102,27 +101,10 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
                 .collect::<Result<_, _>>()?,
             Err(e) => return Err(format!("reading directory {:?}: {}", blk_dir, e)),
         },
-        fs: match shared_dirs_dir.read_dir() {
-            Ok(entries) => entries
-                .into_iter()
-                .map(|result| {
-                    let entry = result
-                        .map_err(|e| format!("examining directory entry: {}", e))?
-                        .file_name();
-
-                    let entry = entry.to_str().ok_or_else(|| {
-                        format!("shared directory name {:?} is not valid UTF-8", entry)
-                    })?;
-
-                    Ok(FsConfig {
-                        tag: entry.to_string(),
-                        socket: format!("/run/service/vhost-user-fs/instance/{vm_name}:{entry}/env/virtiofsd.sock"),
-                    })
-                })
-                .collect::<Result<_, String>>()?,
-            Err(e) if e.kind() == ErrorKind::NotFound => Default::default(),
-            Err(e) => return Err(format!("reading directory {:?}: {e}", shared_dirs_dir)),
-        },
+        fs: [FsConfig {
+            tag: "virtiofs0",
+            socket: format!("/run/service/vhost-user-fs/instance/{vm_name}/env/virtiofsd.sock"),
+        }],
         gpu: match wayland_path.try_exists() {
             Ok(true) => vec![GpuConfig {
                 socket: format!("/run/service/vhost-user-gpu/instance/{vm_name}/env/crosvm.sock"),
