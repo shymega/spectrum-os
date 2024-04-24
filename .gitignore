@@ -5,6 +5,7 @@
 build/
 result
 result-*
+target/
 
 **/subprojects/*
 !**/subprojects/*.wrap

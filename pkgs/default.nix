@@ -39,6 +39,8 @@ let
     rootfs = self.callSpectrumPackage ../host/rootfs {};
     start-vmm = self.callSpectrumPackage ../host/start-vmm {};
     run-spectrum-vm = self.callSpectrumPackage ../scripts/run-spectrum-vm.nix {};
+    xdg-desktop-portal-spectrum-host =
+      self.callSpectrumPackage ../tools/xdg-desktop-portal-spectrum-host {};
 
     # Packages from the overlay, so it's possible to build them from
     # the CLI easily.
