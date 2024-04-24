@@ -61,6 +61,12 @@ pub struct PayloadConfig {
 }
 
 #[derive(Serialize)]
+pub struct VsockConfig {
+    pub cid: u32,
+    pub socket: &'static str,
+}
+
+#[derive(Serialize)]
 pub struct VmConfig {
     pub console: ConsoleConfig,
     pub disks: Vec<DiskConfig>,
@@ -70,6 +76,7 @@ pub struct VmConfig {
     pub net: Vec<NetConfig>,
     pub payload: PayloadConfig,
     pub serial: ConsoleConfig,
+    pub vsock: VsockConfig,
 }
 
 fn command(vm_name: &str, s: impl AsRef<OsStr>) -> Command {

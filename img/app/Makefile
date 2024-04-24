@@ -115,13 +115,14 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	    -device virtio-gpu-rutabaga-pci,cross-domain=on,hostmem=8G \
 	    -object memory-backend-memfd,id=mem,size=256M,share=on \
 	    -numa node,memdev=mem \
+	    -device vhost-vsock-pci,guest-cid=3 \
 	    -chardev vc,id=virtiocon0 \
 	    -device virtio-serial-pci \
 	    -device virtconsole,chardev=virtiocon0
 .PHONY: run-qemu
 
 run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
-	rm -f build/vmm.sock
+	rm -f build/vmm.sock build/vsock.sock
 	@../../scripts/with-taps.elb ../../scripts/run-cloud-hypervisor.sh \
 	    --api-socket path=build/vmm.sock \
 	    --memory size=256M,shared=on \
@@ -129,6 +130,7 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 	           path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
 	    --gpu socket=build/vhost-user-gpu.sock \
+	    --vsock cid=3,socket=build/vsock.sock \
 	    --net tap=tap0 \
 	    --kernel $(KERNEL) \
 	    --cmdline "root=PARTLABEL=root" \
@@ -144,6 +146,7 @@ run-crosvm: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
 	    --net tap-name=tap0 \
 	    --vhost-user-fs build/virtiofsd.sock:virtiofs0 \
 	    --vhost-user-gpu build/vhost-user-gpu.sock \
+	    --vsock cid=3 \
 	    --serial type=file,hardware=serial,path=build/serial.log \
 	    --serial type=stdout,hardware=virtio-console,stdin=true \
 	    $(KERNEL)

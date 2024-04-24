@@ -18,7 +18,10 @@ use std::os::unix::process::parent_id;
 use std::path::Path;
 use std::process::{exit, Command};
 
-use ch::{ConsoleConfig, DiskConfig, FsConfig, GpuConfig, MemoryConfig, PayloadConfig, VmConfig};
+use ch::{
+    ConsoleConfig, DiskConfig, FsConfig, GpuConfig, MemoryConfig, PayloadConfig, VmConfig,
+    VsockConfig,
+};
 use fork::double_fork;
 use net::net_setup;
 use s6::notify_readiness;
@@ -151,6 +154,10 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
         serial: ConsoleConfig {
             mode: "File",
             file: Some(format!("/run/{vm_name}.log")),
+        },
+        vsock: VsockConfig {
+            cid: 3,
+            socket: "env/vsock.sock",
         },
     })
 }

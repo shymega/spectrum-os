@@ -91,3 +91,8 @@ directory on the host, with the tag "virtiofs0".  The VM cannot write
 directly into that directory, but it's possible to create a
 subdirectory on the host and bind mount a directory from a writeable
 filesystem into it to provide the VM with access to shared storage.
+
+=== VSOCK
+
+Every VM has a virtio-vsock device for communication with host
+services.
