@@ -1,13 +1,14 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021, 2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix ({ callSpectrumPackage, clippy, rustfmt }:
 
 (callSpectrumPackage ./. {}).overrideAttrs (
-{ nativeBuildInputs ? [], ... }:
+{ hardeningDisable ? [], nativeBuildInputs ? [], ... }:
 
 {
-  hardeningDisable = [ "fortify" ];
+  # Not compatible with Meson's default -O0.
+  hardeningDisable = hardeningDisable ++ [ "fortify" ];
 
   nativeBuildInputs = nativeBuildInputs ++ [ clippy rustfmt ];
 })) (_: {})
