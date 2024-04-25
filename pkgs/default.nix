@@ -41,6 +41,8 @@ let
     run-spectrum-vm = self.callSpectrumPackage ../scripts/run-spectrum-vm.nix {};
     xdg-desktop-portal-spectrum-host =
       self.callSpectrumPackage ../tools/xdg-desktop-portal-spectrum-host {};
+    xdg-desktop-portal-spectrum =
+      self.callSpectrumPackage ../tools/xdg-desktop-portal-spectrum {};
 
     # Packages from the overlay, so it's possible to build them from
     # the CLI easily.
