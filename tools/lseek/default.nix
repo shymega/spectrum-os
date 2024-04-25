@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
 import ../../lib/call-package.nix ({ src, pkgsStatic }:
@@ -9,7 +9,9 @@ stdenv.mkDerivation (finalAttrs: {
 
   src = lib.fileset.toSource {
     root = ../..;
-    fileset = lib.fileset.intersection src ./.;
+    fileset = lib.fileset.difference
+      (lib.fileset.intersection src ./.)
+      (lib.fileset.maybeMissing ./lseek);
   };
   sourceRoot = "source/tools/lseek";
 
