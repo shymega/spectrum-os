@@ -150,7 +150,10 @@ pub fn vm_config(vm_dir: &Path) -> Result<VmConfig, String> {
         },
         payload: PayloadConfig {
             kernel: kernel_path.to_str().unwrap().to_string(),
+            #[cfg(target_arch = "x86_64")]
             cmdline: "console=ttyS0 root=PARTLABEL=root",
+            #[cfg(not(target_arch = "x86_64"))]
+            cmdline: "root=PARTLABEL=root",
         },
         serial: ConsoleConfig {
             mode: "File",

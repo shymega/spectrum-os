@@ -32,7 +32,10 @@ fn main() -> std::io::Result<()> {
     let expected = "/run/service/vhost-user-fs/instance/testvm/env/virtiofsd.sock";
     assert_eq!(fs1.socket, expected);
     assert_eq!(PathBuf::from(config.payload.kernel), kernel_path);
+    #[cfg(target_arch = "x86_64")]
     assert_eq!(config.payload.cmdline, "console=ttyS0 root=PARTLABEL=root");
+    #[cfg(not(target_arch = "x86_64"))]
+    assert_eq!(config.payload.cmdline, "root=PARTLABEL=root");
     assert_eq!(config.memory.size, 0x40000000);
     assert!(config.memory.shared);
     assert_eq!(config.serial.mode, "File");
