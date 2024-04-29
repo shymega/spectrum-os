@@ -1,4 +1,4 @@
-From d0dfc05aa3789cbc2a1a2057ae4f5aae0913ae3d Mon Sep 17 00:00:00 2001
+From 66bb19b75981574e106f6491edbecba746f087d4 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Thu, 13 Oct 2022 10:37:47 +0900
 Subject: [PATCH 3/4] vhost_user: add protocol flag for shmem
@@ -38,5 +38,5 @@ index 67fc19a..7815d3e 100644
  }
  
 -- 
-2.43.0
+2.44.0
 

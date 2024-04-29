@@ -1,4 +1,4 @@
-From 407b410f3f802d4d5f37a5525fa29c8deaf8998e Mon Sep 17 00:00:00 2001
+From 7958722763a03493a6b35f8916bff126e1ea18f3 Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <alyssa.ross@unikie.com>
 Date: Wed, 28 Sep 2022 12:18:19 +0000
 Subject: [PATCH 1/2] build: use local vhost
@@ -10,23 +10,23 @@ Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
 Signed-off-by: Alyssa Ross <hi@alyssa.is>
 ---
  Cargo.lock | 4 ----
- Cargo.toml | 2 ++
- 2 files changed, 2 insertions(+), 4 deletions(-)
+ Cargo.toml | 4 ++++
+ 2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 533a473d..51b33209 100644
+index 18d10d78..9e36300b 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -2376,8 +2376,6 @@ dependencies = [
+@@ -2380,8 +2380,6 @@ dependencies = [
  [[package]]
  name = "vhost"
  version = "0.10.0"
 -source = "registry+https://github.com/rust-lang/crates.io-index"
 -checksum = "2b64e816d0d49769fbfaa1494eb77cc2a3ddc526ead05c7f922cb7d64106286f"
  dependencies = [
-  "bitflags 2.4.1",
+  "bitflags 2.5.0",
   "libc",
-@@ -2388,8 +2386,6 @@ dependencies = [
+@@ -2392,8 +2390,6 @@ dependencies = [
  [[package]]
  name = "vhost-user-backend"
  version = "0.13.1"
@@ -36,18 +36,20 @@ index 533a473d..51b33209 100644
   "libc",
   "log",
 diff --git a/Cargo.toml b/Cargo.toml
-index 4ef23821..c0455bed 100644
+index c1d4b52e..ce251365 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -54,6 +54,8 @@ zbus = { version = "3.11.1", optional = true }
- [patch.crates-io]
- kvm-bindings = { git = "https://github.com/cloud-hypervisor/kvm-bindings", branch = "ch-v0.7.0" }
- versionize_derive = { git = "https://github.com/cloud-hypervisor/versionize_derive", branch = "ch-0.1.6" }
+@@ -50,6 +50,10 @@ vmm-sys-util = "0.12.1"
+ vm-memory = "0.14.1"
+ zbus = { version = "3.15.2", optional = true }
+ 
++[patch.crates-io]
 +vhost = { path = "../vhost/vhost" }
 +vhost-user-backend = { path = "../vhost/vhost-user-backend" }
- 
++
  [dev-dependencies]
- dirs = "5.0.0"
+ dirs = "5.0.1"
+ net_util = { path = "net_util" }
 -- 
-2.43.0
+2.44.0
 

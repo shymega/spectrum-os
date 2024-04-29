@@ -1,4 +1,4 @@
-From d164b4634073b2efc63a3a9f78aafd5eb40243f5 Mon Sep 17 00:00:00 2001
+From f66e63e8d419a5a4ca55ff957906875678b2bb44 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
 Subject: [PATCH 2/4] vhost_user: add shared memory region support
@@ -487,5 +487,5 @@ index 43e7314..67fc19a 100644
  mod tests {
      use super::*;
 -- 
-2.43.0
+2.44.0
 

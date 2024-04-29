@@ -1,4 +1,4 @@
-From 97de38adff41894ac5b8ed5820a67c8309afda9e Mon Sep 17 00:00:00 2001
+From 06c3e5ede8aa0b9ea417806e7363e72b181209ba Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <hi@alyssa.is>
 Date: Sat, 29 Jul 2023 12:03:18 +0000
 Subject: [PATCH 4/4] vhost_user: renumber SHARED_MEMORY_REGIONS
@@ -44,5 +44,5 @@ index 7815d3e..c0d8dcc 100644
  }
  
 -- 
-2.43.0
+2.44.0
 
