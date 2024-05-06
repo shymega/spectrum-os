@@ -44,6 +44,7 @@ FILES = \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
+	usr/share/dbus-1/services/org.freedesktop.portal.Documents.service \
 	usr/bin/lsvm \
 	usr/bin/vm-console \
 	usr/bin/vm-start \

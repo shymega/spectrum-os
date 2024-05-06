@@ -14,7 +14,8 @@ if {
   # Sockets for vhost-user backends need to be created before the VMM
   # is started, because it will try to connect to them.
 
-  if { mkdir /run/vm/${name}/fs }
+  if { mkdir -p /run/vm/${name}/doc-run/doc /run/vm/${name}/fs/doc }
+  if { mount --rbind /run/vm/${name}/doc-run/doc /run/vm/${name}/fs/doc }
   if { s6-instance-create /run/service/vhost-user-fs $name }
   if { s6-svwait -U /run/service/vhost-user-fs/instance/${name} }
 

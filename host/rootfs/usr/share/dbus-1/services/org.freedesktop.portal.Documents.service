@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: CC0-1.0
+# SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
+
+[D-BUS Service]
+Name=org.freedesktop.portal.Documents
+Exec=/bin/importas -i VM VM export XDG_RUNTIME_DIR ${VM}/doc-run xdg-document-portal

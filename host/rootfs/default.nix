@@ -19,10 +19,39 @@ let
   pkgsGui = pkgsMusl.extend (
     final: super:
     (optionalAttrs (systems.equals pkgsMusl.stdenv.hostPlatform super.stdenv.hostPlatform) {
+      appstream = super.appstream.override {
+        withSystemd = false;
+      };
+      at-spi2-core = super.at-spi2-core.override {
+        systemdSupport = false;
+      };
+
       libgudev = super.libgudev.overrideAttrs ({ ... }: {
         # Tests use umockdev, which is not compatible with libudev-zero.
         doCheck = false;
       });
+
+      modemmanager = super.modemmanager.override {
+        withSystemd = false;
+      };
+      networkmanager = super.networkmanager.override {
+        withSystemd = false;
+      };
+      pcsclite = super.pcsclite.override {
+        systemdSupport = false;
+      };
+      pipewire = super.pipewire.override {
+        enableSystemd = false;
+      };
+      polkit = super.polkit.override {
+        useSystemd = false;
+      };
+      postgresql = super.postgresql.override {
+        systemdSupport = false;
+      };
+      procps = super.procps.override {
+        withSystemd = false;
+      };
 
       systemd = final.libudev-zero;
       systemdLibs = final.libudev-zero;
@@ -32,11 +61,23 @@ let
         systemdSupport = false;
       };
 
+      tracker = super.tracker.overrideAttrs ({ mesonFlags ? [], ... }: {
+        mesonFlags = mesonFlags ++ [ "-Dsystemd_user_services=false" ];
+      });
+
+      util-linux = super.util-linux.override {
+        systemdSupport = false;
+      };
+
       weston = super.weston.overrideAttrs ({ mesonFlags ? [], ... }: {
         mesonFlags = mesonFlags ++ [
           "-Dsystemd=false"
         ];
       });
+
+      xdg-desktop-portal = super.xdg-desktop-portal.override {
+        enableSystemd = false;
+      };
     })
   );
 
@@ -93,7 +134,9 @@ let
     nativeBuildInputs = [ xorg.lndir ];
   } ''
     mkdir -p $out/usr/bin $out/usr/share/dbus-1
-    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
+    ln -st $out/usr/bin \
+        ${concatMapStringsSep " " (p: "${p}/bin/*") packages} \
+        ${pkgsGui.xdg-desktop-portal}/libexec/xdg-document-portal
     ln -st $out/usr/share/dbus-1 \
         ${dbus}/share/dbus-1/session.conf
 

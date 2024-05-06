@@ -5,6 +5,7 @@
 if { s6-rc-init -c /etc/s6-rc /run/service }
 
 if { mkdir -p /dev/pts /dev/shm }
+if { mount --make-shared /run }
 if { mount -a }
 
 s6-rc change ok-all
