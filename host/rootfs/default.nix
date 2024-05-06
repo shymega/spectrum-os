@@ -8,7 +8,7 @@ pkgsStatic.callPackage (
 
 { start-vmm
 , lib, stdenvNoCC, nixos, runCommand, writeClosure, erofs-utils, s6-rc, busybox
-, cloud-hypervisor, cryptsetup, execline, e2fsprogs, jq, kmod, mdevd, s6
+, cloud-hypervisor, cryptsetup, dbus, execline, e2fsprogs, jq, kmod, mdevd, s6
 , s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
 }:
 
@@ -43,7 +43,7 @@ let
   foot = pkgsGui.foot.override { allowPgo = false; };
 
   packages = [
-    cloud-hypervisor e2fsprogs execline jq kmod mdevd
+    cloud-hypervisor dbus e2fsprogs execline jq kmod mdevd
     s6 s6-linux-init s6-rc socat start-vmm virtiofsd
 
     (cryptsetup.override {
@@ -92,8 +92,10 @@ let
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
   } ''
-    mkdir -p $out/usr/bin
+    mkdir -p $out/usr/bin $out/usr/share/dbus-1
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
+    ln -st $out/usr/share/dbus-1 \
+        ${dbus}/share/dbus-1/session.conf
 
     for pkg in ${lib.escapeShellArgs usrPackages}; do
         lndir -ignorelinks -silent "$pkg" "$out/usr"

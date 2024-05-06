@@ -20,6 +20,10 @@ FILES = \
 	etc/passwd \
 	etc/s6-linux-init/env/WAYLAND_DISPLAY \
 	etc/s6-linux-init/env/XDG_RUNTIME_DIR \
+	etc/s6-linux-init/run-image/service/dbus/notification-fd \
+	etc/s6-linux-init/run-image/service/dbus/run \
+	etc/s6-linux-init/run-image/service/dbus/template/notification-fd \
+	etc/s6-linux-init/run-image/service/dbus/template/run \
 	etc/s6-linux-init/run-image/service/getty-tty1/run \
 	etc/s6-linux-init/run-image/service/getty-tty2/run \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
@@ -48,6 +52,10 @@ FILES = \
 DIRS = \
 	dev \
 	etc/s6-linux-init/env \
+	etc/s6-linux-init/run-image/service/dbus/instance \
+	etc/s6-linux-init/run-image/service/dbus/instances \
+	etc/s6-linux-init/run-image/service/dbus/template/data \
+	etc/s6-linux-init/run-image/service/dbus/template/env \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/instance \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/instances \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/template/data \

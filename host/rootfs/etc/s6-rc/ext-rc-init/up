@@ -11,6 +11,9 @@ if {
   if { mkdir /run/vm/${name} }
   if { ln -s /ext/svc/data/${name} /run/vm/${name}/config }
 
+  # Sockets for vhost-user backends need to be created before the VMM
+  # is started, because it will try to connect to them.
+
   if { mkdir /run/vm/${name}/fs }
   if { s6-instance-create /run/service/vhost-user-fs $name }
   if { s6-svwait -U /run/service/vhost-user-fs/instance/${name} }
@@ -21,7 +24,10 @@ if {
     s6-svwait -U /run/service/vhost-user-gpu/instance/${name}
   }
 
-  s6-instance-create /run/service/vmm $name
+  if { s6-instance-create /run/service/vmm $name }
+
+  if { s6-instance-create /run/service/dbus $name }
+  s6-svwait -U /run/service/dbus/instance/${name}
 }
 
 s6-svwait -U /run/service/vmm/instance/${names}
