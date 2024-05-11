@@ -78,6 +78,9 @@ let
       xdg-desktop-portal = super.xdg-desktop-portal.override {
         enableSystemd = false;
       };
+      xdg-desktop-portal-gtk = super.xdg-desktop-portal-gtk.override {
+        buildPortalsInGnome = false;
+      };
     })
   );
 
@@ -133,12 +136,15 @@ let
   packagesSysroot = runCommand "packages-sysroot" {
     nativeBuildInputs = [ xorg.lndir ];
   } ''
-    mkdir -p $out/usr/bin $out/usr/share/dbus-1
+    mkdir -p $out/usr/bin $out/usr/share/dbus-1/services
     ln -st $out/usr/bin \
         ${concatMapStringsSep " " (p: "${p}/bin/*") packages} \
-        ${pkgsGui.xdg-desktop-portal}/libexec/xdg-document-portal
+        ${pkgsGui.xdg-desktop-portal}/libexec/xdg-document-portal \
+        ${pkgsGui.xdg-desktop-portal-gtk}/libexec/xdg-desktop-portal-gtk
     ln -st $out/usr/share/dbus-1 \
         ${dbus}/share/dbus-1/session.conf
+    ln -st $out/usr/share/dbus-1/services \
+        ${pkgsGui.xdg-desktop-portal-gtk}/share/dbus-1/services/org.freedesktop.impl.portal.desktop.gtk.service
 
     for pkg in ${lib.escapeShellArgs usrPackages}; do
         lndir -ignorelinks -silent "$pkg" "$out/usr"
