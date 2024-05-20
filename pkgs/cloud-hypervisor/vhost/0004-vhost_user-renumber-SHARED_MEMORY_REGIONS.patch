@@ -1,7 +1,7 @@
 From 06c3e5ede8aa0b9ea417806e7363e72b181209ba Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <hi@alyssa.is>
 Date: Sat, 29 Jul 2023 12:03:18 +0000
-Subject: [PATCH 4/4] vhost_user: renumber SHARED_MEMORY_REGIONS
+Subject: [PATCH 4/5] vhost_user: renumber SHARED_MEMORY_REGIONS
 SPDX-FileCopyrightText: 2019-2021 Alibaba Cloud. All rights reserved.
 SPDX-FileCopyrightText: The Chromium OS Authors
 SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
@@ -29,7 +29,7 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
-index 7815d3e..c0d8dcc 100644
+index 7815d3ee5..c0d8dcc73 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
 @@ -440,8 +440,8 @@ bitflags! {

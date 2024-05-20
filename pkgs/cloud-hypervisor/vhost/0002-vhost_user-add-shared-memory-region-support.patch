@@ -1,7 +1,7 @@
 From f66e63e8d419a5a4ca55ff957906875678b2bb44 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
-Subject: [PATCH 2/4] vhost_user: add shared memory region support
+Subject: [PATCH 2/5] vhost_user: add shared memory region support
 SPDX-FileCopyrightText: 2019 Intel Corporation. All Rights Reserved.
 SPDX-FileCopyrightText: 2019-2021 Alibaba Cloud. All rights reserved.
 SPDX-FileCopyrightText: The Chromium OS Authors
@@ -38,7 +38,7 @@ Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
  7 files changed, 244 insertions(+), 14 deletions(-)
 
 diff --git a/vhost-user-backend/src/handler.rs b/vhost-user-backend/src/handler.rs
-index 83f5293..f5a8f0f 100644
+index 83f529314..f5a8f0fbe 100644
 --- a/vhost-user-backend/src/handler.rs
 +++ b/vhost-user-backend/src/handler.rs
 @@ -11,9 +11,9 @@ use std::sync::Arc;
@@ -66,7 +66,7 @@ index 83f5293..f5a8f0f 100644
  
  impl<T: VhostUserBackend> Drop for VhostUserHandler<T> {
 diff --git a/vhost/src/vhost_user/backend_req.rs b/vhost/src/vhost_user/backend_req.rs
-index b43982f..948e1b2 100644
+index b43982f06..948e1b26d 100644
 --- a/vhost/src/vhost_user/backend_req.rs
 +++ b/vhost/src/vhost_user/backend_req.rs
 @@ -46,12 +46,16 @@ impl BackendInternal {
@@ -107,7 +107,7 @@ index b43982f..948e1b2 100644
      fn fs_backend_map(&self, fs: &VhostUserFSBackendMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
          self.send_message(BackendReq::FS_MAP, fs, Some(&[fd.as_raw_fd()]))
 diff --git a/vhost/src/vhost_user/backend_req_handler.rs b/vhost/src/vhost_user/backend_req_handler.rs
-index 7b4cbe9..84486aa 100644
+index 7b4cbe965..84486aa81 100644
 --- a/vhost/src/vhost_user/backend_req_handler.rs
 +++ b/vhost/src/vhost_user/backend_req_handler.rs
 @@ -70,6 +70,7 @@ pub trait VhostUserBackendReqHandler {
@@ -154,7 +154,7 @@ index 7b4cbe9..84486aa 100644
                  return Err(Error::InvalidMessage);
              }
 diff --git a/vhost/src/vhost_user/dummy_backend.rs b/vhost/src/vhost_user/dummy_backend.rs
-index 9d9f977..4d9aef1 100644
+index 9d9f9773f..4d9aef156 100644
 --- a/vhost/src/vhost_user/dummy_backend.rs
 +++ b/vhost/src/vhost_user/dummy_backend.rs
 @@ -291,4 +291,8 @@ impl VhostUserBackendReqHandlerMut for DummyBackendReqHandler {
@@ -167,7 +167,7 @@ index 9d9f977..4d9aef1 100644
 +    }
  }
 diff --git a/vhost/src/vhost_user/frontend.rs b/vhost/src/vhost_user/frontend.rs
-index 8674be7..4a745a8 100644
+index 8674be786..4a745a864 100644
 --- a/vhost/src/vhost_user/frontend.rs
 +++ b/vhost/src/vhost_user/frontend.rs
 @@ -72,6 +72,9 @@ pub trait VhostUserFrontend: VhostBackend {
@@ -209,7 +209,7 @@ index 8674be7..4a745a8 100644
  
  impl AsRawFd for Frontend {
 diff --git a/vhost/src/vhost_user/frontend_req_handler.rs b/vhost/src/vhost_user/frontend_req_handler.rs
-index fb2dc16..cd4f604 100644
+index fb2dc16f1..cd4f604bb 100644
 --- a/vhost/src/vhost_user/frontend_req_handler.rs
 +++ b/vhost/src/vhost_user/frontend_req_handler.rs
 @@ -33,6 +33,16 @@ pub trait VhostUserFrontendReqHandler {
@@ -319,7 +319,7 @@ index fb2dc16..cd4f604 100644
              let def_err = libc::EINVAL;
              let val = match res {
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
-index 43e7314..67fc19a 100644
+index 43e73143c..67fc19ac4 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
 @@ -178,6 +178,8 @@ enum_value! {
