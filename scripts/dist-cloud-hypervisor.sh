@@ -8,7 +8,7 @@ if [ $# -gt 1 ]; then
 fi
 
 version="$(nix-instantiate --eval --json -A cloud-hypervisor.version pkgs | jq -r .)"
-name="cloud-hypervisor-$version-spectrum${2-0}-patches"
+name="cloud-hypervisor-$version-spectrum${1-0}-patches"
 
 dir="$(mktemp -d)"
 trap 'rm -rf -- "$dir"' EXIT
