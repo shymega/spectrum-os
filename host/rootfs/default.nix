@@ -10,6 +10,7 @@ pkgsStatic.callPackage (
 , lib, stdenvNoCC, nixos, runCommand, writeClosure, erofs-utils, s6-rc, busybox
 , cloud-hypervisor, cryptsetup, dbus, execline, e2fsprogs, jq, kmod, mdevd, s6
 , s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
+, xdg-desktop-portal-spectrum-host
 }:
 
 let
@@ -89,6 +90,7 @@ let
   packages = [
     cloud-hypervisor dbus e2fsprogs execline jq kmod mdevd
     s6 s6-linux-init s6-rc socat start-vmm virtiofsd
+    xdg-desktop-portal-spectrum-host
 
     (cryptsetup.override {
       programs = {

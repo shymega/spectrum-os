@@ -28,7 +28,13 @@ if {
   if { s6-instance-create /run/service/vmm $name }
 
   if { s6-instance-create /run/service/dbus $name }
-  s6-svwait -U /run/service/dbus/instance/${name}
+  if { s6-svwait -U /run/service/dbus/instance/${name} }
+
+  # The service directory for the VMM needs to exist before
+  # xdg-desktop-portal-spectrum-host is started, so it can install its
+  # listening vsock socket.
+  if { s6-instance-create /run/service/xdg-desktop-portal-spectrum-host $name }
+  s6-svwait -U /run/service/xdg-desktop-portal-spectrum-host/instance/${name}
 }
 
 s6-svwait -U /run/service/vmm/instance/${names}

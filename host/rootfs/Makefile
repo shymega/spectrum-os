@@ -41,6 +41,10 @@ FILES = \
 	etc/s6-linux-init/run-image/service/vmm/notification-fd \
 	etc/s6-linux-init/run-image/service/vmm/run \
 	etc/s6-linux-init/run-image/service/vmm/template/notification-fd \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/notification-fd \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/run \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/template/notification-fd \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/template/run \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/xdg/weston/autolaunch \
 	etc/xdg/weston/weston.ini \
@@ -68,6 +72,10 @@ DIRS = \
 	etc/s6-linux-init/run-image/service/vmm/instances \
 	etc/s6-linux-init/run-image/service/vmm/template/data \
 	etc/s6-linux-init/run-image/service/vmm/template/env \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/instance \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/instances \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/template/data \
+	etc/s6-linux-init/run-image/service/xdg-desktop-portal-spectrum-host/template/env \
 	etc/s6-linux-init/run-image/vm \
 	ext \
 	run \
