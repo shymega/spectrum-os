@@ -8,13 +8,14 @@ pkgsStatic.callPackage (
 { lib, stdenvNoCC, runCommand, writeClosure
 , erofs-utils, jq, s6-rc, util-linux
 , busybox, cacert, dbus, execline, kmod, linux_latest, mdevd, s6, s6-linux-init
+, xdg-desktop-portal-spectrum
 }:
 
 let
   inherit (lib) concatMapStringsSep;
 
   packages = [
-    dbus execline kmod mdevd s6 s6-linux-init s6-rc
+    dbus execline kmod mdevd s6 s6-linux-init s6-rc xdg-desktop-portal-spectrum
 
     (busybox.override {
       extraConfig = ''
@@ -32,12 +33,18 @@ let
     inherit packages;
     passAsFile = [ "packages" ];
   } ''
-    mkdir -p $out/usr/bin $out/usr/share/dbus-1/services
+    mkdir -p \
+        $out/usr/bin \
+        $out/usr/share/dbus-1/services \
+        $out/usr/share/xdg-desktop-portal/portals
     ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
     ln -st $out/usr/share/dbus-1/services \
         ${pkgsMusl.xdg-desktop-portal}/share/dbus-1/services/*.service \
-        ${pkgsMusl.xdg-desktop-portal-gtk}/share/dbus-1/services/*.service
-    ln -s ${pkgsMusl.xdg-desktop-portal-gtk}/share/xdg-desktop-portal $out/usr/share
+        ${pkgsMusl.xdg-desktop-portal-gtk}/share/dbus-1/services/*.service \
+        ${xdg-desktop-portal-spectrum}/share/dbus-1/services/*.service
+    ln -st $out/usr/share/xdg-desktop-portal/portals \
+        ${pkgsMusl.xdg-desktop-portal-gtk}/share/xdg-desktop-portal/portals/*.portal \
+        ${xdg-desktop-portal-spectrum}/share/xdg-desktop-portal/portals/*.portal
     ln -s ${kernel}/lib "$out"
     ln -s ${terminfo}/share/terminfo $out/usr/share
     ln -s ${cacert}/etc/ssl $out/usr/share
