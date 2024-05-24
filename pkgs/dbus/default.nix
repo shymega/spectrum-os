@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-import ../../lib/overlay-package.nix "dbus" ({ final, super }:
+import ../../lib/overlay-package.nix [ "dbus" ] ({ final, super }:
 
 super.dbus.overrideAttrs ({ configureFlags ? [], patches ? [], ... }: {
   patches = patches ++ [

@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
-import ../../lib/overlay-package.nix "cloud-hypervisor" ({ final, super }:
+import ../../lib/overlay-package.nix [ "cloud-hypervisor" ] ({ final, super }:
 
 final.rustPlatform.buildRustPackage {
   inherit (super.cloud-hypervisor)
