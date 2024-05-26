@@ -1,0 +1,64 @@
+= VM File Access
+:page-parent: Using Spectrum
+
+// SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+Spectrum VMs start without any access to user data, but the user can
+grant VMs access to files while the VM is running.
+
+== File chooser portal
+
+Some applications implement the
+https://flatpak.github.io/xdg-desktop-portal/[XDG Desktop Portal]
+https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.FileChooser.html[File
+Chooser API].  If you're using an application that does, when you
+choose to open or save a file in the application, you'll see a file
+chooser dialog that allows you to choose a single location to open or
+save to.  The host will then share this single location with the VM.
+
+TIP: Some applications will only try to use portals when they detect
+that they're running in a sandbox, and they won't realize that a
+Spectrum VMs is a sandbox.  There might be ways to force them to use
+portals anyway, for example by setting the environment variable
+`GTK_USE_PORTAL` to `1` for GTK 3, or
+https://docs.gtk.org/gtk4/running.html#gdk_debug[`GDK_DEBUG`] to
+`portals` for GTK 4.
+
+TIP: If you're using a custom VM image, to use Spectrum's File Chooser
+portal implementation you'll need to install
+https://spectrum-os.org/git/spectrum/tree/tools/xdg-desktop-portal-spectrum[xdg-desktop-portal-spectrum]
+and set the org.freedesktop.impl.portal.FileChooser interface to be
+provided by the "spectrum" portal in
+https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html[portals.conf].
+(https://spectrum-os.org/git/spectrum/tree/img/app/etc/xdg-desktop-portal/portals.conf[Example])
+
+== Manually sharing files with a VM
+
+When using an application that doesn't implement the File Chooser API,
+you can still give it access to files manually.  Each VM has
+xref:creating-vms.adoc#filesystem[access] to the /run/vm/_name_/fs
+directory on the host (mounted at /run/virtiofs/virtiofs0 in the
+default Spectrum VM image).  For the VM, this directory is read-only,
+but writeable files and directories can be bind-mounted into it:
+
+[example]
+====
+1. Create a file to share with the VM:
++
+[listing]
+[source,shell]
+echo "Hello, world!" > /ext/example.txt
+
+2. Create an empty file to bind mount over:
++
+[listing]
+[source,shell]
+touch /run/vm/appvm-example/fs/example.txt
+
+3. Create the bind mount:
++
+[listing]
+[source,shell]
+mount --rbind /ext/example.txt /run/vm/appvm-example/fs/example.txt
+====
