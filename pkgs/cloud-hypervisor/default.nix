@@ -13,10 +13,9 @@ final.rustPlatform.buildRustPackage {
     lockFile = ./Cargo.lock;
     outputHashes = {
       "acpi_tables-0.1.0" = "sha256-a6ojB2XVeH+YzzXRle0agg+ljn0Jsgyaf6TJZAGt8sQ=";
-      "igvm-0.1.9" = "sha256-OztgRiv+//27MS9SqSBJPbrVlXihK2m9UkG4REZ9Vn0=";
       "micro_http-0.1.0" = "sha256-yIgcoEfc7eeS1+bijzkifaBxVNHa71Y+Vn79owMaKvM=";
-      "mshv-bindings-0.1.1" = "sha256-US/AzS7iRUQijkGs1EG04Hk4Q7dPz65BeTMsI8rtMqw=";
-      "vfio-bindings-0.4.0" = "sha256-k8Hf5y8MiTnd3k2iEgnnX/o8VdVS7prKlnssyEerVRM=";
+      "mshv-bindings-0.2.0" = "sha256-NYViItbjt1Q2G4yO3j37naHe9EJ+llkjrNt6w4zoiW8=";
+      "vfio-bindings-0.4.0" = "sha256-mzdYH23CVWm7fvu4+1cFHlPhkUjh7+JlU/ScoXaDNgA=";
       "vfio_user-0.1.0" = "sha256-LJ84k9pMkSAaWkuaUd+2LnPXnNgrP5LdbPOc1Yjz5xA=";
       "vm-fdt-0.3.0" = "sha256-9PywgSnSL+8gT6lcl9t6w7X4fEINa+db+H1vWS+gDOI=";
     };
@@ -26,8 +25,8 @@ final.rustPlatform.buildRustPackage {
     name = "vhost";
     owner = "rust-vmm";
     repo = "vhost";
-    rev = "vhost-user-backend-v0.13.1";
-    hash = "sha256-iF0VPrTEq9blT6hY0QyLcq64+ZNsiEv1EA3c7NoQLRE=";
+    rev = "vhost-user-backend-v0.15.0";
+    hash = "sha256-KPaGoh2xaKuMA+fNU82SwL51TTTIx0ZkumxN1R7maIA=";
   };
 
   cargoPatches = super.cloud-hypervisor.cargoPatches or [] ++ [

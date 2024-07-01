@@ -1,4 +1,4 @@
-From 66bb19b75981574e106f6491edbecba746f087d4 Mon Sep 17 00:00:00 2001
+From 56e591010d99f419b74403f6b49e8b128f608e01 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Thu, 13 Oct 2022 10:37:47 +0900
 Subject: [PATCH 3/5] vhost_user: add protocol flag for shmem
@@ -25,18 +25,18 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  1 file changed, 2 insertions(+)
 
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
-index 67fc19ac4..7815d3ee5 100644
+index 9c48bb8..b02b925 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
-@@ -440,6 +440,8 @@ bitflags! {
+@@ -448,6 +448,8 @@ bitflags! {
          const STATUS = 0x0001_0000;
          /// Support Xen mmap.
          const XEN_MMAP = 0x0002_0000;
 +        /// Support shared memory regions.
 +        const SHARED_MEMORY_REGIONS = 0x0002_0000;
+         /// Support transferring internal device state.
+         const DEVICE_STATE = 0x0008_0000;
      }
- }
- 
 -- 
 2.44.0
 

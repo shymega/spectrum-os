@@ -1,4 +1,4 @@
-From 7958722763a03493a6b35f8916bff126e1ea18f3 Mon Sep 17 00:00:00 2001
+From ae59bebff2d783b76849f94323c1eef1b1350f8d Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <alyssa.ross@unikie.com>
 Date: Wed, 28 Sep 2022 12:18:19 +0000
 Subject: [PATCH 1/2] build: use local vhost
@@ -14,34 +14,34 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  2 files changed, 4 insertions(+), 4 deletions(-)
 
 diff --git a/Cargo.lock b/Cargo.lock
-index 18d10d78..9e36300b 100644
+index 302b7601..b9f9943d 100644
 --- a/Cargo.lock
 +++ b/Cargo.lock
-@@ -2380,8 +2380,6 @@ dependencies = [
+@@ -2254,8 +2254,6 @@ dependencies = [
  [[package]]
  name = "vhost"
- version = "0.10.0"
+ version = "0.11.0"
 -source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "2b64e816d0d49769fbfaa1494eb77cc2a3ddc526ead05c7f922cb7d64106286f"
+-checksum = "6be08d1166d41a78861ad50212ab3f9eca0729c349ac3a7a8f557c62406b87cc"
  dependencies = [
   "bitflags 2.5.0",
   "libc",
-@@ -2392,8 +2390,6 @@ dependencies = [
+@@ -2266,8 +2264,6 @@ dependencies = [
  [[package]]
  name = "vhost-user-backend"
- version = "0.13.1"
+ version = "0.15.0"
 -source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "72c8c447d076ac508d78cb45664d203df7989e891656dce260a7e93d72352c9a"
+-checksum = "1f0ffb1dd8e00a708a0e2c32d5efec5812953819888591fff9ff68236b8a5096"
  dependencies = [
   "libc",
   "log",
 diff --git a/Cargo.toml b/Cargo.toml
-index c1d4b52e..ce251365 100644
+index 8c24dc27..5a484cd5 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -50,6 +50,10 @@ vmm-sys-util = "0.12.1"
- vm-memory = "0.14.1"
- zbus = { version = "3.15.2", optional = true }
+@@ -50,6 +50,10 @@ vmm = { path = "vmm" }
+ vmm-sys-util = "0.12.1"
+ zbus = { version = "4.1.2", optional = true }
  
 +[patch.crates-io]
 +vhost = { path = "../vhost/vhost" }

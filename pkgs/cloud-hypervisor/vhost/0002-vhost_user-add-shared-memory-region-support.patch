@@ -1,4 +1,4 @@
-From f66e63e8d419a5a4ca55ff957906875678b2bb44 Mon Sep 17 00:00:00 2001
+From c0cca052d480a835e57d53eda6c06a42dc278692 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
 Subject: [PATCH 2/5] vhost_user: add shared memory region support
@@ -28,45 +28,46 @@ Tested-by: kokoro <noreply+kokoro@google.com>
 (cherry-picked from commit f436e2706011fa5f34dc415972434aa3299ebc43)
 Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
 ---
- vhost-user-backend/src/handler.rs            |  10 +-
+ vhost-user-backend/src/handler.rs            |  11 +-
  vhost/src/vhost_user/backend_req.rs          |  20 ++-
  vhost/src/vhost_user/backend_req_handler.rs  |  15 +++
  vhost/src/vhost_user/dummy_backend.rs        |   4 +
  vhost/src/vhost_user/frontend.rs             |  24 ++++
  vhost/src/vhost_user/frontend_req_handler.rs |  53 +++++++-
  vhost/src/vhost_user/message.rs              | 132 ++++++++++++++++++-
- 7 files changed, 244 insertions(+), 14 deletions(-)
+ 7 files changed, 245 insertions(+), 14 deletions(-)
 
 diff --git a/vhost-user-backend/src/handler.rs b/vhost-user-backend/src/handler.rs
-index 83f529314..f5a8f0fbe 100644
+index 62c4a66..9da7fe8 100644
 --- a/vhost-user-backend/src/handler.rs
 +++ b/vhost-user-backend/src/handler.rs
-@@ -11,9 +11,9 @@ use std::sync::Arc;
- use std::thread;
- 
+@@ -17,9 +17,10 @@ use crate::bitmap::{BitmapReplace, MemRegionBitmap, MmapLogReg};
+ #[cfg(feature = "postcopy")]
+ use userfaultfd::{Uffd, UffdBuilder};
  use vhost::vhost_user::message::{
--    VhostUserConfigFlags, VhostUserMemoryRegion, VhostUserProtocolFeatures,
--    VhostUserSingleMemoryRegion, VhostUserVirtioFeatures, VhostUserVringAddrFlags,
--    VhostUserVringState,
-+    VhostSharedMemoryRegion, VhostUserConfigFlags, VhostUserMemoryRegion,
-+    VhostUserProtocolFeatures, VhostUserSingleMemoryRegion, VhostUserVirtioFeatures,
-+    VhostUserVringAddrFlags, VhostUserVringState,
+-    VhostTransferStateDirection, VhostTransferStatePhase, VhostUserConfigFlags, VhostUserLog,
+-    VhostUserMemoryRegion, VhostUserProtocolFeatures, VhostUserSingleMemoryRegion,
+-    VhostUserVirtioFeatures, VhostUserVringAddrFlags, VhostUserVringState,
++    VhostSharedMemoryRegion, VhostTransferStateDirection, VhostTransferStatePhase,
++    VhostUserConfigFlags, VhostUserLog, VhostUserMemoryRegion, VhostUserProtocolFeatures,
++    VhostUserSingleMemoryRegion, VhostUserVirtioFeatures, VhostUserVringAddrFlags,
++    VhostUserVringState,
  };
  use vhost::vhost_user::{
      Backend, Error as VhostUserError, Result as VhostUserResult, VhostUserBackendReqHandlerMut,
-@@ -617,6 +617,10 @@ where
- 
+@@ -638,6 +639,10 @@ where
          Ok(())
      }
-+
+ 
 +    fn get_shared_memory_regions(&mut self) -> VhostUserResult<Vec<VhostSharedMemoryRegion>> {
 +        Ok(Vec::new())
 +    }
- }
- 
- impl<T: VhostUserBackend> Drop for VhostUserHandler<T> {
++
+     fn set_device_state_fd(
+         &mut self,
+         direction: VhostTransferStateDirection,
 diff --git a/vhost/src/vhost_user/backend_req.rs b/vhost/src/vhost_user/backend_req.rs
-index b43982f06..948e1b26d 100644
+index b43982f..948e1b2 100644
 --- a/vhost/src/vhost_user/backend_req.rs
 +++ b/vhost/src/vhost_user/backend_req.rs
 @@ -46,12 +46,16 @@ impl BackendInternal {
@@ -107,7 +108,7 @@ index b43982f06..948e1b26d 100644
      fn fs_backend_map(&self, fs: &VhostUserFSBackendMsg, fd: &dyn AsRawFd) -> HandlerResult<u64> {
          self.send_message(BackendReq::FS_MAP, fs, Some(&[fd.as_raw_fd()]))
 diff --git a/vhost/src/vhost_user/backend_req_handler.rs b/vhost/src/vhost_user/backend_req_handler.rs
-index 7b4cbe965..84486aa81 100644
+index 25ffd9c..6e5b0ea 100644
 --- a/vhost/src/vhost_user/backend_req_handler.rs
 +++ b/vhost/src/vhost_user/backend_req_handler.rs
 @@ -70,6 +70,7 @@ pub trait VhostUserBackendReqHandler {
@@ -115,29 +116,29 @@ index 7b4cbe965..84486aa81 100644
      fn add_mem_region(&self, region: &VhostUserSingleMemoryRegion, fd: File) -> Result<()>;
      fn remove_mem_region(&self, region: &VhostUserSingleMemoryRegion) -> Result<()>;
 +    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>>;
- }
- 
- /// Services provided to the frontend by the backend without interior mutability.
-@@ -118,6 +119,7 @@ pub trait VhostUserBackendReqHandlerMut {
+     fn set_device_state_fd(
+         &self,
+         direction: VhostTransferStateDirection,
+@@ -132,6 +133,7 @@ pub trait VhostUserBackendReqHandlerMut {
      fn get_max_mem_slots(&mut self) -> Result<u64>;
      fn add_mem_region(&mut self, region: &VhostUserSingleMemoryRegion, fd: File) -> Result<()>;
      fn remove_mem_region(&mut self, region: &VhostUserSingleMemoryRegion) -> Result<()>;
 +    fn get_shared_memory_regions(&mut self) -> Result<Vec<VhostSharedMemoryRegion>>;
- }
- 
- impl<T: VhostUserBackendReqHandlerMut> VhostUserBackendReqHandler for Mutex<T> {
-@@ -226,6 +228,10 @@ impl<T: VhostUserBackendReqHandlerMut> VhostUserBackendReqHandler for Mutex<T> {
-     fn remove_mem_region(&self, region: &VhostUserSingleMemoryRegion) -> Result<()> {
+     fn set_device_state_fd(
+         &mut self,
+         direction: VhostTransferStateDirection,
+@@ -255,6 +257,10 @@ impl<T: VhostUserBackendReqHandlerMut> VhostUserBackendReqHandler for Mutex<T> {
          self.lock().unwrap().remove_mem_region(region)
      }
-+
+ 
 +    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>> {
 +        self.lock().unwrap().get_shared_memory_regions()
 +    }
- }
- 
- /// Server to handle service requests from frontends from the frontend communication channel.
-@@ -519,6 +525,15 @@ impl<S: VhostUserBackendReqHandler> BackendReqHandler<S> {
++
+     fn set_device_state_fd(
+         &self,
+         direction: VhostTransferStateDirection,
+@@ -580,6 +586,15 @@ impl<S: VhostUserBackendReqHandler> BackendReqHandler<S> {
                  let res = self.backend.remove_mem_region(&msg);
                  self.send_ack_message(&hdr, res)?;
              }
@@ -150,41 +151,42 @@ index 7b4cbe965..84486aa81 100644
 +                }
 +                self.send_reply_with_payload(&hdr, &msg, buf.as_slice())?;
 +            }
-             _ => {
-                 return Err(Error::InvalidMessage);
-             }
+             Ok(FrontendReq::SET_DEVICE_STATE_FD) => {
+                 let file = take_single_file(files).ok_or(Error::IncorrectFds)?;
+                 let msg =
 diff --git a/vhost/src/vhost_user/dummy_backend.rs b/vhost/src/vhost_user/dummy_backend.rs
-index 9d9f9773f..4d9aef156 100644
+index afdc73f..a26ea65 100644
 --- a/vhost/src/vhost_user/dummy_backend.rs
 +++ b/vhost/src/vhost_user/dummy_backend.rs
-@@ -291,4 +291,8 @@ impl VhostUserBackendReqHandlerMut for DummyBackendReqHandler {
-     fn remove_mem_region(&mut self, _region: &VhostUserSingleMemoryRegion) -> Result<()> {
+@@ -292,6 +292,10 @@ impl VhostUserBackendReqHandlerMut for DummyBackendReqHandler {
          Ok(())
      }
-+
+ 
 +    fn get_shared_memory_regions(&mut self) -> Result<Vec<VhostSharedMemoryRegion>> {
 +        Ok(Vec::new())
 +    }
- }
++
+     fn set_device_state_fd(
+         &mut self,
+         _direction: VhostTransferStateDirection,
 diff --git a/vhost/src/vhost_user/frontend.rs b/vhost/src/vhost_user/frontend.rs
-index 8674be786..4a745a864 100644
+index 7c56c08..22eac52 100644
 --- a/vhost/src/vhost_user/frontend.rs
 +++ b/vhost/src/vhost_user/frontend.rs
-@@ -72,6 +72,9 @@ pub trait VhostUserFrontend: VhostBackend {
- 
+@@ -73,6 +73,9 @@ pub trait VhostUserFrontend: VhostBackend {
      /// Remove a guest memory mapping from vhost.
      fn remove_mem_region(&mut self, region: &VhostUserMemoryRegionInfo) -> Result<()>;
-+
+ 
 +    /// Gets the shared memory regions used by the device.
 +    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>>;
- }
- 
- fn error_code<T>(err: VhostUserError) -> Result<T> {
-@@ -517,6 +520,27 @@ impl VhostUserFrontend for Frontend {
-         let hdr = node.send_request_with_body(FrontendReq::REM_MEM_REG, &body, None)?;
++
+     /// Sends VHOST_USER_POSTCOPY_ADVISE msg to the backend
+     /// initiating the beginning of the postcopy process.
+     /// Backend will return a userfaultfd.
+@@ -538,6 +541,27 @@ impl VhostUserFrontend for Frontend {
          node.wait_for_ack(&hdr).map_err(|e| e.into())
      }
-+
+ 
 +    fn get_shared_memory_regions(&self) -> Result<Vec<VhostSharedMemoryRegion>> {
 +        let mut node = self.node();
 +        let hdr = node.send_request_header(FrontendReq::GET_SHARED_MEMORY_REGIONS, None)?;
@@ -205,11 +207,12 @@ index 8674be786..4a745a864 100644
 +        }
 +        Ok(regions)
 +    }
- }
- 
- impl AsRawFd for Frontend {
++
+     #[cfg(feature = "postcopy")]
+     fn postcopy_advise(&mut self) -> Result<File> {
+         let mut node = self.node();
 diff --git a/vhost/src/vhost_user/frontend_req_handler.rs b/vhost/src/vhost_user/frontend_req_handler.rs
-index fb2dc16f1..cd4f604bb 100644
+index fb2dc16..cd4f604 100644
 --- a/vhost/src/vhost_user/frontend_req_handler.rs
 +++ b/vhost/src/vhost_user/frontend_req_handler.rs
 @@ -33,6 +33,16 @@ pub trait VhostUserFrontendReqHandler {
@@ -319,7 +322,7 @@ index fb2dc16f1..cd4f604bb 100644
              let def_err = libc::EINVAL;
              let val = match res {
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
-index 43e73143c..67fc19ac4 100644
+index f24331c..9c48bb8 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
 @@ -178,6 +178,8 @@ enum_value! {
@@ -328,10 +331,10 @@ index 43e73143c..67fc19ac4 100644
          GET_STATUS = 40,
 +        /// Get a list of the device's shared memory regions.
 +        GET_SHARED_MEMORY_REGIONS = 41,
-     }
- }
- 
-@@ -197,14 +199,18 @@ enum_value! {
+         /// Begin transfer of internal state to/from the backend for migration
+         /// purposes.
+         SET_DEVICE_STATE_FD = 42,
+@@ -203,14 +205,18 @@ enum_value! {
          VRING_CALL = 4,
          /// Indicate that an error occurred on the specific vring.
          VRING_ERR = 5,
@@ -354,7 +357,7 @@ index 43e73143c..67fc19ac4 100644
      }
  }
  
-@@ -955,6 +961,99 @@ impl VhostUserMsgValidator for VhostUserFSBackendMsg {
+@@ -1029,6 +1035,99 @@ impl VhostUserMsgValidator for VhostUserFSBackendMsg {
      }
  }
  
@@ -454,7 +457,7 @@ index 43e73143c..67fc19ac4 100644
  /// Inflight I/O descriptor state for split virtqueues
  #[repr(C, packed)]
  #[derive(Clone, Copy, Default)]
-@@ -1086,6 +1185,31 @@ impl QueueRegionPacked {
+@@ -1160,6 +1259,31 @@ impl QueueRegionPacked {
      }
  }
  
