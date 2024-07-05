@@ -11,7 +11,7 @@ background {
     ifelse { redirfd -w 1 /dev/null printenv extspec }
 
     {
-      importas -iu extspec extspec
+      importas -Siu extspec
       findfs $extspec
     }
 

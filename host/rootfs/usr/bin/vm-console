@@ -11,7 +11,7 @@ foreground {
   flock -n $pty
   foot -T $1 --pty $pty
 }
-importas -iu ? ?
+importas -Siu ?
 foreground {
   if { test $? != 230 }
   fdmove -c 1 2

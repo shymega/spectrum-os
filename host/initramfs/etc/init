@@ -36,7 +36,7 @@ background { kill $mdevd_pid }
 background { rm /dev/rootfs.poll }
 
 if {
-  importas -i roothash roothash
+  importas -Si roothash
   veritysetup open /dev/rootfs root-verity /dev/verity $roothash
 }
 
