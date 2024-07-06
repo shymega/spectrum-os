@@ -10,7 +10,7 @@ use std::sync::OnceLock;
 use percent_encoding::percent_decode;
 use url::Url;
 use zbus::zvariant::{Array, ObjectPath, OwnedValue, Value};
-use zbus::{interface, proxy, Connection};
+use zbus::{interface, Connection};
 
 use crate::documents::share_file;
 use crate::msg;
@@ -21,50 +21,15 @@ const XDG_DESKTOP_PORTAL_RESPONSE_OTHER: u32 = 2;
 
 static PROXY: OnceLock<FileChooserProxy> = OnceLock::new();
 
-#[proxy(
-    assume_defaults = false,
-    default_path = "/org/freedesktop/portal/desktop",
-    default_service = "org.freedesktop.impl.portal.desktop.gtk",
-    interface = "org.freedesktop.impl.portal.FileChooser"
-)]
-trait FileChooser {
-    fn open_file(
-        &self,
-        handle: &ObjectPath<'_>,
-        app_id: &str,
-        parent_window: &str,
-        title: &str,
-        options: BTreeMap<&str, Value<'_>>,
-    ) -> zbus::fdo::Result<(u32, BTreeMap<String, OwnedValue>)>;
-
-    fn save_file(
-        &self,
-        handle: &ObjectPath<'_>,
-        app_id: &str,
-        parent_window: &str,
-        title: &str,
-        options: BTreeMap<&str, Value<'_>>,
-    ) -> zbus::fdo::Result<(u32, BTreeMap<String, OwnedValue>)>;
-
-    fn save_files(
-        &self,
-        handle: &ObjectPath<'_>,
-        app_id: &str,
-        parent_window: &str,
-        title: &str,
-        options: BTreeMap<&str, Value<'_>>,
-    ) -> zbus::fdo::Result<(u32, BTreeMap<String, OwnedValue>)>;
-}
-
 #[derive(Debug)]
-pub struct FileChooserImpl {
+pub struct FileChooser {
     guest_share_root: PathBuf,
 }
 
-impl FileChooserImpl {
+impl FileChooser {
     /// D-Bus requests will panic if `guest_share_root` is not absolute.
     pub fn new(guest_share_root: PathBuf) -> Self {
-        FileChooserImpl { guest_share_root }
+        FileChooser { guest_share_root }
     }
 
     /// Take a list of host URIs, share them with the guest using the
@@ -93,7 +58,7 @@ impl FileChooserImpl {
                 .map_err(|e| format!("adding {:?} to document portal: {e}", path))?;
 
             let guest_path = self.guest_share_root.join(path);
-            // Potential panic is documented in FileChooserImpl::new.
+            // Potential panic is documented in FileChooser::new.
             *uri = Url::from_file_path(guest_path).unwrap().to_string();
         }
 
@@ -114,7 +79,7 @@ impl FileChooserImpl {
         let (response, mut results) = PROXY
             .get()
             .unwrap()
-            .open_file(&handle, app_id, parent_window, title, options)
+            .open_file(handle, app_id, parent_window, title, options)
             .await
             .map_err(|e| format!("backend: {e}"))?;
 
@@ -154,7 +119,7 @@ impl FileChooserImpl {
         let (response, mut results) = PROXY
             .get()
             .unwrap()
-            .save_file(&handle, app_id, parent_window, title, options)
+            .save_file(handle, app_id, parent_window, title, options)
             .await
             .map_err(|e| format!("backend: {e}"))?;
 
@@ -178,8 +143,15 @@ impl FileChooserImpl {
     }
 }
 
-#[interface(name = "org.freedesktop.impl.portal.FileChooser")]
-impl FileChooserImpl {
+#[interface(
+    name = "org.freedesktop.impl.portal.FileChooser",
+    proxy(
+        assume_defaults = false,
+        default_path = "/org/freedesktop/portal/desktop",
+        default_service = "org.freedesktop.impl.portal.desktop.gtk",
+    )
+)]
+impl FileChooser {
     async fn open_file(
         &self,
         handle: ObjectPath<'_>,

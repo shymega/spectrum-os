@@ -21,7 +21,7 @@ use futures_lite::prelude::*;
 use futures_lite::stream::StreamExt;
 use zbus::{Connection, ConnectionBuilder, MessageStream};
 
-use file_chooser::FileChooserImpl;
+use file_chooser::FileChooser;
 
 static EXECUTOR: StaticExecutor = StaticExecutor::new();
 static VSOCK_UNIX_PATH: OnceLock<PathBuf> = OnceLock::new();
@@ -134,7 +134,7 @@ async fn run_guest_connection(mut conn: Async<UnixStream>) -> Result<(), String>
 
         let vsock = connect_to_guest(port).await?;
 
-        let imp = FileChooserImpl::new(guest_share_root);
+        let imp = FileChooser::new(guest_share_root);
         ConnectionBuilder::socket(vsock)
             .name("org.freedesktop.impl.portal.desktop.spectrum")
             .unwrap()
