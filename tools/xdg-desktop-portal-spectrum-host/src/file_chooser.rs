@@ -26,6 +26,60 @@ pub struct FileChooser {
     guest_share_root: PathBuf,
 }
 
+#[interface(
+    name = "org.freedesktop.impl.portal.FileChooser",
+    proxy(
+        assume_defaults = false,
+        default_path = "/org/freedesktop/portal/desktop",
+        default_service = "org.freedesktop.impl.portal.desktop.gtk",
+    )
+)]
+impl FileChooser {
+    async fn open_file(
+        &self,
+        handle: ObjectPath<'_>,
+        app_id: &str,
+        parent_window: &str,
+        title: &str,
+        options: BTreeMap<&str, Value<'_>>,
+    ) -> zbus::fdo::Result<(u32, BTreeMap<String, OwnedValue>)> {
+        match self
+            .open_file_impl(handle, app_id, parent_window, title, options)
+            .await
+        {
+            Ok(Some(results)) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_SUCCESS, results)),
+            Ok(None) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_CANCELLED, BTreeMap::new())),
+            Err(e) => {
+                msg(&e);
+                Ok((XDG_DESKTOP_PORTAL_RESPONSE_OTHER, BTreeMap::new()))
+            }
+        }
+    }
+
+    async fn save_file(
+        &self,
+        handle: ObjectPath<'_>,
+        app_id: &str,
+        parent_window: &str,
+        title: &str,
+        options: BTreeMap<&str, Value<'_>>,
+    ) -> zbus::fdo::Result<(u32, BTreeMap<String, OwnedValue>)> {
+        match self
+            .save_file_impl(handle, app_id, parent_window, title, options)
+            .await
+        {
+            Ok(Some(results)) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_SUCCESS, results)),
+            Ok(None) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_CANCELLED, BTreeMap::new())),
+            Err(e) => {
+                msg(&e);
+                Ok((XDG_DESKTOP_PORTAL_RESPONSE_OTHER, BTreeMap::new()))
+            }
+        }
+    }
+
+    // TODO: implement save_files
+}
+
 impl FileChooser {
     /// D-Bus requests will panic if `guest_share_root` is not absolute.
     pub fn new(guest_share_root: PathBuf) -> Self {
@@ -141,60 +195,6 @@ impl FileChooser {
             }
         }
     }
-}
-
-#[interface(
-    name = "org.freedesktop.impl.portal.FileChooser",
-    proxy(
-        assume_defaults = false,
-        default_path = "/org/freedesktop/portal/desktop",
-        default_service = "org.freedesktop.impl.portal.desktop.gtk",
-    )
-)]
-impl FileChooser {
-    async fn open_file(
-        &self,
-        handle: ObjectPath<'_>,
-        app_id: &str,
-        parent_window: &str,
-        title: &str,
-        options: BTreeMap<&str, Value<'_>>,
-    ) -> zbus::fdo::Result<(u32, BTreeMap<String, OwnedValue>)> {
-        match self
-            .open_file_impl(handle, app_id, parent_window, title, options)
-            .await
-        {
-            Ok(Some(results)) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_SUCCESS, results)),
-            Ok(None) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_CANCELLED, BTreeMap::new())),
-            Err(e) => {
-                msg(&e);
-                Ok((XDG_DESKTOP_PORTAL_RESPONSE_OTHER, BTreeMap::new()))
-            }
-        }
-    }
-
-    async fn save_file(
-        &self,
-        handle: ObjectPath<'_>,
-        app_id: &str,
-        parent_window: &str,
-        title: &str,
-        options: BTreeMap<&str, Value<'_>>,
-    ) -> zbus::fdo::Result<(u32, BTreeMap<String, OwnedValue>)> {
-        match self
-            .save_file_impl(handle, app_id, parent_window, title, options)
-            .await
-        {
-            Ok(Some(results)) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_SUCCESS, results)),
-            Ok(None) => Ok((XDG_DESKTOP_PORTAL_RESPONSE_CANCELLED, BTreeMap::new())),
-            Err(e) => {
-                msg(&e);
-                Ok((XDG_DESKTOP_PORTAL_RESPONSE_OTHER, BTreeMap::new()))
-            }
-        }
-    }
-
-    // TODO: implement save_files
 }
 
 pub async fn init(conn: &Connection) {
