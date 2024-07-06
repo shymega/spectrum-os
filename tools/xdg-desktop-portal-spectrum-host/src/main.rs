@@ -15,7 +15,7 @@ use std::process::exit;
 use std::slice;
 use std::sync::OnceLock;
 
-use async_executor::Executor;
+use async_executor::StaticExecutor;
 use async_io::Async;
 use futures_lite::prelude::*;
 use futures_lite::stream::StreamExt;
@@ -23,6 +23,7 @@ use zbus::{Connection, ConnectionBuilder, MessageStream};
 
 use file_chooser::FileChooserImpl;
 
+static EXECUTOR: StaticExecutor = StaticExecutor::new();
 static VSOCK_UNIX_PATH: OnceLock<PathBuf> = OnceLock::new();
 
 async fn receive_u32(conn: &mut Async<UnixStream>) -> io::Result<u32> {
@@ -219,9 +220,7 @@ fn read_argv() {
 fn run() -> Result<(), String> {
     read_argv();
 
-    let ex = Executor::new();
-
-    async_io::block_on(ex.run(async {
+    async_io::block_on(EXECUTOR.run(async {
         // SAFETY: safe because we won't use fd 0 anywhere else.
         let stdin = Async::new(unsafe { UnixListener::from_raw_fd(0) })
             .map_err(|e| format!("listening on stdin: {e}"))?;
@@ -250,12 +249,13 @@ fn run() -> Result<(), String> {
                 initialized = true;
             }
 
-            ex.spawn(async move {
-                if let Err(e) = run_guest_connection(conn).await {
-                    msg(&format!("guest connection error: {e}"));
-                }
-            })
-            .detach();
+            EXECUTOR
+                .spawn(async move {
+                    if let Err(e) = run_guest_connection(conn).await {
+                        msg(&format!("guest connection error: {e}"));
+                    }
+                })
+                .detach();
         }
     }))
 }
