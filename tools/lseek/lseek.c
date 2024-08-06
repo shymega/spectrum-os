@@ -12,7 +12,7 @@
 
 noreturn static void ex_usage(void)
 {
-	fprintf(stderr, "Usage: lseek [ -C | -E | -S ] fd offset prog...\n");
+	fputs("Usage: lseek [ -C | -E | -S ] fd offset prog...\n", stderr);
 	exit(EXIT_FAILURE);
 }
 
