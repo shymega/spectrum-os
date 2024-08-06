@@ -5,10 +5,10 @@
 # and can be built with the same meson.build,
 # to avoid exposing it as a dependency.
 [wrap-file]
-directory = miniserde-0.1.38
-source_url = https://github.com/dtolnay/miniserde/archive/0.1.38.tar.gz
-source_filename = miniserde-0.1.38.tar.gz
-source_hash = 4264f8d0e44463b8bc4ff43d9a8be4ea00fac6c56195e8f19e316b8fce9de132
+directory = miniserde-0.1.39
+source_url = https://github.com/dtolnay/miniserde/archive/0.1.39.tar.gz
+source_filename = miniserde-0.1.39.tar.gz
+source_hash = cb568e7c2db945047f90abbb7cb314674172c7444ec943d30f2761089e77a1d3
 depth = 1
 patch_directory = miniserde
 
