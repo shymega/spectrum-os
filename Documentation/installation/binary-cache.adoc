@@ -2,7 +2,7 @@
 :page-parent: Build and Run
 :page-nav_order: 1
 
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 Building Spectrum from source can take a very long time.  To avoid
@@ -12,12 +12,13 @@ Nix will download build outputs from the cache, instead of building
 them locally.
 
 The binary cache is populated by doing a Spectrum
-xref:../development/release.adoc[release build], on the latest NixOS
-unstable, on https://www.vultr.com/[Vultr], and are signed to ensure
+xref:../development/release.adoc[release build] with a
+https://spectrum-os.org/git/infra/about[custom Linux image] on
+https://www.scaleway.com/[Scaleway], and are signed to ensure
 authenticity.  The build infrastructure and signing key are accessible
-by Alyssa Ross and Puck Meerburg.  Storage is provided by Daniel
-Kuehn.  Please xref:../contributing/communication.adoc[get in touch]
-if you encounter any trouble with it.
+by Alyssa Ross.  Storage is provided by Daniel Kuehn.  Please
+xref:../contributing/communication.adoc[get in touch] if you encounter
+any trouble with it.
 
 == For NixOS
 
@@ -31,7 +32,7 @@ Add the following configuration to /etc/nixos/configuration.nix:
   nix.settings.substituters = [ "https://cache.dataaturservice.se/spectrum/" ];
   nix.settings.trusted-public-keys = [
     "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
-    "spectrum-os.org-1:rnnSumz3+Dbs5uewPlwZSTP0k3g/5SRG4hD7Wbr9YuQ="
+    "spectrum-os.org-2:foQk3r7t2VpRx92CaXb5ROyy/NBdRJQG2uX2XJMYZfU="
   ];
 }
 ----
