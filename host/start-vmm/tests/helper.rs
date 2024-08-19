@@ -7,7 +7,7 @@ use std::mem::{forget, swap};
 use std::os::raw::c_char;
 use std::os::unix::prelude::*;
 use std::path::{Path, PathBuf};
-use std::sync::OnceLock;
+use std::sync::LazyLock;
 
 use start_vmm::prog_name;
 
@@ -15,22 +15,17 @@ extern "C" {
     fn mkdtemp(template: *mut c_char) -> *mut c_char;
 }
 
-static TMPDIR: OnceLock<PathBuf> = OnceLock::new();
+static TMPDIR: LazyLock<PathBuf> = LazyLock::new(|| {
+    std::env::var_os("TMPDIR")
+        .unwrap_or_else(|| OsString::from("/tmp"))
+        .into()
+});
 
 pub struct TempDir(PathBuf);
 
 impl TempDir {
     pub fn new() -> std::io::Result<Self> {
-        // FIXME: once LazyLock is in the standard library, we can do
-        // the initialization in the declaration.
-        // https://github.com/rust-lang/rust/issues/109736
-        let tmpdir = TMPDIR.get_or_init(|| {
-            std::env::var_os("TMPDIR")
-                .unwrap_or_else(|| OsString::from("/tmp"))
-                .into()
-        });
-
-        let mut dirname = tmpdir.clone().into_os_string().into_vec();
+        let mut dirname = TMPDIR.clone().into_os_string().into_vec();
         dirname.extend_from_slice(b"/spectrum-start-vmm-test-");
         dirname.extend_from_slice(&prog_name().into_bytes());
         dirname.extend_from_slice(b".XXXXXX\0");
