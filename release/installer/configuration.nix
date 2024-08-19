@@ -52,7 +52,7 @@ in
 
   boot.loader.systemd-boot.enable = true;
 
-  environment.systemPackages = with pkgs; [ gnome.adwaita-icon-theme ];
+  environment.systemPackages = with pkgs; [ adwaita-icon-theme ];
 
   systemd.tmpfiles.rules = [
     "L+ /var/lib/eos-image-defaults/vendor-customer-support.ini - - - - ${app/vendor-customer-support.ini}"

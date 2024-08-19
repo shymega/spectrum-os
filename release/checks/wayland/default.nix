@@ -14,7 +14,7 @@ nixosTest ({ lib, pkgs, ... }: {
   name = "spectrum-wayland";
 
   nodes.machine = { ... }: {
-    hardware.opengl.enable = true;
+    hardware.graphics.enable = true;
 
     systemd.services.cloud-hypervisor = {
       after = [ "crosvm-gpu.service" "weston.service" ];
