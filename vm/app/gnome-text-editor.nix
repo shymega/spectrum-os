@@ -5,7 +5,6 @@ import ../../lib/call-package.nix (
 { callSpectrumPackage, pkgsMusl }:
 
 callSpectrumPackage ../make-vm.nix {} {
-  wayland = true;
   run = pkgsMusl.callPackage (
     { lib, writeScript, gnome-text-editor, wayland-proxy-virtwl }:
     writeScript "run-gnome-text-editor" ''

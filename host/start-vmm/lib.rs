@@ -67,7 +67,6 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
     let blk_dir = config_dir.join("blk");
     let kernel_path = config_dir.join("vmlinux");
     let net_providers_dir = config_dir.join("providers/net");
-    let wayland_path = config_dir.join("wayland");
 
     Ok(VmConfig {
         console: ConsoleConfig {
@@ -107,13 +106,9 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
             tag: "virtiofs0",
             socket: format!("/run/service/vhost-user-fs/instance/{vm_name}/env/virtiofsd.sock"),
         }],
-        gpu: match wayland_path.try_exists() {
-            Ok(true) => vec![GpuConfig {
-                socket: format!("/run/service/vhost-user-gpu/instance/{vm_name}/env/crosvm.sock"),
-            }],
-            Ok(false) => vec![],
-            Err(e) => return Err(format!("checking for existence of {:?}: {e}", wayland_path)),
-        },
+        gpu: vec![GpuConfig {
+            socket: format!("/run/service/vhost-user-gpu/instance/{vm_name}/env/crosvm.sock"),
+        }],
         memory: MemoryConfig {
             size: 256 << 20,
             shared: true,

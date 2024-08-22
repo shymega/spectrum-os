@@ -5,7 +5,6 @@ import ../../lib/call-package.nix (
 { callSpectrumPackage, pkgsMusl, pkgsStatic }:
 
 callSpectrumPackage ../make-vm.nix {} {
-  wayland = true;
   run = pkgsStatic.callPackage (
     { lib, writeScript }:
     writeScript "run-foot" ''

@@ -25,10 +25,6 @@ providers/net:: A directory containing a file named for each VM that
 should provide networking to this VM.  The contents of these files are
 ignored.
 
-wayland:: An empty file, whose presence indicates that the host should
-set up a virtio-gpu device supporting the cross-domain context type,
-for the VM to send Wayland messages over.
-
 === Example
 
 A configuration directory for a VM called "appvm-lynx" dedicated to

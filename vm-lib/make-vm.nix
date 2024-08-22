@@ -14,7 +14,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, runCommand, writeClosure, erofs-utils }:
 
-{ run, providers ? {}, sharedDirs ? {}, wayland ? false }:
+{ run, providers ? {}, sharedDirs ? {} }:
 
 let
   inherit (lib)
@@ -26,8 +26,6 @@ assert !(any (hasInfix "\n") (concatLists (attrValues providers)));
 
 runCommand "spectrum-vm" {
   nativeBuildInputs = [ erofs-utils ];
-
-  inherit wayland;
 
   providerDirs = concatStrings (concatLists
     (mapAttrsToList (kind: map (vm: "${kind}/${vm}\n")) providers));
@@ -49,10 +47,6 @@ runCommand "spectrum-vm" {
   popd
 
   popd
-
-  if [ -n "$wayland" ]; then
-      touch "$out/wayland"
-  fi
 
   ln -s /usr/img/appvm/blk/root.img "$out/blk"
   ln -s /usr/img/appvm/vmlinux "$out"
