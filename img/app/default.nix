@@ -2,60 +2,63 @@
 # SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ lseek, src, terminfo, pkgsMusl, pkgsStatic }:
-pkgsStatic.callPackage (
+{ lseek, src, terminfo, pkgsMusl, pkgsStatic, buildFHSEnv, appimageTools }:
 
+pkgsStatic.callPackage (
 { lib, stdenvNoCC, runCommand, writeClosure
 , erofs-utils, jq, s6-rc, util-linux
-, busybox, cacert, dbus, execline, kmod, linux_latest, mdevd, s6, s6-linux-init
+, busybox, cacert, execline, kmod, linux_latest, mdevd, s6, s6-linux-init
 , xdg-desktop-portal-spectrum
 }:
 
 let
+  appimageFhsenv = (buildFHSEnv (appimageTools.defaultFhsEnvArgs // {
+    name = "vm-fhs-env";
+    targetPkgs = pkgs: appimageTools.defaultFhsEnvArgs.targetPkgs pkgs ++ [
+      pkgs.fuse
+
+      (busybox.override {
+        enableMinimal = true;
+        extraConfig = ''
+          CONFIG_CLEAR y
+          CONFIG_FEATURE_IP_ADDRESS y
+          CONFIG_FEATURE_IP_LINK y
+          CONFIG_FEATURE_IP_ROUTE y
+          CONFIG_FEATURE_WGET_TIMEOUT y
+          CONFIG_IP y
+          CONFIG_WGET y
+        '';
+      })
+
+      cacert
+      execline
+      kmod
+      mdevd
+      s6
+      s6-linux-init
+      s6-rc
+      terminfo
+      xdg-desktop-portal-spectrum
+
+      # Some packages can't (currently?) be built statically.
+
+      # https://github.com/nix-ocaml/nix-overlays/issues/698
+      pkgsMusl.wayland-proxy-virtwl
+      # Depends on xcvt, which can't be built statically.
+      pkgsMusl.xwayland
+      pkgsMusl.xdg-desktop-portal
+      pkgsMusl.xdg-desktop-portal-gtk
+    ];
+  })).fhsenv;
+in
+
+let
   inherit (lib) concatMapStringsSep;
 
-  packages = [
-    dbus execline kmod mdevd s6 s6-linux-init s6-rc xdg-desktop-portal-spectrum
-
-    (busybox.override {
-      extraConfig = ''
-        CONFIG_DEPMOD n
-        CONFIG_INSMOD n
-        CONFIG_LSMOD n
-        CONFIG_MODINFO n
-        CONFIG_MODPROBE n
-        CONFIG_RMMOD n
-      '';
-    })
-
-    # Some packages can't (currently?) be built statically.
-
-    # https://github.com/nix-ocaml/nix-overlays/issues/698
-    pkgsMusl.wayland-proxy-virtwl
-
-    # Depends on xcvt, which can't be built statically.
-    pkgsMusl.xwayland
-  ];
-
-  packagesSysroot = runCommand "packages-sysroot" {
-    inherit packages;
-    passAsFile = [ "packages" ];
-  } ''
-    mkdir -p \
-        $out/usr/bin \
-        $out/usr/share/dbus-1/services \
-        $out/usr/share/xdg-desktop-portal/portals
-    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
-    ln -st $out/usr/share/dbus-1/services \
-        ${pkgsMusl.xdg-desktop-portal}/share/dbus-1/services/*.service \
-        ${pkgsMusl.xdg-desktop-portal-gtk}/share/dbus-1/services/*.service \
-        ${xdg-desktop-portal-spectrum}/share/dbus-1/services/*.service
-    ln -st $out/usr/share/xdg-desktop-portal/portals \
-        ${pkgsMusl.xdg-desktop-portal-gtk}/share/xdg-desktop-portal/portals/*.portal \
-        ${xdg-desktop-portal-spectrum}/share/xdg-desktop-portal/portals/*.portal
-    ln -s ${kernel}/lib "$out"
-    ln -s ${terminfo}/share/terminfo $out/usr/share
-    ln -s ${cacert}/etc/ssl $out/usr/share
+  packagesSysroot = runCommand "packages-sysroot" {} ''
+    mkdir -p $out/etc/ssl/certs
+    ln -s ${appimageFhsenv}/{lib64,usr} ${kernel}/lib $out
+    ln -s ${cacert}/etc/ssl/certs/* $out/etc/ssl/certs
   '';
 
   kernelTarget =
@@ -124,7 +127,7 @@ stdenvNoCC.mkDerivation {
 
   enableParallelBuilding = true;
 
-  passthru = { inherit kernel packagesSysroot; };
+  passthru = { inherit appimageFhsenv kernel packagesSysroot; };
 
   meta = with lib; {
     license = licenses.eupl12;
