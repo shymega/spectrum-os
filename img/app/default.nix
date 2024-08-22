@@ -2,7 +2,7 @@
 # SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ lseek, src, terminfo, pkgsMusl, pkgsStatic, buildFHSEnv, appimageTools }:
+{ lseek, src, terminfo, pkgsStatic, buildFHSEnv, appimageTools }:
 
 pkgsStatic.callPackage (
 { lib, stdenvNoCC, runCommand, writeClosure
@@ -43,11 +43,11 @@ let
       # Some packages can't (currently?) be built statically.
 
       # https://github.com/nix-ocaml/nix-overlays/issues/698
-      pkgsMusl.wayland-proxy-virtwl
+      pkgs.wayland-proxy-virtwl
       # Depends on xcvt, which can't be built statically.
-      pkgsMusl.xwayland
-      pkgsMusl.xdg-desktop-portal
-      pkgsMusl.xdg-desktop-portal-gtk
+      pkgs.xwayland
+      pkgs.xdg-desktop-portal
+      pkgs.xdg-desktop-portal-gtk
     ];
   })).fhsenv;
 in

@@ -2,8 +2,8 @@
 # SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ callSpectrumPackage, lib, pkgsMusl }:
+{ callSpectrumPackage, lib, foot }:
 
 callSpectrumPackage ../make-vm.nix {} {
-  run = lib.getExe pkgsMusl.foot;
+  run = lib.getExe foot;
 }) (_: {})
