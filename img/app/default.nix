@@ -32,6 +32,9 @@ let
 
     # https://github.com/nix-ocaml/nix-overlays/issues/698
     pkgsMusl.wayland-proxy-virtwl
+
+    # Depends on xcvt, which can't be built statically.
+    pkgsMusl.xwayland
   ];
 
   packagesSysroot = runCommand "packages-sysroot" {

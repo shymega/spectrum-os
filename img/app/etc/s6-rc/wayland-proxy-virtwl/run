@@ -6,6 +6,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2022 Unikie
 
+foreground { mkdir /tmp/.X11-unix }
 foreground { mkdir /run/user }
 foreground {
   umask 077
@@ -13,18 +14,21 @@ foreground {
 }
 
 s6-ipcserver-socketbinder -B /run/user/0/wayland-0
-
 fdmove -c 3 0
+
+s6-ipcserver-socketbinder -B /tmp/.X11-unix/X0
+fdmove -c 4 0
+
 redirfd -r 0 /dev/null
 
 # Notify readiness.
-if { fdmove 1 4 echo }
-fdclose 4
+if { fdmove 1 5 echo }
+fdclose 5
 
 if { /etc/mdev/wait card0 }
 
-export LISTEN_FDS 1
-export LISTEN_FDNAMES wayland
+export LISTEN_FDS 2
+export LISTEN_FDNAMES wayland:x11
 getpid LISTEN_PID
 
-wayland-proxy-virtwl --virtio-gpu
+wayland-proxy-virtwl --virtio-gpu --x-display=0
