@@ -106,7 +106,7 @@ runCommand "spectrum-installer" {
   eosimagesSize="$(blockSize ${eosimages})"
 
   truncate -s $(((3 * 2048 + $espSize + $installerSize + $eosimagesSize) * 512)) $out
-  sfdisk $out <<EOF
+  sfdisk --no-reread --no-tell-kernel $out <<EOF
   label: gpt
   size=$espSize, type=U
   size=$installerSize, type=L, uuid=${installerPartUuid}

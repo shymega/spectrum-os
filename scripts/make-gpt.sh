@@ -54,7 +54,7 @@ done
 
 rm -f "$out"
 truncate -s "$gptBytes" "$out"
-sfdisk "$out" <<EOF
+sfdisk --no-reread --no-tell-kernel "$out" <<EOF
 $table
 EOF
 
