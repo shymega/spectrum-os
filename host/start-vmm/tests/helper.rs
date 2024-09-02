@@ -3,7 +3,6 @@
 
 use std::ffi::OsString;
 use std::io;
-use std::mem::{forget, swap};
 use std::os::raw::c_char;
 use std::os::unix::prelude::*;
 use std::path::{Path, PathBuf};
@@ -46,15 +45,6 @@ impl TempDir {
 
     pub fn path(&self) -> &Path {
         self.0.as_path()
-    }
-
-    /// The `TempDir` Drop handler will not be run, so the caller takes responsibility
-    /// for removing the directory when no longer required.
-    pub fn into_path_buf(mut self) -> PathBuf {
-        let mut path = PathBuf::new();
-        swap(&mut path, &mut self.0);
-        forget(self);
-        path
     }
 }
 
