@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../../lib/call-package.nix (
 { callSpectrumPackage, rootfs, nixosTest }:
@@ -15,6 +15,10 @@ nixosTest ({ lib, pkgs, ... }: {
 
   nodes.machine = { ... }: {
     hardware.graphics.enable = true;
+
+    services.udev.extraRules = ''
+      KERNEL=="card0", TAG+="systemd"
+    '';
 
     systemd.services.cloud-hypervisor = {
       after = [ "crosvm-gpu.service" "weston.service" ];
@@ -56,8 +60,8 @@ nixosTest ({ lib, pkgs, ... }: {
     };
 
     systemd.services.weston = {
-      after = [ "surface-notify-socket.service" ];
-      wants = [ "surface-notify-socket.service" ];
+      after = [ "dev-dri-card0.device" "surface-notify-socket.service" ];
+      wants = [ "dev-dri-card0.device" "surface-notify-socket.service" ];
       environment.XDG_RUNTIME_DIR = "/run";
       environment.WAYLAND_DEBUG = "server";
       serviceConfig.ExecStart = "${lib.getExe pkgs.westonLite} --modules ${surface-notify}/lib/weston/surface-notify.so,systemd-notify.so";
