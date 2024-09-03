@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
 foreground { printf "NAME                \tSTATUS\n" }
-cd /ext/svc/data
+cd /run/vm
 elglob -0 vms *
 forx -E vm { $vms }
 if { printf "%-20s\t" $vm }
