@@ -1,0 +1,39 @@
+#!/bin/execlineb -S2
+# SPDX-License-Identifier: EUPL-1.2+
+# SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022 Unikie
+
+cd $2
+elglob -0 names *
+
+forx -po0 -E name { $names }
+
+if { mkdir /run/vm/${1}.${name} }
+if { ln -s ${2}/${name} /run/vm/${1}.${name}/config }
+
+# Sockets for vhost-user backends need to be created before the VMM
+# is started, because it will try to connect to them.
+
+if { mkdir -p /run/vm/${1}.${name}/doc-run/doc /run/vm/${1}.${name}/fs/doc }
+if { mount --rbind /run/vm/${1}.${name}/doc-run/doc /run/vm/${1}.${name}/fs/doc }
+if { s6-instance-create /run/service/vhost-user-fs ${1}.${name} }
+if { s6-svwait -U /run/service/vhost-user-fs/instance/${1}.${name} }
+
+if {
+  if -t { test -e /run/vm/${1}.${name}/config/wayland }
+  if { s6-instance-create /run/service/vhost-user-gpu ${1}.${name} }
+  s6-svwait -U /run/service/vhost-user-gpu/instance/${1}.${name}
+}
+
+if { s6-instance-create /run/service/vmm ${1}.${name} }
+
+if { s6-instance-create /run/service/dbus ${1}.${name} }
+if { s6-svwait -U /run/service/dbus/instance/${1}.${name} }
+
+# The service directory for the VMM needs to exist before
+# xdg-desktop-portal-spectrum-host is started, so it can install its
+# listening vsock socket.
+if { s6-instance-create /run/service/xdg-desktop-portal-spectrum-host ${1}.${name} }
+if { s6-svwait -U /run/service/xdg-desktop-portal-spectrum-host/instance/${1}.${name} }
+
+s6-svwait -U /run/service/vmm/instance/${1}.${name}

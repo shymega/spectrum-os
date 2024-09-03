@@ -53,6 +53,7 @@ FILES = \
 	usr/share/dbus-1/services/org.freedesktop.portal.Documents.service \
 	usr/bin/lsvm \
 	usr/bin/vm-console \
+	usr/bin/vm-import \
 	usr/bin/vm-start \
 	usr/bin/vm-stop
 

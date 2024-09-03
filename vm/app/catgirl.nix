@@ -4,7 +4,7 @@
 import ../../lib/call-package.nix ({ callSpectrumPackage, pkgsStatic }:
 
 callSpectrumPackage ../make-vm.nix {} {
-  providers.net = [ "netvm" ];
+  providers.net = [ "user.netvm" ];
   run = pkgsStatic.callPackage (
     { lib, writeScript, catgirl }:
     writeScript "run-catgirl" ''

@@ -1,40 +1,4 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
-# SPDX-FileCopyrightText: 2022 Unikie
+# SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
 
-cd /ext/svc/data
-elglob -0 names *
-
-if {
-  forx -po0 -E name { $names }
-
-  if { mkdir /run/vm/${name} }
-  if { ln -s /ext/svc/data/${name} /run/vm/${name}/config }
-
-  # Sockets for vhost-user backends need to be created before the VMM
-  # is started, because it will try to connect to them.
-
-  if { mkdir -p /run/vm/${name}/doc-run/doc /run/vm/${name}/fs/doc }
-  if { mount --rbind /run/vm/${name}/doc-run/doc /run/vm/${name}/fs/doc }
-  if { s6-instance-create /run/service/vhost-user-fs $name }
-  if { s6-svwait -U /run/service/vhost-user-fs/instance/${name} }
-
-  if {
-    if -t { test -e ${name}/wayland }
-    if { s6-instance-create /run/service/vhost-user-gpu $name }
-    s6-svwait -U /run/service/vhost-user-gpu/instance/${name}
-  }
-
-  if { s6-instance-create /run/service/vmm $name }
-
-  if { s6-instance-create /run/service/dbus $name }
-  if { s6-svwait -U /run/service/dbus/instance/${name} }
-
-  # The service directory for the VMM needs to exist before
-  # xdg-desktop-portal-spectrum-host is started, so it can install its
-  # listening vsock socket.
-  if { s6-instance-create /run/service/xdg-desktop-portal-spectrum-host $name }
-  s6-svwait -U /run/service/xdg-desktop-portal-spectrum-host/instance/${name}
-}
-
-s6-svwait -U /run/service/vmm/instance/${names}
+vm-import user /ext/svc/data

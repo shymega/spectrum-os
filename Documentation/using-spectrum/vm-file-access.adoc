@@ -54,11 +54,11 @@ echo "Hello, world!" > /ext/example.txt
 +
 [listing]
 [source,shell]
-touch /run/vm/appvm-example/fs/example.txt
+touch /run/vm/user.appvm-example/fs/example.txt
 
 3. Create the bind mount:
 +
 [listing]
 [source,shell]
-mount --rbind /ext/example.txt /run/vm/appvm-example/fs/example.txt
+mount --rbind /ext/example.txt /run/vm/user.appvm-example/fs/example.txt
 ====

@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
 
-foreground { printf "NAME                \tSTATUS\n" }
+foreground { printf "NAME                            STATUS\n" }
 cd /run/vm
 elglob -0 vms *
 forx -E vm { $vms }
-if { printf "%-20s\t" $vm }
+if { printf "%-25s\t" $vm }
 if -n {
   redirfd -w 2 /dev/null
   backtick -E state {
