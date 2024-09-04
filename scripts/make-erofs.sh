@@ -31,8 +31,8 @@ while read -r arg1; do
 	echo
 
 	parent="$root/$(dirname "$arg2")"
-	chmod -R +w -- "$root"
 	mkdir -p -- "$parent"
+	chmod +w -- "$parent"
 	cp -RT -- "$arg1" "$root/$arg2"
 done
 
