@@ -1,6 +1,6 @@
 #!/bin/execlineb -S2
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
 cd $2
@@ -8,6 +8,7 @@ elglob -0 names *
 
 forx -po0 -E name { $names }
 
+if -tn { test -d /run/vm/${1}.${name} }
 if { mkdir /run/vm/${1}.${name} }
 if { ln -s ${2}/${name} /run/vm/${1}.${name}/config }
 
