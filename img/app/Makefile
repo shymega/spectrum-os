@@ -2,6 +2,8 @@
 # SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-FileCopyrightText: 2022 Unikie
 
+.POSIX:
+
 include ../../lib/common.mk
 
 prefix = build/host

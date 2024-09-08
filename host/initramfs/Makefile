@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
+.POSIX:
+
 include ../../lib/common.mk
 
 dest = build/initramfs
