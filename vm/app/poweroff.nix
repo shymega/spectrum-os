@@ -4,6 +4,7 @@
 import ../../lib/call-package.nix ({ callSpectrumPackage, writeScript }:
 
 callSpectrumPackage ../make-vm.nix {} {
+  type = "nix";
   run = writeScript "run-poweroff" ''
     #!/bin/execlineb -P
     poweroff -f

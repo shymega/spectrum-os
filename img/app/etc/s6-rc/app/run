@@ -1,6 +1,6 @@
 #!/bin/execlineb -P
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021, 2024 Alyssa Ross <hi@alyssa.is>
 
 export TERM foot
 export TERMINFO_DIRS /usr/share/terminfo
@@ -16,12 +16,33 @@ importas -i home HOME
 if { mkdir -p -- $home }
 cd $home
 
-redirfd -u 0 /dev/hvc0
-fdmove -c 1 0
-fdmove -c 2 0
+foreground {
+  redirfd -r 0 /run/ext/type
+  withstdinas -E type
+  case $type {
+    appimage {
+      if { modprobe fuse }
+      export LD_LIBRARY_PATH /lib64
+      /run/ext/run
+    }
+    nix {
+      if {
+	mount -t overlay -o ro,lowerdir=/nix/store:/run/ext/nix/store
+	  store /nix/store
+      }
 
-foreground { clear }
-unexport ?
+      redirfd -u 0 /dev/hvc0
+      fdmove -c 1 0
+      fdmove -c 2 0
 
-foreground { /run/ext/run }
+      foreground { clear }
+      unexport ?
+
+      /run/ext/run
+    }
+  }
+  fdmove -c 1 2
+  echo "Unknown app type: ${type}"
+}
+
 s6-linux-init-shutdown -p now

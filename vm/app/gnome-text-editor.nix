@@ -5,6 +5,7 @@ import ../../lib/call-package.nix (
 { callSpectrumPackage, lib, writeScript, gnome-text-editor }:
 
 callSpectrumPackage ../make-vm.nix {} {
+  type = "nix";
   run = writeScript "run-gnome-text-editor" ''
     #!/bin/execlineb -P
     export GDK_DEBUG portals

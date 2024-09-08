@@ -14,7 +14,7 @@ pkgs.pkgsStatic.callPackage (
 
 { lib, runCommand, writeClosure, erofs-utils }:
 
-{ run, providers ? {}, sharedDirs ? {} }:
+{ run, type, providers ? {}, sharedDirs ? {} }:
 
 let
   inherit (lib)
@@ -29,13 +29,15 @@ runCommand "spectrum-vm" {
 
   providerDirs = concatStrings (concatLists
     (mapAttrsToList (kind: map (vm: "${kind}/${vm}\n")) providers));
-  passAsFile = [ "providerDirs" ];
+  inherit type;
+
+  passAsFile = [ "providerDirs" "type" ];
 } ''
   mkdir -p "$out"/{blk,providers}
 
   ln -s ${run} run
   (
-      printf "run\nrun\n"
+      printf "run\nrun\n%s\ntype\n" "$typePath"
       comm -23 <(sort ${writeClosure [ run ]}) \
           <(sort ${writeClosure [ basePaths ]}) | sed p
   ) | ${../scripts/make-erofs.sh} -L ext "$out/blk/run.img"
