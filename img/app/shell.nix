@@ -17,10 +17,7 @@ import ../../lib/call-package.nix (
     cloud-hypervisor crosvm execline jq iproute2 qemu_kvm reuse s6 virtiofsd
   ];
 
-  runDef = callSpectrumPackage run {};
-  shellHook = shellHook + ''
-    export RUN_IMG="$(printf "%s\n" "$runDef"/blk/run.img)"
-  '';
+  CONFIG = callSpectrumPackage run {};
 
   LINUX_SRC = srcOnly passthru.kernel;
   VMLINUX = "${passthru.kernel.dev}/vmlinux";

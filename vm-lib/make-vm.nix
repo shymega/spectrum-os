@@ -29,20 +29,17 @@ runCommand "spectrum-vm" {
 
   providerDirs = concatStrings (concatLists
     (mapAttrsToList (kind: map (vm: "${kind}/${vm}\n")) providers));
-  inherit type;
-
-  passAsFile = [ "providerDirs" "type" ];
+  passAsFile = [ "providerDirs" ];
 } ''
-  mkdir -p "$out"/{blk,providers}
-
-  ln -s ${run} run
-  (
-      printf "run\nrun\n%s\ntype\n" "$typePath"
-      comm -23 <(sort ${writeClosure [ run ]}) \
-          <(sort ${writeClosure [ basePaths ]}) | sed p
-  ) | ${../scripts/make-erofs.sh} -L ext "$out/blk/run.img"
-
+  mkdir -p $out/{blk,fs,providers}
   pushd "$out"
+
+  echo ${type} > fs/type
+  ln -s ${run} fs/run
+  mkdir -p fs${builtins.storeDir}
+  comm -23 <(sort ${writeClosure [ run ]}) \
+      <(sort ${writeClosure [ basePaths ]}) |
+      xargs -rd '\n' cp -rvt fs${builtins.storeDir}
 
   pushd providers
   xargs -rd '\n' dirname -- < "$providerDirsPath" | xargs -rd '\n' mkdir -p --

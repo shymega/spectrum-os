@@ -52,7 +52,6 @@ VM_FILES = \
 	etc/s6-linux-init/scripts/rc.shutdown.final \
 	etc/xdg/xdg-desktop-portal/portals.conf
 VM_DIRS = dev run proc sys tmp \
-	etc/s6-linux-init/run-image/ext \
 	etc/s6-linux-init/run-image/service
 VM_FIFOS = etc/s6-linux-init/run-image/service/s6-linux-init-shutdownd/fifo
 
@@ -123,16 +122,14 @@ start-vhost-user-gpu:
 	while ! [ -S build/vhost-user-gpu.sock ] && sleep .1; do :; done
 .PHONY: start-vhost-user-gpu
 
-start-virtiofsd:
+start-virtiofsd: scripts/start-virtiofsd.elb
 	mkdir -p build
-	$(S6_IPCSERVER_SOCKETBINDER) -B build/virtiofsd.sock \
-	    $(BACKGROUND) $(VIRTIOFSD) --fd 0 --shared-dir . ""
+	scripts/start-virtiofsd.elb
 .PHONY: start-virtiofsd
 
 run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	@../../scripts/run-qemu.sh -m 256 -cpu host -kernel $(KERNEL) -vga none \
 	    -drive file=$(imgdir)/appvm/blk/root.img,if=virtio,format=raw,readonly=on \
-	    -drive file=$(RUN_IMG),if=virtio,format=raw,readonly=on \
 	    -append "root=PARTLABEL=root nokaslr" \
 	    -gdb unix:build/gdb.sock,server,nowait \
 	    -netdev user,id=net0 \
@@ -154,7 +151,6 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 	    --api-socket path=build/vmm.sock \
 	    --memory size=1G,shared=on \
 	    --disk path=$(imgdir)/appvm/blk/root.img,readonly=on \
-	           path=$(RUN_IMG),readonly=on \
 	    --fs tag=virtiofs0,socket=build/virtiofsd.sock \
 	    --gpu socket=build/vhost-user-gpu.sock \
 	    --vsock cid=3,socket=build/vsock.sock \
@@ -168,7 +164,6 @@ run-cloud-hypervisor: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-vi
 run-crosvm: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
 	../../scripts/with-taps.elb $(CROSVM_RUN) \
 	    --disk $(imgdir)/appvm/blk/root.img \
-	    --disk $(RUN_IMG) \
 	    -p "console=ttyS0 root=PARTLABEL=root" \
 	    --net tap-name=tap0 \
 	    --vhost-user-fs build/virtiofsd.sock:virtiofs0 \

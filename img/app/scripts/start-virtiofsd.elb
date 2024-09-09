@@ -1,0 +1,14 @@
+#!/usr/bin/env execlineb
+# SPDX-License-Identifier: EUPL-1.2+
+# SPDX-FileCopyrightText: 2022, 2024 Alyssa Ross <hi@alyssa.is>
+
+s6-ipcserver-socketbinder -B build/virtiofsd.sock
+background {
+  if { mkdir -p build/fs }
+  unshare -rUm
+  if { mount -t tmpfs fs build/fs }
+  if { mkdir build/fs/config }
+  if { importas -Si CONFIG mount --rbind -- ${CONFIG}/fs build/fs/config }
+  importas -SsD virtiofsd VIRTIOFSD
+  $VIRTIOFSD --fd 0 --shared-dir build/fs
+}

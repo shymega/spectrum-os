@@ -14,6 +14,11 @@ if { ln -s ${2}/${name} /run/vm/${1}.${name}/config }
 # Sockets for vhost-user backends need to be created before the VMM
 # is started, because it will try to connect to them.
 
+if {
+  mount -m --rbind -o nofail
+    /run/vm/${1}.${name}/config/fs /run/vm/${1}.${name}/fs/config
+}
+
 if { mkdir -p /run/vm/${1}.${name}/doc-run/doc /run/vm/${1}.${name}/fs/doc }
 if { mount --rbind /run/vm/${1}.${name}/doc-run/doc /run/vm/${1}.${name}/fs/doc }
 if { s6-instance-create /run/service/vhost-user-fs ${1}.${name} }

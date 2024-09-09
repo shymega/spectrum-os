@@ -17,17 +17,18 @@ if { mkdir -p -- $home }
 cd $home
 
 foreground {
-  redirfd -r 0 /run/ext/type
+  redirfd -r 0 /run/virtiofs/virtiofs0/config/type
   withstdinas -E type
   case $type {
     appimage {
       if { modprobe fuse }
       export LD_LIBRARY_PATH /lib64
-      /run/ext/run
+      /run/virtiofs/virtiofs0/config/run
     }
     nix {
       if {
-	mount -t overlay -o ro,lowerdir=/nix/store:/run/ext/nix/store
+	mount -t overlay
+	  -o ro,lowerdir=/nix/store:/run/virtiofs/virtiofs0/config/nix/store
 	  store /nix/store
       }
 
@@ -38,7 +39,7 @@ foreground {
       foreground { clear }
       unexport ?
 
-      /run/ext/run
+      /run/virtiofs/virtiofs0/config/run
     }
   }
   fdmove -c 1 2
