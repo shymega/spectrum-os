@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 use std::borrow::Cow;
 use std::fmt::{self, Display, Formatter};
@@ -36,6 +36,9 @@ impl Serialize for MacAddress {
 }
 
 extern "C" {
+    /// # Safety
+    ///
+    /// `provider_vm_name` must not be null.
     pub fn net_setup(provider_vm_name: *const c_char) -> NetConfig;
 }
 

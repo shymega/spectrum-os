@@ -17,7 +17,7 @@
 // ifr_name doesn't have to be null terminated.
 #pragma GCC diagnostic ignored "-Wstringop-truncation"
 
-int if_up(const char *name)
+int if_up(const char name[static 1])
 {
 	struct ifreq ifr;
 	int fd, r = -1;
@@ -35,7 +35,7 @@ out:
 	return r;
 }
 
-int if_rename(const char *name, const char *newname)
+int if_rename(const char name[static 1], const char newname[static 1])
 {
 	int fd, r;
 	struct ifreq ifr;
@@ -60,7 +60,7 @@ int if_rename(const char *name, const char *newname)
 	return r;
 }
 
-int if_down(const char *name)
+int if_down(const char name[static 1])
 {
 	struct ifreq ifr;
 	int fd, r = -1;
@@ -78,7 +78,7 @@ out:
 	return r;
 }
 
-int bridge_add(const char *name)
+int bridge_add(const char name[static 1])
 {
 	int fd, r;
 
@@ -99,7 +99,7 @@ int bridge_add(const char *name)
 	return r;
 }
 
-int bridge_add_if(const char *brname, const char *ifname)
+int bridge_add_if(const char brname[static 1], const char ifname[static 1])
 {
 	struct ifreq ifr;
 	int fd, r;
@@ -116,7 +116,7 @@ int bridge_add_if(const char *brname, const char *ifname)
 	return r;
 }
 
-int bridge_remove_if(const char *brname, const char *ifname)
+int bridge_remove_if(const char brname[static 1], const char ifname[static 1])
 {
 	struct ifreq ifr;
 	int fd, r;
@@ -133,7 +133,7 @@ int bridge_remove_if(const char *brname, const char *ifname)
 	return r;
 }
 
-int bridge_delete(const char *name)
+int bridge_delete(const char name[static 1])
 {
 	int fd, r;
 

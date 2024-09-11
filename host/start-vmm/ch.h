@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 #include <stdint.h>
 
@@ -10,8 +10,10 @@ struct net_config {
 	uint8_t mac[6];
 };
 
-int ch_add_net(const char *vm_name, const struct net_config *,
+int ch_add_net(const char vm_name[static 1], const struct net_config[static 1],
                struct ch_device **out);
-int ch_remove_device(const char *vm_name, struct ch_device *);
+
+[[gnu::nonnull]]
+int ch_remove_device(const char vm_name[static 1], struct ch_device *);
 
 void ch_device_free(struct ch_device *);

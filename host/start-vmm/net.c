@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 #include "ch.h"
 #include "net-util.h"
@@ -19,7 +19,8 @@
 
 #include <linux/if_tun.h>
 
-static int setup_tap(const char *bridge_name, const char *tap_prefix)
+static int setup_tap(const char bridge_name[static 1],
+		     const char tap_prefix[static 1])
 {
 	int fd;
 	char tap_name[IFNAMSIZ];
@@ -43,13 +44,15 @@ out:
 	return fd;
 }
 
-static int client_net_setup(const char *bridge_name)
+static int client_net_setup(const char bridge_name[static 1])
 {
 	return setup_tap(bridge_name, "client");
 }
 
-static int router_net_setup(const char *bridge_name, const char *router_vm_name,
-                            const uint8_t mac[6], struct ch_device **out)
+static int router_net_setup(const char bridge_name[static 1],
+			    const char router_vm_name[static 1],
+                            const uint8_t mac[6],
+			    struct ch_device *out[static 1])
 {
 	struct net_config net;
 	int e;
@@ -66,7 +69,8 @@ static int router_net_setup(const char *bridge_name, const char *router_vm_name,
 	return -1;
 }
 
-static int router_net_cleanup(pid_t pid, const char *vm_name,
+[[gnu::nonnull]]
+static int router_net_cleanup(pid_t pid, const char vm_name[static 1],
                               struct ch_device *vm_net_device)
 {
 	int e;
@@ -100,8 +104,9 @@ static int bridge_cleanup(pid_t pid)
 	return bridge_delete(name);
 }
 
+[[gnu::nonnull]]
 static noreturn void exit_listener_main(int fd, pid_t pid,
-                                        const char *router_vm_name,
+                                        const char router_vm_name[static 1],
                                         struct ch_device *router_vm_net_device)
 {
 	// Wait for the other end of the pipe to be closed.
@@ -128,7 +133,8 @@ static noreturn void exit_listener_main(int fd, pid_t pid,
 	exit(status);
 }
 
-static int exit_listener_setup(const char *router_vm_name,
+[[gnu::nonnull]]
+static int exit_listener_setup(const char router_vm_name[static 1],
                                struct ch_device *router_vm_net_device)
 {
 	pid_t pid = getpid();
@@ -152,7 +158,7 @@ static int exit_listener_setup(const char *router_vm_name,
 	}
 }
 
-struct net_config net_setup(const char *router_vm_name)
+struct net_config net_setup(const char router_vm_name[static 1])
 {
 	struct ch_device *router_vm_net_device = NULL;
 	struct net_config r = { .fd = -1, .mac = { 0 } };
