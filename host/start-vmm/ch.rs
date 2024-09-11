@@ -172,8 +172,7 @@ pub fn remove_device(vm_name: &str, device_id: &OsStr) -> Result<(), NonZeroI32>
 /// # Safety
 ///
 /// - `vm_name` must point to a valid C string.
-/// - `tap` must be a file descriptor describing an tap device.
-/// - `mac` must be a valid pointer.
+/// - `id` must be a valid pointer.
 #[export_name = "ch_add_net"]
 unsafe extern "C" fn add_net_c(
     vm_name: *const c_char,
