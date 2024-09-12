@@ -172,12 +172,11 @@ pub fn remove_device(vm_name: &str, device_id: &OsStr) -> Result<(), NonZeroI32>
 /// # Safety
 ///
 /// - `vm_name` must point to a valid C string.
-/// - `id` must be a valid pointer.
 #[export_name = "ch_add_net"]
 unsafe extern "C" fn add_net_c(
     vm_name: *const c_char,
     net: &NetConfig,
-    id: *mut *mut OsString,
+    id: Option<&mut *mut OsString>,
 ) -> c_int {
     let Ok(vm_name) = CStr::from_ptr(vm_name).to_str() else {
         return EINVAL.into();
@@ -186,7 +185,7 @@ unsafe extern "C" fn add_net_c(
     match add_net(vm_name, net) {
         Err(e) => e.get(),
         Ok(id_str) => {
-            if !id.is_null() {
+            if let Some(id) = id {
                 let token = Box::into_raw(Box::new(id_str));
                 *id = token;
             }
@@ -201,7 +200,7 @@ unsafe extern "C" fn add_net_c(
 /// - `id` must be a device ID obtained by calling `add_net_c`.  After
 ///   calling `remove_device_c`, the pointer is no longer valid.
 #[export_name = "ch_remove_device"]
-unsafe extern "C" fn remove_device_c(vm_name: *const c_char, device_id: *mut OsString) -> c_int {
+unsafe extern "C" fn remove_device_c(vm_name: *const c_char, device_id: &mut OsString) -> c_int {
     let Ok(vm_name) = CStr::from_ptr(vm_name).to_str() else {
         return EINVAL.into();
     };
@@ -219,8 +218,8 @@ unsafe extern "C" fn remove_device_c(vm_name: *const c_char, device_id: *mut OsS
 /// `id` must be a device ID obtained by calling `add_net_c`.  After
 /// calling `device_free`, the pointer is no longer valid.
 #[export_name = "ch_device_free"]
-unsafe extern "C" fn device_free(id: *mut OsString) {
-    if !id.is_null() {
+unsafe extern "C" fn device_free(id: Option<&mut OsString>) {
+    if let Some(id) = id {
         drop(Box::from_raw(id))
     }
 }
