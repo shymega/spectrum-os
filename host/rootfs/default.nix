@@ -117,7 +117,7 @@ let
         CONFIG_RMMOD n
       '';
     })
-  ] ++ (with pkgsGui; [ crosvm foot westonLite ]);
+  ] ++ (with pkgsGui; [ cosmic-files crosvm foot westonLite ]);
 
   nixosAllHardware = nixos ({ modulesPath, ... }: {
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
