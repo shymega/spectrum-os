@@ -57,7 +57,8 @@ FILES = \
 	usr/bin/vm-console \
 	usr/bin/vm-import \
 	usr/bin/vm-start \
-	usr/bin/vm-stop
+	usr/bin/vm-stop \
+	usr/bin/xdg-open
 
 DIRS = \
 	dev \
