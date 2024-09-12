@@ -53,6 +53,7 @@ FILES = \
 	usr/share/dbus-1/services/org.freedesktop.portal.Documents.service \
 	usr/bin/create-vm-dependencies \
 	usr/bin/lsvm \
+	usr/bin/run-appimage \
 	usr/bin/vm-console \
 	usr/bin/vm-import \
 	usr/bin/vm-start \
@@ -61,6 +62,7 @@ FILES = \
 DIRS = \
 	dev \
 	etc/s6-linux-init/env \
+	etc/s6-linux-init/run-image/configs \
 	etc/s6-linux-init/run-image/service/dbus/instance \
 	etc/s6-linux-init/run-image/service/dbus/instances \
 	etc/s6-linux-init/run-image/service/dbus/template/data \
