@@ -11,9 +11,6 @@ if -tn { test -d /run/vm/${1}.${name} }
 if { mkdir /run/vm/${1}.${name} }
 if { ln -s ${2}/${name} /run/vm/${1}.${name}/config }
 
-# Sockets for vhost-user backends need to be created before the VMM
-# is started, because it will try to connect to them.
-
 if {
   mount -m --rbind -o nofail
     /run/vm/${1}.${name}/config/fs /run/vm/${1}.${name}/fs/config
@@ -21,18 +18,14 @@ if {
 
 if { mkdir -p /run/vm/${1}.${name}/doc-run/doc /run/vm/${1}.${name}/fs/doc }
 if { mount --rbind /run/vm/${1}.${name}/doc-run/doc /run/vm/${1}.${name}/fs/doc }
-if { s6-instance-create /run/service/vhost-user-fs ${1}.${name} }
-if { s6-svwait -U /run/service/vhost-user-fs/instance/${1}.${name} }
 
-if { s6-instance-create /run/service/vhost-user-gpu ${1}.${name} }
-if { s6-svwait -U /run/service/vhost-user-gpu/instance/${1}.${name} }
+# Sockets for vhost-user backends need to be created before the VMM
+# is started, because it will try to connect to them.
+if {
+  forx -pE service { dbus vhost-user-fs vhost-user-gpu xdg-desktop-portal-spectrum-host }
+  if { s6-instance-create /run/service/${service} ${1}.${name} }
+  s6-svwait -U /run/service/${service}/instance/${1}.${name}
+}
 
 if { s6-instance-create /run/service/vmm ${1}.${name} }
-
-if { s6-instance-create /run/service/dbus ${1}.${name} }
-if { s6-svwait -U /run/service/dbus/instance/${1}.${name} }
-
-if { s6-instance-create /run/service/xdg-desktop-portal-spectrum-host ${1}.${name} }
-if { s6-svwait -U /run/service/xdg-desktop-portal-spectrum-host/instance/${1}.${name} }
-
 s6-svwait -U /run/service/vmm/instance/${1}.${name}
