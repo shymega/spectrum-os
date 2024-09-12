@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 mod ch;
 mod fork;
@@ -45,10 +45,11 @@ pub fn prog_name() -> String {
         .into_owned()
 }
 
-pub fn create_api_socket() -> Result<UnixListener, String> {
-    let _ = remove_file("env/cloud-hypervisor.sock");
-    let api_socket = UnixListener::bind("env/cloud-hypervisor.sock")
-        .map_err(|e| format!("creating API socket: {e}"))?;
+pub fn create_api_socket(vm_dir: &Path) -> Result<UnixListener, String> {
+    let path = vm_dir.join("vmm");
+
+    let _ = remove_file(&path);
+    let api_socket = UnixListener::bind(&path).map_err(|e| format!("creating API socket: {e}"))?;
 
     if let Err(e) = api_socket.clear_cloexec() {
         return Err(format!("clearing CLOEXEC on API socket fd: {}", e));
@@ -57,12 +58,18 @@ pub fn create_api_socket() -> Result<UnixListener, String> {
     Ok(api_socket)
 }
 
-pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> {
-    if config_root.to_str().is_none() {
-        return Err(format!("config root {:?} is not valid UTF-8", config_root));
+pub fn vm_config(vm_dir: &Path) -> Result<VmConfig, String> {
+    let Some(vm_name) = vm_dir.file_name().unwrap().to_str() else {
+        return Err(format!("VM dir {:?} is not valid UTF-8", vm_dir));
+    };
+
+    // A colon is used for namespacing vhost-user backends, so while
+    // we have the VM name we enforce that it doesn't contain one.
+    if vm_name.contains(':') {
+        return Err(format!("VM name may not contain a colon: {:?}", vm_name));
     }
 
-    let config_dir = config_root.join(vm_name).join("config");
+    let config_dir = vm_dir.join("config");
 
     let blk_dir = config_dir.join("blk");
     let kernel_path = config_dir.join("vmlinux");
@@ -123,8 +130,10 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
                         .into_string()
                         .map_err(|name| format!("provider name {:?} is not UTF-8", name))?;
 
+                    let provider_dir = vm_dir.parent().unwrap().join(provider_name);
+
                     // SAFETY: we check the result.
-                    let net = unsafe { net_setup(&provider_name.as_str()) };
+                    let net = unsafe { net_setup(&provider_dir.as_path()) };
                     if net.fd == -1 {
                         let e = io::Error::last_os_error();
                         return Err(format!("setting up networking failed: {e}"));
@@ -149,7 +158,7 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
         },
         vsock: VsockConfig {
             cid: 3,
-            socket: "env/vsock.sock",
+            socket: vm_dir.join("vsock").into_os_string().into_string().unwrap(),
         },
     })
 }
@@ -157,8 +166,8 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
 /// # Safety
 ///
 /// Calls [notify_readiness], so can only be called once per process.
-unsafe fn create_vm_child_main(vm_name: &str, config: VmConfig) -> ! {
-    if let Err(e) = ch::create_vm(vm_name, config) {
+unsafe fn create_vm_child_main(vm_dir: &Path, config: VmConfig) -> ! {
+    if let Err(e) = ch::create_vm(vm_dir, config) {
         eprintln!("{}: creating VM: {e}", prog_name());
         if kill(parent_id() as _, SIGTERM) == -1 {
             let e = io::Error::last_os_error();
@@ -175,20 +184,8 @@ unsafe fn create_vm_child_main(vm_name: &str, config: VmConfig) -> ! {
     exit(0)
 }
 
-pub fn create_vm(dir: &Path, config_root: &Path) -> Result<(), String> {
-    let vm_name = dir
-        .file_name()
-        .ok_or_else(|| "directory has no name".to_string())?;
-
-    let vm_name = &vm_name
-        .to_str()
-        .ok_or_else(|| format!("VM name {:?} is not valid UTF-8", vm_name))?;
-
-    if vm_name.contains(':') {
-        return Err(format!("VM name may not contain a colon: {:?}", vm_name));
-    }
-
-    let config = vm_config(vm_name, config_root)?;
+pub fn create_vm(vm_dir: &Path) -> Result<(), String> {
+    let config = vm_config(vm_dir)?;
 
     // SAFETY: safe because we ensure we don't violate any invariants
     // concerning OS resources shared between processes, by only
@@ -197,7 +194,7 @@ pub fn create_vm(dir: &Path, config_root: &Path) -> Result<(), String> {
         e if e < 0 => Err(format!("double fork: {}", io::Error::from_raw_os_error(-e))),
         // SAFETY: create_vm_child_main can only be called once per process,
         // but this is a new process, so we know it hasn't been called before.
-        0 => unsafe { create_vm_child_main(vm_name, config) },
+        0 => unsafe { create_vm_child_main(vm_dir, config) },
         _ => Ok(()),
     }
 }
@@ -215,7 +212,7 @@ mod tests {
 
     #[test]
     fn test_vm_name_colon() {
-        let e = create_vm(Path::new("/:vm"), Path::new("/")).unwrap_err();
+        let e = create_vm(Path::new("/:vm")).unwrap_err();
         assert!(e.contains("colon"), "unexpected error: {:?}", e);
     }
 }

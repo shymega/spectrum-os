@@ -6,7 +6,7 @@
 #include <net/if.h>
 
 struct ch_device;
-struct vm_name;
+struct vm_dir;
 
 struct net_config {
 	int fd;
@@ -15,7 +15,7 @@ struct net_config {
 };
 
 [[gnu::nonnull]]
-int ch_add_net(const struct vm_name *, const struct net_config[static 1]);
+int ch_add_net(const struct vm_dir *, const struct net_config[static 1]);
 
 [[gnu::nonnull]]
-int ch_remove_device(const struct vm_name *, const char device_id[static 1]);
+int ch_remove_device(const struct vm_dir *, const char device_id[static 1]);

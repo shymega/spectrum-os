@@ -50,7 +50,7 @@ static int client_net_setup(const char bridge_name[static 1],
 
 [[gnu::nonnull]]
 static int router_net_setup(const char bridge_name[static 1],
-			    const struct vm_name *router_vm_name,
+			    const struct vm_dir *router_vm_dir,
                             const uint8_t mac[6],
 			    char device_id_out[static IFNAMSIZ])
 {
@@ -61,7 +61,7 @@ static int router_net_setup(const char bridge_name[static 1],
 	if ((net.fd = setup_tap(bridge_name, "router", net.id)) == -1)
 		return -1;
 
-	e = ch_add_net(router_vm_name, &net);
+	e = ch_add_net(router_vm_dir, &net);
 	close(net.fd);
 	if (!e) {
 		strcpy(device_id_out, net.id);
@@ -72,13 +72,13 @@ static int router_net_setup(const char bridge_name[static 1],
 }
 
 [[gnu::nonnull]]
-static int router_net_cleanup(pid_t pid, const struct vm_name *vm_name,
+static int router_net_cleanup(pid_t pid, const struct vm_dir *vm_dir,
                               const char device_id[static 1])
 {
 	int e;
 	char name[IFNAMSIZ], newname[IFNAMSIZ], brname[IFNAMSIZ];
 
-	if ((e = ch_remove_device(vm_name, device_id))) {
+	if ((e = ch_remove_device(vm_dir, device_id))) {
 		errno = e;
 		return -1;
 	}
@@ -108,7 +108,7 @@ static int bridge_cleanup(pid_t pid)
 
 [[gnu::nonnull]]
 static noreturn void exit_listener_main(int fd, pid_t pid,
-                                        const struct vm_name *router_vm_name,
+                                        const struct vm_dir *router_vm_dir,
                                         const char router_device_id[static 1])
 {
 	// Wait for the other end of the pipe to be closed.
@@ -122,7 +122,7 @@ static noreturn void exit_listener_main(int fd, pid_t pid,
 	}
 	assert(pollfd.revents == POLLERR);
 
-	if (router_net_cleanup(pid, router_vm_name, router_device_id) == -1) {
+	if (router_net_cleanup(pid, router_vm_dir, router_device_id) == -1) {
 		warn("cleaning up router tap");
 		status = EXIT_FAILURE;
 	}
@@ -135,7 +135,7 @@ static noreturn void exit_listener_main(int fd, pid_t pid,
 }
 
 [[gnu::nonnull]]
-static int exit_listener_setup(const struct vm_name *router_vm_name,
+static int exit_listener_setup(const struct vm_dir *router_vm_dir,
                                const char router_device_id[static 1])
 {
 	pid_t pid = getpid();
@@ -151,8 +151,7 @@ static int exit_listener_setup(const struct vm_name *router_vm_name,
 		return -1;
 	case 0:
 		close(fd[0]);
-		exit_listener_main(fd[1], pid, router_vm_name,
-				   router_device_id);
+		exit_listener_main(fd[1], pid, router_vm_dir, router_device_id);
 	default:
 		close(fd[1]);
 		return 0;
@@ -160,7 +159,7 @@ static int exit_listener_setup(const struct vm_name *router_vm_name,
 }
 
 [[gnu::nonnull]]
-struct net_config net_setup(const struct vm_name *router_vm_name)
+struct net_config net_setup(const struct vm_dir *router_vm_dir)
 {
 	struct net_config r = { .fd = -1, .mac = { 0 } };
 	char bridge_name[IFNAMSIZ], router_device_id[IFNAMSIZ] = { 0 };
@@ -182,14 +181,14 @@ struct net_config net_setup(const struct vm_name *router_vm_name)
 	if ((r.fd = client_net_setup(bridge_name, r.id)) == -1)
 		goto fail_bridge;
 
-	if (router_net_setup(bridge_name, router_vm_name, router_mac,
+	if (router_net_setup(bridge_name, router_vm_dir, router_mac,
 	                     router_device_id) == -1)
 		goto fail_bridge;
 
 	// Set up a process that will listen for this process dying,
 	// and remove the interface from the netvm, and delete the
 	// bridge.
-	if (exit_listener_setup(router_vm_name, router_device_id) == -1)
+	if (exit_listener_setup(router_vm_dir, router_device_id) == -1)
 		goto fail_bridge;
 
 	return r;

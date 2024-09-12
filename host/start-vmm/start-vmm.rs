@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 use std::env::current_dir;
 use std::os::unix::prelude::*;
@@ -17,12 +17,18 @@ unsafe fn run() -> String {
         Err(e) => return e,
     };
 
-    let api_socket = match create_api_socket() {
+    let Some(vm_name) = dir.file_name() else {
+        return "directory has no name".to_string();
+    };
+
+    let vm_dir = Path::new("/run/vm").join(vm_name);
+
+    let api_socket = match create_api_socket(&vm_dir) {
         Ok(api_socket) => api_socket,
         Err(e) => return e,
     };
 
-    if let Err(e) = create_vm(&dir, Path::new("/run/vm")) {
+    if let Err(e) = create_vm(&vm_dir) {
         return e;
     }
 

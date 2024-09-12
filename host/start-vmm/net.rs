@@ -3,6 +3,7 @@
 
 use std::borrow::Cow;
 use std::fmt::{self, Display, Formatter};
+use std::path::Path;
 
 use miniserde::ser::Fragment;
 use miniserde::Serialize;
@@ -39,10 +40,10 @@ extern "C" {
     /// # Safety
     ///
     /// The rest of the result is only valid if the returned fd is not -1.
-    // SAFETY: &str is sized, so it's okay to pass a reference to it
+    // SAFETY: &Path is sized, so it's okay to pass a reference to it
     // to C, as long as it's opaque to C.
     #[allow(improper_ctypes)]
-    pub fn net_setup(provider_vm_name: &&str) -> NetConfigC;
+    pub fn net_setup(provider_vm_dir: &&Path) -> NetConfigC;
 }
 
 #[cfg(test)]

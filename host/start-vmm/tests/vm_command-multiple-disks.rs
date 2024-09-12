@@ -26,7 +26,7 @@ fn main() -> std::io::Result<()> {
         symlink("/dev/null", image_path)?;
     }
 
-    let config = vm_config("testvm", tmp_dir.path()).unwrap();
+    let config = vm_config(vm_config_dir.parent().unwrap()).unwrap();
     assert_eq!(config.disks.len(), 2);
     assert!(config.disks.iter().all(|disk| disk.readonly));
 

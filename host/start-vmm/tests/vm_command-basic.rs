@@ -10,15 +10,16 @@ use test_helper::TempDir;
 fn main() -> std::io::Result<()> {
     let tmp_dir = TempDir::new()?;
 
-    let kernel_path = tmp_dir.path().join("testvm/config/vmlinux");
-    let image_path = tmp_dir.path().join("testvm/config/blk/root.img");
+    let vm_dir = tmp_dir.path().join("testvm");
+    let kernel_path = vm_dir.join("config/vmlinux");
+    let image_path = vm_dir.join("config/blk/root.img");
 
     create_dir_all(kernel_path.parent().unwrap())?;
     create_dir_all(image_path.parent().unwrap())?;
     File::create(&kernel_path)?;
     File::create(&image_path)?;
 
-    let mut config = vm_config("testvm", tmp_dir.path()).unwrap();
+    let mut config = vm_config(&vm_dir).unwrap();
 
     assert_eq!(config.console.mode, "Pty");
     assert_eq!(config.disks.len(), 1);
@@ -37,7 +38,7 @@ fn main() -> std::io::Result<()> {
     assert_eq!(config.serial.mode, "File");
     assert_eq!(config.serial.file.unwrap(), "/run/testvm.log");
     assert_eq!(config.vsock.cid, 3);
-    assert_eq!(config.vsock.socket, "env/vsock.sock");
+    assert_eq!(PathBuf::from(config.vsock.socket), vm_dir.join("vsock"));
 
     Ok(())
 }

@@ -8,7 +8,7 @@ use std::mem::take;
 use std::num::NonZeroI32;
 use std::os::raw::{c_char, c_int};
 use std::os::unix::prelude::*;
-use std::path::PathBuf;
+use std::path::Path;
 use std::process::{Command, Stdio};
 use std::string::FromUtf8Error;
 
@@ -65,7 +65,7 @@ pub struct PayloadConfig {
 #[derive(Serialize)]
 pub struct VsockConfig {
     pub cid: u32,
-    pub socket: &'static str,
+    pub socket: String,
 }
 
 #[derive(Serialize)]
@@ -81,25 +81,21 @@ pub struct VmConfig {
     pub vsock: VsockConfig,
 }
 
-fn command(vm_name: &str, s: impl AsRef<OsStr>) -> Command {
-    let mut api_socket_path = PathBuf::from("/run/service/vmm/instance");
-    api_socket_path.push(vm_name);
-    api_socket_path.push("env/cloud-hypervisor.sock");
-
+fn command(vm_dir: &Path, s: impl AsRef<OsStr>) -> Command {
     let mut command = Command::new("ch-remote");
     command.stdin(Stdio::null());
     command.arg("--api-socket");
-    command.arg(api_socket_path);
+    command.arg(vm_dir.join("vmm"));
     command.arg(s);
     command
 }
 
-pub fn create_vm(vm_name: &str, mut config: VmConfig) -> Result<(), String> {
+pub fn create_vm(vm_dir: &Path, mut config: VmConfig) -> Result<(), String> {
     // Net devices can't be created from file descriptors in vm.create.
     // https://github.com/cloud-hypervisor/cloud-hypervisor/issues/5523
     let nets = take(&mut config.net);
 
-    let mut ch_remote = command(vm_name, "create")
+    let mut ch_remote = command(vm_dir, "create")
         .args(["--", "-"])
         .stdin(Stdio::piped())
         .spawn()
@@ -122,14 +118,14 @@ pub fn create_vm(vm_name: &str, mut config: VmConfig) -> Result<(), String> {
     }
 
     for net in nets {
-        add_net(vm_name, &net).map_err(|e| format!("failed to add net: {e}"))?;
+        add_net(vm_dir, &net).map_err(|e| format!("failed to add net: {e}"))?;
     }
 
     Ok(())
 }
 
-pub fn add_net(vm_name: &str, net: &NetConfig) -> Result<(), NonZeroI32> {
-    let mut ch_remote = command(vm_name, "add-net")
+pub fn add_net(vm_dir: &Path, net: &NetConfig) -> Result<(), NonZeroI32> {
+    let mut ch_remote = command(vm_dir, "add-net")
         .arg(format!("fd={},id={},mac={}", net.fd, net.id, net.mac))
         .stdout(Stdio::piped())
         .spawn()
@@ -144,8 +140,8 @@ pub fn add_net(vm_name: &str, net: &NetConfig) -> Result<(), NonZeroI32> {
     Err(EPROTO)
 }
 
-pub fn remove_device(vm_name: &str, device_id: &OsStr) -> Result<(), NonZeroI32> {
-    let ch_remote = command(vm_name, "remove-device")
+pub fn remove_device(vm_dir: &Path, device_id: &OsStr) -> Result<(), NonZeroI32> {
+    let ch_remote = command(vm_dir, "remove-device")
         .arg(device_id)
         .status()
         .or(Err(EPERM))?;
@@ -190,8 +186,8 @@ impl TryFrom<NetConfigC> for NetConfig {
 /// - `net.fd` must be a valid file descriptor.
 /// - `net.id` must point to a valid C string.
 #[export_name = "ch_add_net"]
-unsafe extern "C" fn add_net_c(vm_name: &&str, net: &NetConfigC) -> c_int {
-    if let Err(e) = add_net(vm_name, &net.try_into().unwrap()) {
+unsafe extern "C" fn add_net_c(vm_dir: &&Path, net: &NetConfigC) -> c_int {
+    if let Err(e) = add_net(vm_dir, &net.try_into().unwrap()) {
         e.get()
     } else {
         0
@@ -202,10 +198,10 @@ unsafe extern "C" fn add_net_c(vm_name: &&str, net: &NetConfigC) -> c_int {
 ///
 /// - `device_id` must point to a valid C string.
 #[export_name = "ch_remove_device"]
-unsafe extern "C" fn remove_device_c(vm_name: &&str, device_id: *const c_char) -> c_int {
+unsafe extern "C" fn remove_device_c(vm_dir: &&Path, device_id: *const c_char) -> c_int {
     let device_id = OsStr::from_bytes(CStr::from_ptr(device_id).to_bytes());
 
-    if let Err(e) = remove_device(vm_name, device_id) {
+    if let Err(e) = remove_device(vm_dir, device_id) {
         e.get()
     } else {
         0
