@@ -1,25 +1,29 @@
 // SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
-use std::env::current_dir;
+use std::env::args_os;
 use std::os::unix::prelude::*;
 use std::path::Path;
 use std::process::exit;
 
 use start_vmm::{create_api_socket, create_vm, prog_name, vm_command};
 
+fn ex_usage() -> ! {
+    eprintln!("Usage: start-vmm vm");
+    exit(1);
+}
+
 /// # Safety
 ///
 /// Calls [`notify_readiness`], so can only be called once.
 unsafe fn run() -> String {
-    let dir = match current_dir().map_err(|e| format!("getting current directory: {}", e)) {
-        Ok(dir) => dir,
-        Err(e) => return e,
+    let mut args = args_os().skip(1);
+    let Some(vm_name) = args.next() else {
+        ex_usage();
     };
-
-    let Some(vm_name) = dir.file_name() else {
-        return "directory has no name".to_string();
-    };
+    if args.next().is_some() {
+        ex_usage();
+    }
 
     let vm_dir = Path::new("/run/vm").join(vm_name);
 
