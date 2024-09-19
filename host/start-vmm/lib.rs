@@ -25,7 +25,7 @@ use ch::{
 use fork::double_fork;
 use net::net_setup;
 use s6::notify_readiness;
-use unix::clear_cloexec;
+use unix::AsFdExt;
 
 const SIGTERM: i32 = 15;
 
@@ -49,10 +49,8 @@ pub fn create_api_socket() -> Result<UnixListener, String> {
     let api_socket = UnixListener::bind("env/cloud-hypervisor.sock")
         .map_err(|e| format!("creating API socket: {e}"))?;
 
-    // Safe because we own api_socket.
-    if unsafe { clear_cloexec(api_socket.as_fd()) } == -1 {
-        let errno = io::Error::last_os_error();
-        return Err(format!("clearing CLOEXEC on API socket fd: {}", errno));
+    if let Err(e) = api_socket.clear_cloexec() {
+        return Err(format!("clearing CLOEXEC on API socket fd: {}", e));
     }
 
     Ok(api_socket)
