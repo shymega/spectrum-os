@@ -7,6 +7,7 @@ use std::mem::take;
 use std::num::NonZeroI32;
 use std::os::raw::{c_char, c_int};
 use std::os::unix::prelude::*;
+use std::path::PathBuf;
 use std::process::{Command, Stdio};
 
 use miniserde::{json, Serialize};
@@ -80,9 +81,9 @@ pub struct VmConfig {
 }
 
 fn command(vm_name: &str, s: impl AsRef<OsStr>) -> Command {
-    let mut api_socket_path = OsString::from("/run/service/vmm/instance/");
+    let mut api_socket_path = PathBuf::from("/run/service/vmm/instance");
     api_socket_path.push(vm_name);
-    api_socket_path.push("/env/cloud-hypervisor.sock");
+    api_socket_path.push("env/cloud-hypervisor.sock");
 
     let mut command = Command::new("ch-remote");
     command.stdin(Stdio::null());
