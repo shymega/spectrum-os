@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: EUPL-1.2+
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022, 2024 Alyssa Ross <hi@alyssa.is>
 
 #include "net-util.h"
 
@@ -153,7 +153,7 @@ int tap_open(char name[static IFNAMSIZ], int flags)
 	struct ifreq ifr;
 	int fd;
 
-	if (name[IFNAMSIZ - 1]) {
+	if (strnlen(name, IFNAMSIZ) == IFNAMSIZ) {
 		errno = ENAMETOOLONG;
 		return -1;
 	}
