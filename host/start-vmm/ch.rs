@@ -197,7 +197,7 @@ unsafe extern "C" fn add_net_c(
 /// # Safety
 ///
 /// - `vm_name` must point to a valid C string.
-/// - `id` must be a device ID obtained by calling `add_net_c`.  After
+/// - `device_id` must be a device ID obtained by calling `add_net_c`.  After
 ///   calling `remove_device_c`, the pointer is no longer valid.
 #[export_name = "ch_remove_device"]
 unsafe extern "C" fn remove_device_c(vm_name: *const c_char, device_id: &mut OsString) -> c_int {
