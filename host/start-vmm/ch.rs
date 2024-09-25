@@ -17,7 +17,6 @@ use miniserde::{json, Serialize};
 use crate::net::MacAddress;
 
 // Trivially safe.
-const EINVAL: NonZeroI32 = unsafe { NonZeroI32::new_unchecked(22) };
 const EPERM: NonZeroI32 = unsafe { NonZeroI32::new_unchecked(1) };
 const EPROTO: NonZeroI32 = unsafe { NonZeroI32::new_unchecked(71) };
 
@@ -188,15 +187,10 @@ impl TryFrom<NetConfigC> for NetConfig {
 
 /// # Safety
 ///
-/// - `vm_name` must point to a valid C string.
 /// - `net.fd` must be a valid file descriptor.
 /// - `net.id` must point to a valid C string.
 #[export_name = "ch_add_net"]
-unsafe extern "C" fn add_net_c(vm_name: *const c_char, net: &NetConfigC) -> c_int {
-    let Ok(vm_name) = CStr::from_ptr(vm_name).to_str() else {
-        return EINVAL.into();
-    };
-
+unsafe extern "C" fn add_net_c(vm_name: &&str, net: &NetConfigC) -> c_int {
     if let Err(e) = add_net(vm_name, &net.try_into().unwrap()) {
         e.get()
     } else {
@@ -206,14 +200,9 @@ unsafe extern "C" fn add_net_c(vm_name: *const c_char, net: &NetConfigC) -> c_in
 
 /// # Safety
 ///
-/// - `vm_name` must point to a valid C string.
 /// - `device_id` must point to a valid C string.
 #[export_name = "ch_remove_device"]
-unsafe extern "C" fn remove_device_c(vm_name: *const c_char, device_id: *const c_char) -> c_int {
-    let Ok(vm_name) = CStr::from_ptr(vm_name).to_str() else {
-        return EINVAL.into();
-    };
-
+unsafe extern "C" fn remove_device_c(vm_name: &&str, device_id: *const c_char) -> c_int {
     let device_id = OsStr::from_bytes(CStr::from_ptr(device_id).to_bytes());
 
     if let Err(e) = remove_device(vm_name, device_id) {

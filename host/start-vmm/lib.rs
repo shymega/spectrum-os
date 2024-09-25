@@ -10,7 +10,7 @@ mod unix;
 use std::borrow::Cow;
 use std::convert::TryInto;
 use std::env::args_os;
-use std::ffi::{CString, OsStr};
+use std::ffi::OsStr;
 use std::fs::remove_file;
 use std::io::{self, ErrorKind};
 use std::os::unix::net::UnixListener;
@@ -122,16 +122,14 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
             Ok(entries) => entries
                 .into_iter()
                 .map(|result| {
-                    let entry = result
+                    let provider_name = result
                         .map_err(|e| format!("examining directory entry: {}", e))?
-                        .file_name();
+                        .file_name()
+                        .into_string()
+                        .map_err(|name| format!("provider name {:?} is not UTF-8", name))?;
 
-                    // Safe because provider_name is the name of a directory entry, so
-                    // can't contain a null byte.
-                    let provider_name = unsafe { CString::from_vec_unchecked(entry.into_vec()) };
-
-                    // Safe because we pass a valid pointer and check the result.
-                    let net = unsafe { net_setup(provider_name.as_ptr()) };
+                    // SAFETY: we check the result.
+                    let net = unsafe { net_setup(&provider_name.as_str()) };
                     if net.fd == -1 {
                         let e = io::Error::last_os_error();
                         return Err(format!("setting up networking failed: {e}"));

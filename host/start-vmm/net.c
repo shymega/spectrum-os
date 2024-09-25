@@ -48,8 +48,9 @@ static int client_net_setup(const char bridge_name[static 1],
 	return setup_tap(bridge_name, "client", tap_name);
 }
 
+[[gnu::nonnull]]
 static int router_net_setup(const char bridge_name[static 1],
-			    const char router_vm_name[static 1],
+			    const struct vm_name *router_vm_name,
                             const uint8_t mac[6],
 			    char device_id_out[static IFNAMSIZ])
 {
@@ -70,7 +71,8 @@ static int router_net_setup(const char bridge_name[static 1],
 	return -1;
 }
 
-static int router_net_cleanup(pid_t pid, const char vm_name[static 1],
+[[gnu::nonnull]]
+static int router_net_cleanup(pid_t pid, const struct vm_name *vm_name,
                               const char device_id[static 1])
 {
 	int e;
@@ -104,8 +106,9 @@ static int bridge_cleanup(pid_t pid)
 	return bridge_delete(name);
 }
 
+[[gnu::nonnull]]
 static noreturn void exit_listener_main(int fd, pid_t pid,
-                                        const char router_vm_name[static 1],
+                                        const struct vm_name *router_vm_name,
                                         const char router_device_id[static 1])
 {
 	// Wait for the other end of the pipe to be closed.
@@ -131,7 +134,8 @@ static noreturn void exit_listener_main(int fd, pid_t pid,
 	exit(status);
 }
 
-static int exit_listener_setup(const char router_vm_name[static 1],
+[[gnu::nonnull]]
+static int exit_listener_setup(const struct vm_name *router_vm_name,
                                const char router_device_id[static 1])
 {
 	pid_t pid = getpid();
@@ -155,7 +159,8 @@ static int exit_listener_setup(const char router_vm_name[static 1],
 	}
 }
 
-struct net_config net_setup(const char router_vm_name[static 1])
+[[gnu::nonnull]]
+struct net_config net_setup(const struct vm_name *router_vm_name)
 {
 	struct net_config r = { .fd = -1, .mac = { 0 } };
 	char bridge_name[IFNAMSIZ], router_device_id[IFNAMSIZ] = { 0 };
