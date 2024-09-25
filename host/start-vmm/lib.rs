@@ -8,6 +8,7 @@ mod s6;
 mod unix;
 
 use std::borrow::Cow;
+use std::convert::TryInto;
 use std::env::args_os;
 use std::ffi::{CString, OsStr};
 use std::fs::remove_file;
@@ -136,7 +137,7 @@ pub fn vm_config(vm_name: &str, config_root: &Path) -> Result<VmConfig, String> 
                         return Err(format!("setting up networking failed: {e}"));
                     }
 
-                    Ok(net)
+                    Ok(net.try_into().unwrap())
                 })
                 // TODO: to support multiple net providers, we'll need
                 // a better naming scheme for tap and bridge devices.

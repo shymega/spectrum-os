@@ -8,9 +8,10 @@ use std::os::raw::c_char;
 use miniserde::ser::Fragment;
 use miniserde::Serialize;
 
-use crate::ch::NetConfig;
+use crate::ch::NetConfigC;
 
 #[repr(transparent)]
+#[derive(Copy, Clone)]
 pub struct MacAddress([u8; 6]);
 
 impl MacAddress {
@@ -39,7 +40,7 @@ extern "C" {
     /// # Safety
     ///
     /// `provider_vm_name` must not be null.
-    pub fn net_setup(provider_vm_name: *const c_char) -> NetConfig;
+    pub fn net_setup(provider_vm_name: *const c_char) -> NetConfigC;
 }
 
 #[cfg(test)]

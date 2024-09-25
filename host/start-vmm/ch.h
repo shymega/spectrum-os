@@ -3,17 +3,17 @@
 
 #include <stdint.h>
 
+#include <net/if.h>
+
 struct ch_device;
 
 struct net_config {
 	int fd;
+	char id[IFNAMSIZ];
 	uint8_t mac[6];
 };
 
-int ch_add_net(const char vm_name[static 1], const struct net_config[static 1],
-               struct ch_device **out);
+int ch_add_net(const char vm_name[static 1], const struct net_config[static 1]);
 
-[[gnu::nonnull]]
-int ch_remove_device(const char vm_name[static 1], struct ch_device *);
-
-void ch_device_free(struct ch_device *);
+int ch_remove_device(const char vm_name[static 1],
+		     const char device_id[static 1]);

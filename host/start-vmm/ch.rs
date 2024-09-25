@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: EUPL-1.2+
 // SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
+use std::convert::{TryFrom, TryInto};
 use std::ffi::{CStr, OsStr, OsString};
 use std::io::Write;
 use std::mem::take;
@@ -9,6 +10,7 @@ use std::os::raw::{c_char, c_int};
 use std::os::unix::prelude::*;
 use std::path::PathBuf;
 use std::process::{Command, Stdio};
+use std::string::FromUtf8Error;
 
 use miniserde::{json, Serialize};
 
@@ -43,9 +45,9 @@ pub struct GpuConfig {
 }
 
 #[derive(Serialize)]
-#[repr(C)]
 pub struct NetConfig {
     pub fd: RawFd,
+    pub id: String,
     pub mac: MacAddress,
 }
 
@@ -111,12 +113,13 @@ pub fn create_vm(vm_name: &str, mut config: VmConfig) -> Result<(), String> {
     let status = ch_remote
         .wait()
         .map_err(|e| format!("waiting for ch-remote: {e}"))?;
-    if status.success() {
-    } else if let Some(code) = status.code() {
-        return Err(format!("ch-remote exited {code}"));
-    } else {
-        let signal = status.signal().unwrap();
-        return Err(format!("ch-remote killed by signal {signal}"));
+    if !status.success() {
+        if let Some(code) = status.code() {
+            return Err(format!("ch-remote exited {code}"));
+        } else {
+            let signal = status.signal().unwrap();
+            return Err(format!("ch-remote killed by signal {signal}"));
+        }
     }
 
     for net in nets {
@@ -126,31 +129,16 @@ pub fn create_vm(vm_name: &str, mut config: VmConfig) -> Result<(), String> {
     Ok(())
 }
 
-pub fn add_net(vm_name: &str, net: &NetConfig) -> Result<OsString, NonZeroI32> {
+pub fn add_net(vm_name: &str, net: &NetConfig) -> Result<(), NonZeroI32> {
     let mut ch_remote = command(vm_name, "add-net")
-        .arg(format!("fd={},mac={}", net.fd, net.mac))
+        .arg(format!("fd={},id={},mac={}", net.fd, net.id, net.mac))
         .stdout(Stdio::piped())
         .spawn()
         .or(Err(EPERM))?;
 
-    let jq_out = match Command::new("jq")
-        .args(["-j", ".id"])
-        .stdin(ch_remote.stdout.take().unwrap())
-        .stderr(Stdio::inherit())
-        .output()
-    {
-        Ok(o) => o,
-        Err(_) => {
-            // Try not to leave a zombie.
-            let _ = ch_remote.kill();
-            let _ = ch_remote.wait();
-            return Err(EPERM);
-        }
-    };
-
     if let Ok(ch_remote_status) = ch_remote.wait() {
-        if ch_remote_status.success() && jq_out.status.success() {
-            return Ok(OsString::from_vec(jq_out.stdout));
+        if ch_remote_status.success() {
+            return Ok(());
         }
     }
 
@@ -170,44 +158,65 @@ pub fn remove_device(vm_name: &str, device_id: &OsStr) -> Result<(), NonZeroI32>
     }
 }
 
-/// # Safety
-///
-/// - `vm_name` must point to a valid C string.
-#[export_name = "ch_add_net"]
-unsafe extern "C" fn add_net_c(
-    vm_name: *const c_char,
-    net: &NetConfig,
-    id: Option<&mut *mut OsString>,
-) -> c_int {
-    let Ok(vm_name) = CStr::from_ptr(vm_name).to_str() else {
-        return EINVAL.into();
-    };
+#[repr(C)]
+pub struct NetConfigC {
+    pub fd: RawFd,
+    pub id: [u8; 16],
+    pub mac: MacAddress,
+}
 
-    match add_net(vm_name, net) {
-        Err(e) => e.get(),
-        Ok(id_str) => {
-            if let Some(id) = id {
-                let token = Box::into_raw(Box::new(id_str));
-                *id = token;
-            }
-            0
-        }
+impl<'a> TryFrom<&'a NetConfigC> for NetConfig {
+    type Error = FromUtf8Error;
+
+    fn try_from(c: &'a NetConfigC) -> Result<NetConfig, Self::Error> {
+        let nul_index = c.id.iter().position(|&c| c == 0).unwrap_or(c.id.len());
+        Ok(NetConfig {
+            fd: c.fd,
+            id: String::from_utf8(c.id[..nul_index].to_vec())?,
+            mac: c.mac,
+        })
+    }
+}
+
+impl TryFrom<NetConfigC> for NetConfig {
+    type Error = FromUtf8Error;
+
+    fn try_from(c: NetConfigC) -> Result<NetConfig, Self::Error> {
+        Self::try_from(&c)
     }
 }
 
 /// # Safety
 ///
 /// - `vm_name` must point to a valid C string.
-/// - `device_id` must be a device ID obtained by calling `add_net_c`.  After
-///   calling `remove_device_c`, the pointer is no longer valid.
-#[export_name = "ch_remove_device"]
-unsafe extern "C" fn remove_device_c(vm_name: *const c_char, device_id: &mut OsString) -> c_int {
+/// - `net.fd` must be a valid file descriptor.
+/// - `net.id` must point to a valid C string.
+#[export_name = "ch_add_net"]
+unsafe extern "C" fn add_net_c(vm_name: *const c_char, net: &NetConfigC) -> c_int {
     let Ok(vm_name) = CStr::from_ptr(vm_name).to_str() else {
         return EINVAL.into();
     };
-    let device_id = Box::from_raw(device_id);
 
-    if let Err(e) = remove_device(vm_name, device_id.as_ref()) {
+    if let Err(e) = add_net(vm_name, &net.try_into().unwrap()) {
+        e.get()
+    } else {
+        0
+    }
+}
+
+/// # Safety
+///
+/// - `vm_name` must point to a valid C string.
+/// - `device_id` must point to a valid C string.
+#[export_name = "ch_remove_device"]
+unsafe extern "C" fn remove_device_c(vm_name: *const c_char, device_id: *const c_char) -> c_int {
+    let Ok(vm_name) = CStr::from_ptr(vm_name).to_str() else {
+        return EINVAL.into();
+    };
+
+    let device_id = OsStr::from_bytes(CStr::from_ptr(device_id).to_bytes());
+
+    if let Err(e) = remove_device(vm_name, device_id) {
         e.get()
     } else {
         0
