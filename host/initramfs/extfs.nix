@@ -9,6 +9,7 @@ let
   };
 
   appvm-catgirl = callSpectrumPackage ../../vm/app/catgirl.nix {};
+  appvm-firefox = callSpectrumPackage ../../vm/app/firefox.nix {};
   appvm-foot = callSpectrumPackage ../../vm/app/foot.nix {};
   appvm-gnome-text-editor = callSpectrumPackage ../../vm/app/gnome-text-editor.nix {};
   appvm-lynx = callSpectrumPackage ../../vm/app/lynx.nix {};
@@ -17,13 +18,14 @@ in
 runCommand "ext.ext4" {
   nativeBuildInputs = [ e2fsprogs ];
 } ''
-  mkdir -p root/svc/data/appvm-{catgirl,foot,gnome-text-editor,lynx}
+  mkdir -p root/svc/data/appvm-{catgirl,firefox,foot,gnome-text-editor,lynx}
   cd root
 
   tar -C ${netvm} -c data | tar -C svc -x
   chmod +w svc/data
 
   tar -C ${appvm-catgirl} -c . | tar -C svc/data/appvm-catgirl -x
+  tar -C ${appvm-firefox} -c . | tar -C svc/data/appvm-firefox -x
   tar -C ${appvm-foot} -c . | tar -C svc/data/appvm-foot -x
   tar -C ${appvm-gnome-text-editor} -c . | tar -C svc/data/appvm-gnome-text-editor -x
   tar -C ${appvm-lynx} -c . | tar -C svc/data/appvm-lynx -x
