@@ -13,6 +13,7 @@ backtick HOME {
 }
 
 importas -i home HOME
+if { mkdir -p -- $home }
 cd $home
 
 redirfd -u 0 /dev/hvc0
