@@ -2,7 +2,7 @@
 :page-parent: About Spectrum
 
 // SPDX-FileCopyrightText: 2022 Unikie
-// SPDX-FileCopyrightText: 2022 Alyssa Ross <hi@alyssa.is>
+// SPDX-FileCopyrightText: 2022, 2024 Alyssa Ross <hi@alyssa.is>
 // SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
 
 Spectrum is based on the principle of security by compartmentalization.
@@ -11,13 +11,13 @@ The high level stack is illustrated in the following diagram:
 
 image::../diagrams/stack.svg[]
 
-The default set of virtual machines includes two application VMs,
-_appvm-catgirl_ (an IRC client) and _appvm-lynx_ (a text-based web
-browser); and a system VM, _netvm_ (which handles hardware network
-devices and provides network services to application VMs).
-Refer to xref:../using-spectrum/creating-vms.adoc[Creating VMs] and
-xref:../using-spectrum/running-vms.adoc[Running
-VMs] for more information about using VMs in Spectrum.
+The default set of virtual machines includes some application VMs,
+(names prefixed with _appvm-_); and a system VM, _netvm_ (which
+handles hardware network devices and provides network services to
+application VMs).  Refer to
+xref:../using-spectrum/creating-vms.adoc[Creating VMs] and
+xref:../using-spectrum/running-vms.adoc[Running VMs] for more
+information about using VMs in Spectrum.
 
 == Architecture Decision Records (ADRs)
 
