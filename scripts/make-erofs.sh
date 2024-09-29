@@ -30,9 +30,18 @@ while read -r arg1; do
 	fi
 	echo
 
-	parent="$root/$(dirname "$arg2")"
-	mkdir -p -- "$parent"
-	chmod +w -- "$parent"
+	parent="$(dirname "$arg2")"
+	awk -v parent="$parent" -v root="$root" 'BEGIN {
+		n = split(parent, components, "/")
+		for (i = 1; i <= n; i++) {
+			printf "%s/", root
+			for (j = 1; j <= i; j++)
+				printf "%s/", components[j]
+			print
+		}
+	}' | xargs -rd '\n' chmod +w -- 2>/dev/null || :
+	mkdir -p -- "$root/$parent"
+
 	cp -RT -- "$arg1" "$root/$arg2"
 done
 
