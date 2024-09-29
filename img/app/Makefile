@@ -40,6 +40,7 @@ VM_FILES = \
 	etc/passwd \
 	etc/resolv.conf \
 	etc/s6-linux-init/env/DBUS_SESSION_BUS_ADDRESS \
+	etc/s6-linux-init/env/GTK_USE_PORTAL \
 	etc/s6-linux-init/env/NIX_XDG_DESKTOP_PORTAL_DIR \
 	etc/s6-linux-init/env/XDG_RUNTIME_DIR \
 	etc/s6-linux-init/scripts/rc.init \
