@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: MIT
 # SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
 
-{ run ? ../../vm/app/mg.nix, ... } @ args:
+{ run ? ../../vm/app/foot.nix, ... } @ args:
 
 import ../../lib/call-package.nix (
 { callSpectrumPackage, srcOnly

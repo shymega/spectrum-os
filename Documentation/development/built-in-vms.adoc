@@ -22,14 +22,14 @@ filesystem's Nix store onto its own, then runs the provided script.
 It's possible to run these VMs directly from your development system,
 without needing to start a whole Spectrum system, and then start the
 VM inside that system.  This is done using the development shell for
-the template.  For example, to run the built-in mg VM, run the
-following in the img/app directory:
+the template.  For example, to run the built-in gnome-text-editor VM,
+run the following in the img/app directory:
 
 [source,shell]
 ----
 nix-shell \
   -I nixpkgs=https://spectrum-os.org/git/nixpkgs/snapshot/nixpkgs-rootfs.tar.gz \
-  --arg run ../../vm/app/mg.nix \
+  --arg run ../../vm/app/gnome-text-editor.nix \
   --run 'make clean && make -j$NIX_BUILD_CORES run'
 ----
 
