@@ -5,4 +5,4 @@ devpts		/dev/pts	devpts	defaults,gid=4,mode=620
 tmpfs		/dev/shm	tmpfs	defaults
 sysfs		/sys		sysfs	defaults
 LABEL=ext	/run/ext	erofs	ro
-store		/nix/store	overlay	ro,lowerdir=/nix/store:/run/ext/nix/store
+store		/nix/store	overlay	ro,lowerdir=/nix/store:/run/ext/nix/store,nofail
