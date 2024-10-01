@@ -33,8 +33,9 @@ runCommand "spectrum-vm" {
 } ''
   mkdir -p "$out"/{blk,providers}
 
+  ln -s ${run} run
   (
-      printf "%s\nrun\n" ${run}
+      printf "run\nrun\n"
       comm -23 <(sort ${writeClosure [ run ]}) \
           <(sort ${writeClosure [ basePaths ]}) | sed p
   ) | ${../scripts/make-erofs.sh} -L ext "$out/blk/run.img"
