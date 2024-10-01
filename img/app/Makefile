@@ -59,7 +59,7 @@ build/empty:
 
 build/rootfs.erofs: ../../scripts/make-erofs.sh $(VM_FILES) $(VM_BUILD_FILES) build/empty
 	( \
-	    printf '%s\n' $$PACKAGES ;\
+	    cat $$PACKAGES ;\
 	    for file in $(VM_FILES) $(VM_LINKS); do printf '%s\n%s\n' $$file $$file; done ;\
 	    for file in $(VM_BUILD_FILES); do printf '%s\n%s\n' $$file $${file#build/}; done ;\
 	    printf 'build/empty\n%s\n' $(VM_DIRS) ;\

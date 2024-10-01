@@ -173,14 +173,9 @@ stdenvNoCC.mkDerivation {
   MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
   MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
 
-  PACKAGES = [ packagesSysroot "/" ];
-
-  shellHook = ''
-    PACKAGES+=" $(sed p ${writeClosure [ packagesSysroot ]} | tr '\n' ' ')"
-  '';
-
-  preBuild = ''
-    runHook shellHook
+  PACKAGES = runCommand "packages" {} ''
+    printf "%s\n/\n" ${packagesSysroot} >$out
+    sed p ${writeClosure [ packagesSysroot] } >>$out
   '';
 
   makeFlags = [ "dest=$(out)" ];

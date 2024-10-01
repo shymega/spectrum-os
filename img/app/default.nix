@@ -104,15 +104,10 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ erofs-utils jq lseek s6-rc util-linux ];
 
-  PACKAGES = [ packagesSysroot "/" ];
   KERNEL = "${kernel}/${baseNameOf kernelTarget}";
-
-  shellHook = ''
-    PACKAGES+=" $(sed p ${writeClosure [ packagesSysroot ]} | tr '\n' ' ')"
-  '';
-
-  preBuild = ''
-    runHook shellHook
+  PACKAGES = runCommand "packages" {} ''
+    printf "%s\n/\n" ${packagesSysroot} >$out
+    sed p ${writeClosure [ packagesSysroot] } >>$out
   '';
 
   makeFlags = [ "prefix=$(out)" ];
