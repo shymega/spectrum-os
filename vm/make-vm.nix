@@ -5,5 +5,5 @@ import ../lib/call-package.nix ({ callSpectrumPackage, pkgs }:
 
 import ../vm-lib/make-vm.nix {
   inherit pkgs;
-  basePaths = (callSpectrumPackage ../img/app {}).packagesSysroot;
+  basePaths = (callSpectrumPackage ../host/rootfs {}).appvm.packagesSysroot;
 }) (_: {})
