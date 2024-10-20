@@ -3,7 +3,7 @@
 
 project('surface-notify', 'c', default_options : [ 'warning_level=2' ])
 
-libweston = dependency('libweston-13')
+libweston = dependency('libweston-14')
 wayland_server = dependency('wayland-server')
 
 shared_library('surface-notify', 'module.c',

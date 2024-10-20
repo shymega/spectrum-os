@@ -26,6 +26,18 @@ let
       at-spi2-core = super.at-spi2-core.override {
         systemdSupport = false;
       };
+      colord = super.colord.override {
+        enableSystemd = false;
+      };
+      gcr_4 = super.gcr_4.override {
+        systemdSupport = false;
+      };
+      gnome-desktop = super.gnome-desktop.override {
+        withSystemd = false;
+      };
+      gnome-settings-daemon = super.gnome-settings-daemon.override {
+        withSystemd = false;
+      };
 
       libgudev = super.libgudev.overrideAttrs ({ ... }: {
         # Tests use umockdev, which is not compatible with libudev-zero.
@@ -62,9 +74,17 @@ let
         systemdSupport = false;
       };
 
-      tracker = super.tracker.overrideAttrs ({ mesonFlags ? [], ... }: {
+      tinysparql = super.tinysparql.overrideAttrs ({ mesonFlags ? [], ... }: {
         mesonFlags = mesonFlags ++ [ "-Dsystemd_user_services=false" ];
       });
+
+      upower = super.upower.override {
+        withSystemd = false;
+
+        # Not ideal, but it's the best way to get rid of an installed
+        # test that needs umockdev.
+        withIntrospection = false;
+      };
 
       util-linux = super.util-linux.override {
         systemdSupport = false;
@@ -78,9 +98,6 @@ let
 
       xdg-desktop-portal = super.xdg-desktop-portal.override {
         enableSystemd = false;
-      };
-      xdg-desktop-portal-gtk = super.xdg-desktop-portal-gtk.override {
-        buildPortalsInGnome = false;
       };
     })
   );
