@@ -23,7 +23,13 @@ stdenvNoCC.mkDerivation {
 
   src = lib.fileset.toSource {
     root = ../..;
-    fileset = src;
+    fileset = lib.fileset.intersection src (lib.fileset.unions [
+      ./.
+      ../../lib/common.mk
+      ../../scripts/format-uuid.sh
+      ../../scripts/make-gpt.sh
+      ../../scripts/sfdisk-field.awk
+    ]);
   };
   sourceRoot = "source/release/live";
 
