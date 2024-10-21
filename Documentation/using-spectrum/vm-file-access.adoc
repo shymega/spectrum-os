@@ -26,6 +26,12 @@ portals anyway, for example by setting the environment variable
 https://docs.gtk.org/gtk4/running.html#gdk_debug[`GDK_DEBUG`] to
 `portals` for GTK 4.
 
+TIP: Downloads to a fixed directory will not use the portal, and so
+will not be visible outside the VM.  For example, a normal download in
+Firefox will just download the "Downloads" directory on the transient
+VM filesystem, but downloading a file using "Save Link As…" will use
+the portal.
+
 == Manually sharing files with a VM
 
 When using an application that doesn't implement the File Chooser API,
