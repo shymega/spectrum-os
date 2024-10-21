@@ -26,14 +26,6 @@ portals anyway, for example by setting the environment variable
 https://docs.gtk.org/gtk4/running.html#gdk_debug[`GDK_DEBUG`] to
 `portals` for GTK 4.
 
-TIP: If you're using a custom VM image, to use Spectrum's File Chooser
-portal implementation you'll need to install
-https://spectrum-os.org/git/spectrum/tree/tools/xdg-desktop-portal-spectrum[xdg-desktop-portal-spectrum]
-and set the org.freedesktop.impl.portal.FileChooser interface to be
-provided by the "spectrum" portal in
-https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html[portals.conf].
-(https://spectrum-os.org/git/spectrum/tree/img/app/etc/xdg/xdg-desktop-portal/portals.conf[Example])
-
 == Manually sharing files with a VM
 
 When using an application that doesn't implement the File Chooser API,

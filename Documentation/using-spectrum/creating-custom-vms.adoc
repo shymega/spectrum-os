@@ -91,3 +91,14 @@ filesystem into it to provide the VM with access to shared storage.
 
 Every VM has a virtio-vsock device for communication with host
 services.
+
+== XDG Desktop Portals
+
+Spectrum provides an implementation of the XDG File chooser portal,
+allowing the user to selectively grant the VM access to host files.
+To use it, install
+https://spectrum-os.org/git/spectrum/tree/tools/xdg-desktop-portal-spectrum[xdg-desktop-portal-spectrum]
+and set the org.freedesktop.impl.portal.FileChooser interface to be
+provided by the "spectrum" portal in
+https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html[portals.conf].
+(https://spectrum-os.org/git/spectrum/tree/img/app/etc/xdg/xdg-desktop-portal/portals.conf[Example])
