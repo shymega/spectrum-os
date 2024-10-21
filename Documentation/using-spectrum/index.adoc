@@ -9,5 +9,5 @@
 
 Ready to get started with Spectrum? Here is what you can do next:
 
-* xref:creating-vms.adoc[Create your own VM] to use others applications.
+* xref:creating-custom-vms.adoc[Create your own VM] to use others applications.
 * xref:running-vms.adoc[Start some applications].

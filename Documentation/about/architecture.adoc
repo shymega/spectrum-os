@@ -15,7 +15,7 @@ The default set of virtual machines includes some application VMs,
 (names prefixed with _appvm-_); and a system VM, _netvm_ (which
 handles hardware network devices and provides network services to
 application VMs).  Refer to
-xref:../using-spectrum/creating-vms.adoc[Creating VMs] and
+xref:../using-spectrum/creating-custom-vms.adoc[Creating custom VMs] and
 xref:../using-spectrum/running-vms.adoc[Running VMs] for more
 information about using VMs in Spectrum.
 

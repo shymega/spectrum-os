@@ -1,4 +1,4 @@
-= Creating VMs
+= Creating Custom VMs
 :page-parent: Using Spectrum
 :page-nav_order: 2
 
