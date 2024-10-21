@@ -31,7 +31,7 @@ https://spectrum-os.org/git/spectrum/tree/tools/xdg-desktop-portal-spectrum[xdg-
 and set the org.freedesktop.impl.portal.FileChooser interface to be
 provided by the "spectrum" portal in
 https://flatpak.github.io/xdg-desktop-portal/docs/portals.conf.html[portals.conf].
-(https://spectrum-os.org/git/spectrum/tree/img/app/etc/xdg-desktop-portal/portals.conf[Example])
+(https://spectrum-os.org/git/spectrum/tree/img/app/etc/xdg/xdg-desktop-portal/portals.conf[Example])
 
 == Manually sharing files with a VM
 
