@@ -64,6 +64,9 @@ static int router_net_setup(const char bridge_name[static 1],
 	e = ch_add_net(router_vm_dir, &net);
 	close(net.fd);
 	if (!e) {
+		// net.id is NUL-terminated and can't be longer than
+		// device_id_out.
+		// NOLINTNEXTLINE(clang-analyzer-security.insecureAPI.strcpy)
 		strcpy(device_id_out, net.id);
 		return 0;
 	}

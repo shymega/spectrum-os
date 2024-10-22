@@ -1,9 +1,9 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2022-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
 { src, lib, stdenv, fetchCrate, fetchurl, buildPackages
-, meson, ninja, rustc, clippy, run-spectrum-vm
+, meson, ninja, rustc, clang-tools, clippy, run-spectrum-vm
 }:
 
 let
@@ -72,6 +72,23 @@ stdenv.mkDerivation (finalAttrs: {
   mesonFlags = [ "-Dtests=false" "-Dunwind=false" "-Dwerror=true" ];
 
   passthru.tests = {
+    clang-tidy = finalAttrs.finalPackage.overrideAttrs (
+      { src, nativeBuildInputs ? [], ... }:
+      {
+        src = lib.fileset.toSource {
+          root = ../..;
+          fileset = lib.fileset.union (lib.fileset.fromSource src) ../../.clang-tidy;
+        };
+
+        nativeBuildInputs = nativeBuildInputs ++ [ clang-tools ];
+
+        buildPhase = ''
+          clang-tidy --warnings-as-errors='*' -p . ../*.c ../*.h
+          touch $out
+          exit 0
+        '';
+      }
+    );
     clippy = finalAttrs.finalPackage.overrideAttrs (
       { name, nativeBuildInputs ? [], ... }:
       {

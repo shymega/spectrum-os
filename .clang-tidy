@@ -1,3 +1,7 @@
 # SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: CC0-1.0
 ---
+Checks:
+- -clang-analyzer-security.insecureAPI.DeprecatedOrUnsafeBufferHandling
+- -clang-diagnostic-unknown-attributes
+- -clang-diagnostic-unknown-warning-option
