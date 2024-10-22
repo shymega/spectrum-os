@@ -20,3 +20,8 @@ host terminal:
 Double click a .AppImage file in the file manager to run that
 application in a transient VM.  The VM will be destroyed when the
 application exits.
+
+TIP: Like on other systems, running AppImages requires them to have
+the executable bit set.  This is not currently possible to do with the
+file manager in Spectrum, but can be done with `chmod +x` in the
+terminal.
