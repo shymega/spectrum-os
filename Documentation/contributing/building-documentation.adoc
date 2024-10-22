@@ -28,14 +28,7 @@ cd spectrum/Documentation
 ----
 nix-shell
 ----
-. In the development shell, do an initial build of the documentation
-site:
-+
-[source,shell]
-----
-scripts/build.sh
-----
-. Run a development server for previewing changes locally:
+. In the development shell, run a server for previewing changes locally:
 +
 [source,shell]
 ----
@@ -43,10 +36,6 @@ jekyll serve
 ----
 +
 This will serve a local copy of the documentation at http://localhost:4000/.
-+
-IMPORTANT: Jekyll does not handle rendering of the draw.io diagrams. If you
-modify any of those, or add new ones, run `scripts/build.sh` again to do a full
-rebuild of the site.
 
 After making changes to the documentation, see how to
 xref:first-patch.adoc[send your patch] and submit the changes for review.

@@ -7,10 +7,6 @@
 
 Spectrum is based on the principle of security by compartmentalization.
 
-The high level stack is illustrated in the following diagram:
-
-image::../diagrams/stack.svg[]
-
 The default set of virtual machines includes some application VMs,
 (names prefixed with _appvm-_); and a system VM, _netvm_ (which
 handles hardware network devices and provides network services to

@@ -57,7 +57,6 @@ let
       ] ++ map fileset.maybeMissing [
         ../Documentation/.jekyll-cache
         ../Documentation/_site
-        ../Documentation/diagrams/stack.svg
         ../host/initramfs/build
         ../host/rootfs/build
         ../img/app/build

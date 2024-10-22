@@ -4,7 +4,7 @@
 
 import ../lib/call-package.nix
 
-({ callSpectrumPackage, src, lib, stdenvNoCC, drawio-headless }:
+({ callSpectrumPackage, src, lib, stdenvNoCC }:
 
 stdenvNoCC.mkDerivation {
   name = "spectrum-docs";
@@ -17,14 +17,11 @@ stdenvNoCC.mkDerivation {
 
   buildPhase = ''
     runHook preBuild
-    scripts/build.sh -d $out
+    jekyll build --disable-disk-cache -b /doc -d $out
     runHook postBuild
   '';
 
   dontInstall = true;
 
-  nativeBuildInputs = [
-    (callSpectrumPackage ./jekyll.nix {})
-    drawio-headless
-  ];
+  nativeBuildInputs = [ (callSpectrumPackage ./jekyll.nix {}) ];
 }) (_: {})
