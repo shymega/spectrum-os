@@ -2,7 +2,9 @@
 # SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
-{ src, lib, stdenv, clang-tools, meson, ninja, pkg-config, dbus }:
+{ src
+, lib, stdenv, llvmPackages, llvmPackages_19, meson, ninja, pkg-config, dbus
+}:
 
 stdenv.mkDerivation (finalAttrs: {
   name = "xdg-desktop-portal-spectrum";
@@ -24,7 +26,9 @@ stdenv.mkDerivation (finalAttrs: {
     clang-tidy = finalAttrs.finalPackage.overrideAttrs (
       { nativeBuildInputs ? [], ... }:
       {
-        nativeBuildInputs = nativeBuildInputs ++ [ clang-tools ];
+        nativeBuildInputs =
+          assert lib.versionOlder llvmPackages.release_version "19";
+          nativeBuildInputs ++ [ llvmPackages_19.clang-tools ];
 
         buildPhase = ''
           clang-tidy --warnings-as-errors='*' ../*.c
