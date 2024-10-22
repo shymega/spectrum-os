@@ -8,8 +8,8 @@ pkgsStatic.callPackage (
 
 { start-vmm
 , lib, stdenvNoCC, nixos, runCommand, writeClosure, erofs-utils, s6-rc, busybox
-, cloud-hypervisor, cryptsetup, dbus, execline, e2fsprogs, jq, kmod, mdevd, s6
-, s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
+, cloud-hypervisor, cryptsetup, dbus, execline, e2fsprogs, inkscape, jq, kmod
+, mdevd, s6, s6-linux-init, socat, util-linuxMinimal, virtiofsd, xorg
 , xdg-desktop-portal-spectrum-host
 }:
 
@@ -134,7 +134,7 @@ let
         CONFIG_RMMOD n
       '';
     })
-  ] ++ (with pkgsGui; [ cosmic-files crosvm foot westonLite ]);
+  ] ++ (with pkgsGui; [ cosmic-files crosvm foot ]);
 
   nixosAllHardware = nixos ({ modulesPath, ... }: {
     imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
@@ -149,13 +149,21 @@ let
   # Packages that should be fully linked into /usr,
   # (not just their bin/* files).
   usrPackages = [
-    appvm kernel firmware pkgsGui.mesa.drivers pkgsGui.dejavu_fonts
-  ];
+    appvm kernel firmware
+  ] ++ (with pkgsGui; [ mesa.drivers dejavu_fonts westonLite ]);
 
   packagesSysroot = runCommand "packages-sysroot" {
+    depsBuildBuild = [ inkscape ];
     nativeBuildInputs = [ xorg.lndir ];
   } ''
-    mkdir -p $out/usr/bin $out/usr/share/dbus-1/services
+    mkdir -p $out/usr/bin $out/usr/share/dbus-1/services \
+      $out/usr/share/icons/hicolor/20x20/apps
+
+    # Weston doesn't support SVG icons.
+    inkscape -w 20 -h 20 \
+        -o $out/usr/share/icons/hicolor/20x20/apps/com.system76.CosmicFiles.png \
+        ${pkgsGui.cosmic-files}/share/icons/hicolor/24x24/apps/com.system76.CosmicFiles.svg
+
     ln -st $out/usr/bin \
         ${concatMapStringsSep " " (p: "${p}/bin/*") packages} \
         ${pkgsGui.xdg-desktop-portal}/libexec/xdg-document-portal \
