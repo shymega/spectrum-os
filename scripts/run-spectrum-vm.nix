@@ -24,7 +24,7 @@ runCommandCC "run-spectrum-vm" {
     clang-tidy = runCommand "run-spectrum-vm-clang-tidy" {
       nativeBuildInputs = [ clang-tools ];
     } ''
-      clang-tidy --warnings-as-errors='*' \
+      clang-tidy --config-file=${../.clang-tidy} --warnings-as-errors='*' \
           ${lib.escapeShellArgs (map (flag: "--extra-arg=${flag}") cflags)} \
           ${./run-spectrum-vm.c}
       touch $out

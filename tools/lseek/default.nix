@@ -21,8 +21,13 @@ stdenv.mkDerivation (finalAttrs: {
 
   passthru.tests = {
     clang-tidy = finalAttrs.finalPackage.overrideAttrs (
-      { nativeBuildInputs ? [], ... }:
+      { src, nativeBuildInputs ? [], ... }:
       {
+        src = lib.fileset.toSource {
+          root = ../..;
+          fileset = lib.fileset.union (lib.fileset.fromSource src) ../../.clang-tidy;
+        };
+
         nativeBuildInputs = nativeBuildInputs ++ [ clang-tools ];
   
         buildPhase = ''
