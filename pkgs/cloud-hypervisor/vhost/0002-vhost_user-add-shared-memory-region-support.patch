@@ -1,4 +1,4 @@
-From ab4b868221d4e1f1b85ebbb709083446492ed08a Mon Sep 17 00:00:00 2001
+From ec36f16286beca831df9dbea709cf93e409f10d8 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
 Subject: [PATCH 2/3] vhost_user: add shared memory region support
@@ -324,7 +324,7 @@ index fb2dc16..cd4f604 100644
              let def_err = libc::EINVAL;
              let val = match res {
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
-index f24331c..6ba00ea 100644
+index f24331c..70a987a 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
 @@ -184,6 +184,8 @@ enum_value! {
@@ -394,7 +394,7 @@ index f24331c..6ba00ea 100644
 +
 +impl VhostUserMsgValidator for VhostUserShmemMapMsg {
 +    fn is_valid(&self) -> bool {
-+        (self.flags.bits() & !VhostUserFSBackendMsgFlags::all().bits() as u8) == 0
++        (self.flags.bits() & !VhostUserShmemMapMsgFlags::all().bits()) == 0
 +            && self.fd_offset.checked_add(self.len).is_some()
 +            && self.shm_offset.checked_add(self.len).is_some()
 +    }
