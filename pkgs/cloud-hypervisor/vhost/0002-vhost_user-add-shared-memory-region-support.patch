@@ -1,12 +1,12 @@
-From c0cca052d480a835e57d53eda6c06a42dc278692 Mon Sep 17 00:00:00 2001
+From ab4b868221d4e1f1b85ebbb709083446492ed08a Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 16:45:12 +0900
-Subject: [PATCH 2/5] vhost_user: add shared memory region support
+Subject: [PATCH 2/3] vhost_user: add shared memory region support
 SPDX-FileCopyrightText: 2019 Intel Corporation. All Rights Reserved.
 SPDX-FileCopyrightText: 2019-2021 Alibaba Cloud. All rights reserved.
 SPDX-FileCopyrightText: The Chromium OS Authors
 SPDX-FileCopyrightText: 2022 Unikie
-SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 SPDX-License-Identifier: Apache-2.0
 
 Add support for shared memory regions to vhost-user. This is adding
@@ -27,6 +27,8 @@ Reviewed-by: Alexandre Courbot <acourbot@chromium.org>
 Tested-by: kokoro <noreply+kokoro@google.com>
 (cherry-picked from commit f436e2706011fa5f34dc415972434aa3299ebc43)
 Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
+[renumbered for crosvm commit e428c4ba88a26695f63929c680b4101a9b8d5cbc]
+Signed-off-by: Alyssa Ross <hi@alyssa.is>
 ---
  vhost-user-backend/src/handler.rs            |  11 +-
  vhost/src/vhost_user/backend_req.rs          |  20 ++-
@@ -34,8 +36,8 @@ Signed-off-by: Alyssa Ross <alyssa.ross@unikie.com>
  vhost/src/vhost_user/dummy_backend.rs        |   4 +
  vhost/src/vhost_user/frontend.rs             |  24 ++++
  vhost/src/vhost_user/frontend_req_handler.rs |  53 +++++++-
- vhost/src/vhost_user/message.rs              | 132 ++++++++++++++++++-
- 7 files changed, 245 insertions(+), 14 deletions(-)
+ vhost/src/vhost_user/message.rs              | 126 +++++++++++++++++++
+ 7 files changed, 243 insertions(+), 10 deletions(-)
 
 diff --git a/vhost-user-backend/src/handler.rs b/vhost-user-backend/src/handler.rs
 index 62c4a66..9da7fe8 100644
@@ -322,42 +324,39 @@ index fb2dc16..cd4f604 100644
              let def_err = libc::EINVAL;
              let val = match res {
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
-index f24331c..9c48bb8 100644
+index f24331c..6ba00ea 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
-@@ -178,6 +178,8 @@ enum_value! {
-         /// Query the backend for its device status as defined in the VIRTIO
-         /// specification.
-         GET_STATUS = 40,
+@@ -184,6 +184,8 @@ enum_value! {
+         /// After transferring state, check the backend for any errors that may have
+         /// occurred during the transfer
+         CHECK_DEVICE_STATE = 43,
 +        /// Get a list of the device's shared memory regions.
-+        GET_SHARED_MEMORY_REGIONS = 41,
-         /// Begin transfer of internal state to/from the backend for migration
-         /// purposes.
-         SET_DEVICE_STATE_FD = 42,
-@@ -203,14 +205,18 @@ enum_value! {
-         VRING_CALL = 4,
-         /// Indicate that an error occurred on the specific vring.
-         VRING_ERR = 5,
-+        /// Indicates a request to map a fd into a shared memory region.
-+        SHMEM_MAP = 6,
-+        /// Indicates a request to unmap part of a shared memory region.
-+        SHMEM_UNMAP = 7,
-         /// Virtio-fs draft: map file content into the window.
--        FS_MAP = 6,
-+        FS_MAP = 8,
-         /// Virtio-fs draft: unmap file content from the window.
--        FS_UNMAP = 7,
-+        FS_UNMAP = 9,
-         /// Virtio-fs draft: sync file content.
--        FS_SYNC = 8,
-+        FS_SYNC = 10,
-         /// Virtio-fs draft: perform a read/write from an fd directly to GPA.
--        FS_IO = 9,
-+        FS_IO = 11,
++        GET_SHARED_MEMORY_REGIONS = 1004,
      }
  }
  
-@@ -1029,6 +1035,99 @@ impl VhostUserMsgValidator for VhostUserFSBackendMsg {
+@@ -203,6 +205,8 @@ enum_value! {
+         VRING_CALL = 4,
+         /// Indicate that an error occurred on the specific vring.
+         VRING_ERR = 5,
++
++        // Non-standard message types.
+         /// Virtio-fs draft: map file content into the window.
+         FS_MAP = 6,
+         /// Virtio-fs draft: unmap file content from the window.
+@@ -211,6 +215,10 @@ enum_value! {
+         FS_SYNC = 8,
+         /// Virtio-fs draft: perform a read/write from an fd directly to GPA.
+         FS_IO = 9,
++        /// Indicates a request to map a fd into a shared memory region.
++        SHMEM_MAP = 1000,
++        /// Indicates a request to unmap part of a shared memory region.
++        SHMEM_UNMAP = 1001,
+     }
+ }
+ 
+@@ -1029,6 +1037,99 @@ impl VhostUserMsgValidator for VhostUserFSBackendMsg {
      }
  }
  
@@ -457,7 +456,7 @@ index f24331c..9c48bb8 100644
  /// Inflight I/O descriptor state for split virtqueues
  #[repr(C, packed)]
  #[derive(Clone, Copy, Default)]
-@@ -1160,6 +1259,31 @@ impl QueueRegionPacked {
+@@ -1160,6 +1261,31 @@ impl QueueRegionPacked {
      }
  }
  
@@ -490,5 +489,5 @@ index f24331c..9c48bb8 100644
  mod tests {
      use super::*;
 -- 
-2.44.0
+2.46.0
 
