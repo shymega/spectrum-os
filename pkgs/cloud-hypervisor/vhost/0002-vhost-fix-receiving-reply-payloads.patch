@@ -1,7 +1,7 @@
-From 0afbf25e9fc67955ed9243f9cebb6540d43669ac Mon Sep 17 00:00:00 2001
+From 8f45dffb3bdf894d1ca6ca33133be816ba5ac70d Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 15:56:18 +0900
-Subject: [PATCH 1/3] vhost: fix receiving reply payloads
+Subject: [PATCH 2/4] vhost: fix receiving reply payloads
 SPDX-FileCopyrightText: 2019 Alibaba Cloud Computing. All rights reserved.
 SPDX-FileCopyrightText: The Chromium OS Authors
 SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
@@ -22,10 +22,10 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  2 files changed, 15 insertions(+), 30 deletions(-)
 
 diff --git a/vhost/src/vhost_user/connection.rs b/vhost/src/vhost_user/connection.rs
-index 9f61427..8469ba6 100644
+index 4fca9c5..0ce7215 100644
 --- a/vhost/src/vhost_user/connection.rs
 +++ b/vhost/src/vhost_user/connection.rs
-@@ -551,7 +551,7 @@ impl<R: Req> Endpoint<R> {
+@@ -543,7 +543,7 @@ impl<H: MsgHeader> Endpoint<H> {
      /// accepted and all other file descriptor will be discard silently.
      ///
      /// # Return:
@@ -34,14 +34,14 @@ index 9f61427..8469ba6 100644
      /// * - SocketRetry: temporary error caused by signals or short of resources.
      /// * - SocketBroken: the underline socket is broken.
      /// * - SocketError: other socket related errors.
-@@ -560,15 +560,13 @@ impl<R: Req> Endpoint<R> {
-     #[cfg_attr(feature = "cargo-clippy", allow(clippy::type_complexity))]
+@@ -552,15 +552,13 @@ impl<H: MsgHeader> Endpoint<H> {
+     #[allow(clippy::type_complexity)]
      pub fn recv_payload_into_buf<T: ByteValued + Sized + VhostUserMsgValidator + Default>(
          &mut self,
 -        buf: &mut [u8],
--    ) -> Result<(VhostUserMsgHeader<R>, T, usize, Option<Vec<File>>)> {
--        let mut hdr = VhostUserMsgHeader::default();
-+    ) -> Result<(VhostUserMsgHeader<R>, T, Vec<u8>, Option<Vec<File>>)> {
+-    ) -> Result<(H, T, usize, Option<Vec<File>>)> {
+-        let mut hdr = H::default();
++    ) -> Result<(H, T, Vec<u8>, Option<Vec<File>>)> {
          let mut body: T = Default::default();
 +        let (hdr, files) = self.recv_header()?;
 +
@@ -49,13 +49,13 @@ index 9f61427..8469ba6 100644
 +        let mut buf: Vec<u8> = vec![0; payload_size];
          let mut iovs = [
 -            iovec {
--                iov_base: (&mut hdr as *mut VhostUserMsgHeader<R>) as *mut c_void,
--                iov_len: mem::size_of::<VhostUserMsgHeader<R>>(),
+-                iov_base: (&mut hdr as *mut H) as *mut c_void,
+-                iov_len: mem::size_of::<H>(),
 -            },
              iovec {
                  iov_base: (&mut body as *mut T) as *mut c_void,
                  iov_len: mem::size_of::<T>(),
-@@ -578,19 +576,16 @@ impl<R: Req> Endpoint<R> {
+@@ -570,19 +568,16 @@ impl<H: MsgHeader> Endpoint<H> {
                  iov_len: buf.len(),
              },
          ];
@@ -64,7 +64,7 @@ index 9f61427..8469ba6 100644
 -        // arbitrary data.
 -        let (bytes, files) = unsafe { self.recv_into_iovec_all(&mut iovs[..])? };
 -
--        let total = mem::size_of::<VhostUserMsgHeader<R>>() + mem::size_of::<T>();
+-        let total = mem::size_of::<H>() + mem::size_of::<T>();
 -        if bytes < total {
 +        // SAFETY: Safe because we own body and buf, and body is ByteValued, and it's safe
 +        // to fill a byte slice with arbitrary data.
@@ -82,7 +82,7 @@ index 9f61427..8469ba6 100644
  }
  
 diff --git a/vhost/src/vhost_user/frontend.rs b/vhost/src/vhost_user/frontend.rs
-index 8f625ea..7c56c08 100644
+index 9f2d85a..d56354b 100644
 --- a/vhost/src/vhost_user/frontend.rs
 +++ b/vhost/src/vhost_user/frontend.rs
 @@ -727,23 +727,13 @@ impl FrontendInternal {

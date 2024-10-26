@@ -10,11 +10,11 @@ super.cloud-hypervisor.overrideAttrs (
     cargoDeps = final.rustPlatform.importCargoLock {
       lockFile = ./Cargo.lock;
       outputHashes = {
-        "acpi_tables-0.1.0" = "sha256-a6ojB2XVeH+YzzXRle0agg+ljn0Jsgyaf6TJZAGt8sQ=";
+        "acpi_tables-0.1.0" = "sha256-ReIibUCFiLVq6AFqFupue/3BEQUJoImCLKaUBSVpdl4=";
         "micro_http-0.1.0" = "sha256-yIgcoEfc7eeS1+bijzkifaBxVNHa71Y+Vn79owMaKvM=";
-        "mshv-bindings-0.2.0" = "sha256-NYViItbjt1Q2G4yO3j37naHe9EJ+llkjrNt6w4zoiW8=";
-        "vfio-bindings-0.4.0" = "sha256-mzdYH23CVWm7fvu4+1cFHlPhkUjh7+JlU/ScoXaDNgA=";
-        "vfio_user-0.1.0" = "sha256-LJ84k9pMkSAaWkuaUd+2LnPXnNgrP5LdbPOc1Yjz5xA=";
+        "mshv-bindings-0.3.0" = "sha256-IqmFB4nyENsfEPqiSYv52sL4LDiv+rCabTiIxE1MWZ0=";
+        "vfio-bindings-0.4.0" = "sha256-ie/RcYbojLCGJkc6Yl97iUhOxnYk8/DO7JKlhMtT/6w=";
+        "vfio_user-0.1.0" = "sha256-jScCwZEqoWYGBBKjoxB6xXOltX1/5h4Jgpcy5RzzTtg=";
         "vm-fdt-0.3.0" = "sha256-9PywgSnSL+8gT6lcl9t6w7X4fEINa+db+H1vWS+gDOI=";
       };
     };
@@ -23,8 +23,8 @@ super.cloud-hypervisor.overrideAttrs (
       name = "vhost";
       owner = "rust-vmm";
       repo = "vhost";
-      rev = "vhost-user-backend-v0.15.0";
-      hash = "sha256-KPaGoh2xaKuMA+fNU82SwL51TTTIx0ZkumxN1R7maIA=";
+      rev = "vhost-user-backend-v0.16.0";
+      hash = "sha256-ol1QacoMD8E85uaNrCr7Vy92XjZfQCB9FbZsAEvq2fM=";
     };
 
     patches = patches ++ [
@@ -33,9 +33,10 @@ super.cloud-hypervisor.overrideAttrs (
     ];
 
     vhostPatches = [
-      vhost/0001-vhost-fix-receiving-reply-payloads.patch
-      vhost/0002-vhost_user-add-shared-memory-region-support.patch
-      vhost/0003-vhost_user-add-protocol-flag-for-shmem.patch
+      vhost/0001-vhost_user-add-get_size-to-MsgHeader.patch
+      vhost/0002-vhost-fix-receiving-reply-payloads.patch
+      vhost/0003-vhost_user-add-shared-memory-region-support.patch
+      vhost/0004-vhost_user-add-protocol-flag-for-shmem.patch
     ];
 
     postUnpack = postUnpack + ''

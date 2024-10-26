@@ -1,7 +1,7 @@
-From 385edd78aefe2ff75fa2ee109ac556d621eb1d8d Mon Sep 17 00:00:00 2001
+From b66c194a5ea16f369198f49a000a80f993b7cbeb Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Thu, 13 Oct 2022 10:37:47 +0900
-Subject: [PATCH 3/3] vhost_user: add protocol flag for shmem
+Subject: [PATCH 4/4] vhost_user: add protocol flag for shmem
 SPDX-FileCopyrightText: 2019-2021 Alibaba Cloud. All rights reserved.
 SPDX-FileCopyrightText: The Chromium OS Authors
 SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
@@ -26,11 +26,11 @@ Signed-off-by: Alyssa Ross <hi@alyssa.is>
  1 file changed, 2 insertions(+)
 
 diff --git a/vhost/src/vhost_user/message.rs b/vhost/src/vhost_user/message.rs
-index 70a987a..b48f210 100644
+index f090466..f77e098 100644
 --- a/vhost/src/vhost_user/message.rs
 +++ b/vhost/src/vhost_user/message.rs
-@@ -452,6 +452,8 @@ bitflags! {
-         const XEN_MMAP = 0x0002_0000;
+@@ -444,6 +444,8 @@ bitflags! {
+         const SHARED_OBJECT = 0x0004_0000;
          /// Support transferring internal device state.
          const DEVICE_STATE = 0x0008_0000;
 +        /// Support shared memory regions. (Non-standard.)
