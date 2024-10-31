@@ -19,8 +19,8 @@
 #include <linux/if_tun.h>
 
 static int setup_tap(const char bridge_name[static 1],
-		     const char tap_prefix[static 1],
-		     char tap_name[static IFNAMSIZ])
+                     const char tap_prefix[static 1],
+                     char tap_name[static IFNAMSIZ])
 {
 	int fd;
 
@@ -43,16 +43,16 @@ out:
 }
 
 static int client_net_setup(const char bridge_name[static 1],
-			    char tap_name[static IFNAMSIZ])
+                            char tap_name[static IFNAMSIZ])
 {
 	return setup_tap(bridge_name, "client", tap_name);
 }
 
 [[gnu::nonnull]]
 static int router_net_setup(const char bridge_name[static 1],
-			    const struct vm_dir *router_vm_dir,
+                            const struct vm_dir *router_vm_dir,
                             const uint8_t mac[6],
-			    char device_id_out[static IFNAMSIZ])
+                            char device_id_out[static IFNAMSIZ])
 {
 	struct net_config net;
 	int e;

@@ -35,7 +35,7 @@ static void on_commit(struct wl_listener *, struct weston_surface *surface)
 }
 
 static void on_destroy(struct wl_listener *listener,
-		       struct weston_surface *surface)
+                       struct weston_surface *surface)
 {
 	struct wl_listener *commit_listener = wl_signal_get(
 		&surface->commit_signal, (wl_notify_func_t)on_commit);
@@ -72,7 +72,7 @@ static struct wl_listener create_surface_listener = {
 int wet_module_init(struct weston_compositor *compositor, int *, char *[])
 {
 	wl_signal_add(&compositor->create_surface_signal,
-		      &create_surface_listener);
+	              &create_surface_listener);
 
 	return 0;
 }

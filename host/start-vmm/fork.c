@@ -28,7 +28,7 @@ int double_fork(void)
 	case 0:
 		close(fd[0]);
 		switch ((v = fork())) {
-	        case 0:
+		case 0:
 			close(fd[1]);
 			return 0;
 		case -1:

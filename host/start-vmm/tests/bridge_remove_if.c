@@ -36,8 +36,8 @@ int main(void)
 	assert(bridge_remove_if(bridge_name, tap_name) != -1);
 
 	r = snprintf(brif_path, sizeof brif_path,
-		     "/sys/devices/virtual/net/%s/brif/%s",
-		     bridge_name, tap_name);
+	             "/sys/devices/virtual/net/%s/brif/%s",
+	             bridge_name, tap_name);
 	assert(r > 0 && (size_t)r < sizeof brif_path);
 
 	assert(lstat(brif_path, &statbuf) == -1);
