@@ -47,6 +47,7 @@ VM_FILES = \
 	etc/s6-linux-init/env/XDG_RUNTIME_DIR \
 	etc/s6-linux-init/run-image/service/s6-linux-init-shutdownd/notification-fd \
 	etc/s6-linux-init/run-image/service/s6-linux-init-shutdownd/run \
+	etc/s6-linux-init/run-image/service/getty-hvc0/run \
 	etc/s6-linux-init/scripts/rc.init \
 	etc/s6-linux-init/scripts/rc.shutdown \
 	etc/s6-linux-init/scripts/rc.shutdown.final \

@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2021, 2024 Alyssa Ross <hi@alyssa.is>
 
-export TERM foot
-export TERMINFO_DIRS /usr/share/terminfo
 export TMPDIR /run
 
 backtick USER { id -un }
@@ -31,13 +29,6 @@ foreground {
 	  -o ro,lowerdir=/nix/store:/run/virtiofs/virtiofs0/config/nix/store
 	  store /nix/store
       }
-
-      redirfd -u 0 /dev/hvc0
-      fdmove -c 1 0
-      fdmove -c 2 0
-
-      foreground { clear }
-      unexport ?
 
       /run/virtiofs/virtiofs0/config/run
     }
