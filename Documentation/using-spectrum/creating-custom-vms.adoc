@@ -55,8 +55,11 @@ be any input to read from the console.
 
 === User interface
 
-Every VM has a virtio-console device to use to interact with the user
-of the Spectrum system.
+Every VM has a virtio-gpu device that provides only the cross-domain
+context with a Wayland channel (no GPU acceleration).  This can be
+used by the VM to display Wayland windows on the host.
+
+A virtio-console device is also provided.
 
 === Networking
 
