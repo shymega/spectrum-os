@@ -43,9 +43,12 @@ https://wayland.freedesktop.org/architecture.html[here].
 The host provides onlya Wayland terminal client,
 https://codeberg.org/dnkl/foot/[foot], which is used for interacting with VM
 consoles.
-In future it will be possible for application VMs to display windows on the
-single Wayland compositor on the host system, using Wayland virtio-gpu
-contexts.  X11 applications are not currently supported, but could be in future.
+It is possible for application VMs to display windows on the single Wayland
+compositor on the host system, using Wayland virtio-gpu contexts.  X11
+applications may be usable, but the host does not provide any special
+accommodations for them, so the guest must bridge them to Wayland.
+By default this is done with
+https://github.com/talex5/wayland-proxy-virtwl[wayland-proxy-virtwl].
 
 All host user space components are built with the https://musl.libc.org/[musl C
 library].
