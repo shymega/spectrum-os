@@ -89,7 +89,7 @@ in
 
 runCommand "spectrum-installer" {
   nativeBuildInputs = [ grub jq util-linux systemdMinimal ];
-  passthru = { inherit esp installer eosimages; };
+  passthru = { inherit eosimages esp installer rootfs; };
 } ''
   blockSize() {
       wc -c "$1" | awk '{printf "%d\n", ($1 + 511) / 512}'
