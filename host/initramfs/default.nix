@@ -59,6 +59,7 @@ let
     runCommand "microcode.cpio" {
       nativeBuildInputs = [ cpio ];
       __structuredAttrs = true;
+      unsafeDiscardReferences = { out = true; };
     } ''
       cpio -id < ${microcodeAmd}/amd-ucode.img
       cpio -id < ${microcodeIntel}/intel-ucode.img
@@ -70,6 +71,7 @@ let
     nativeBuildInputs = [ cpio ];
     storePaths = writeClosure [ packagesSysroot ];
     __structuredAttrs = true;
+    unsafeDiscardReferences = { out = true; };
   } ''
     cd ${packagesSysroot}
     (printf "/nix\n/nix/store\n" && find . $(< $storePaths)) |
@@ -103,5 +105,7 @@ stdenvNoCC.mkDerivation {
   enableParallelBuilding = true;
 
   __structuredAttrs = true;
+
+  unsafeDiscardReferences = { out = true; };
 }
 ) {}) (_: {})

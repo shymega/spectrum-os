@@ -133,6 +133,8 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
+  unsafeDiscardReferences = { out = true; };
+
   meta = with lib; {
     license = licenses.eupl12;
     platforms = platforms.linux;

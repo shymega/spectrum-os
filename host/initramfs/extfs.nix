@@ -16,6 +16,7 @@ in
 runCommand "ext.ext4" {
   nativeBuildInputs = [ e2fsprogs ];
   __structuredAttrs = true;
+  unsafeDiscardReferences = { out = true; };
 } ''
   mkdir -p root/svc/data/appvm-{firefox,foot,gnome-text-editor}
   cd root

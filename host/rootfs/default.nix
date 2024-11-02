@@ -217,6 +217,8 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
+  unsafeDiscardReferences = { out = true; };
+
   passthru = { inherit appvm firmware kernel nixosAllHardware pkgsGui; };
 
   meta = with lib; {

@@ -52,6 +52,8 @@ stdenvNoCC.mkDerivation {
 
   __structuredAttrs = true;
 
+  unsafeDiscardReferences = { out = true; };
+
   passthru = { inherit initramfs rootfs; };
 }
 ) (_: {})

@@ -9,6 +9,7 @@ runCommand "eosimages.img" {
   imageName = "Spectrum-0.0-x86_64-generic.0.Live.img";
   image = callSpectrumPackage ../live {};
   __structuredAttrs = true;
+  unsafeDiscardReferences = { out = true; };
 } ''
   mkdir dir
   cd dir
