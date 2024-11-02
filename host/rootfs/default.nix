@@ -199,19 +199,23 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ erofs-utils lseek s6-rc ];
 
-  MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
-  MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
+  env = {
+    MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
+    MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
 
-  PACKAGES = runCommand "packages" {} ''
-    printf "%s\n/\n" ${packagesSysroot} >$out
-    sed p ${writeClosure [ packagesSysroot] } >>$out
-  '';
+    PACKAGES = runCommand "packages" {} ''
+      printf "%s\n/\n" ${packagesSysroot} >$out
+      sed p ${writeClosure [ packagesSysroot] } >>$out
+    '';
+  };
 
   makeFlags = [ "dest=$(out)" ];
 
   dontInstall = true;
 
   enableParallelBuilding = true;
+
+  __structuredAttrs = true;
 
   passthru = { inherit appvm firmware kernel nixosAllHardware pkgsGui; };
 

@@ -29,6 +29,7 @@ let
 
   rootfs = runCommand "installer.img" {
     nativeBuildInputs = [ squashfs-tools-ng ];
+    __structuredAttrs = true;
   } ''
     sed 's,^${storeDir}/,,' ${writeClosure [ installer.store ]} |
         tar -C ${storeDir} -c --verbatim-files-from -T - \
@@ -65,6 +66,7 @@ let
       "efiemu32.o" "efiemu64.o" "moddep.lst" "command.lst" "fs.lst" "partmap.lst"
       "parttool.lst" "video.lst" "crypto.lst" "terminal.lst" "modinfo.sh"
     ];
+    __structuredAttrs = true;
     passthru = { inherit grubCfg; };
   } ''
     truncate -s 15M $out
@@ -89,6 +91,7 @@ in
 
 runCommand "spectrum-installer" {
   nativeBuildInputs = [ grub jq util-linux systemdMinimal ];
+  __structuredAttrs = true;
   passthru = { inherit eosimages esp installer rootfs; };
 } ''
   blockSize() {

@@ -27,9 +27,10 @@ assert !(any (hasInfix "\n") (concatLists (attrValues providers)));
 runCommand "spectrum-vm" {
   nativeBuildInputs = [ erofs-utils ];
 
-  providerDirs = concatStrings (concatLists
-    (mapAttrsToList (kind: map (vm: "${kind}/${vm}\n")) providers));
-  passAsFile = [ "providerDirs" ];
+  providerDirs = concatLists
+    (mapAttrsToList (kind: map (vm: "${kind}/${vm}")) providers);
+
+  __structuredAttrs = true;
 } ''
   mkdir -p $out/{blk,fs,providers}
   pushd "$out"
@@ -41,10 +42,14 @@ runCommand "spectrum-vm" {
       <(sort ${writeClosure [ basePaths ]}) |
       xargs -rd '\n' cp -rvt fs${builtins.storeDir}
 
-  pushd providers
-  xargs -rd '\n' dirname -- < "$providerDirsPath" | xargs -rd '\n' mkdir -p --
-  xargs -rd '\n' touch -- < "$providerDirsPath"
-  popd
+  if (( ''${#providerDirs} != 0 )); then
+    pushd providers
+
+    dirname -z -- "''${providerDirs[@]}" | xargs -0 mkdir -p --
+    touch -- "''${providerDirs[@]}"
+
+    popd
+  fi
 
   popd
 

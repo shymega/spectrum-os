@@ -115,11 +115,13 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ erofs-utils jq lseek s6-rc util-linux ];
 
-  KERNEL = "${kernel}/${baseNameOf kernelTarget}";
-  PACKAGES = runCommand "packages" {} ''
-    printf "%s\n/\n" ${packagesSysroot} >$out
-    sed p ${writeClosure [ packagesSysroot] } >>$out
-  '';
+  env = {
+    KERNEL = "${kernel}/${baseNameOf kernelTarget}";
+    PACKAGES = runCommand "packages" {} ''
+      printf "%s\n/\n" ${packagesSysroot} >$out
+      sed p ${writeClosure [ packagesSysroot] } >>$out
+    '';
+  };
 
   makeFlags = [ "prefix=$(out)" ];
 
@@ -128,6 +130,8 @@ stdenvNoCC.mkDerivation {
   enableParallelBuilding = true;
 
   passthru = { inherit appimageFhsenv kernel packagesSysroot; };
+
+  __structuredAttrs = true;
 
   meta = with lib; {
     license = licenses.eupl12;

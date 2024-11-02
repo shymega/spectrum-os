@@ -35,18 +35,22 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ cryptsetup dosfstools jq lseek mtools util-linux ];
 
-  EXT_FS = extfs;
-  INITRAMFS = initramfs;
-  KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
-  ROOT_FS = rootfs;
-  SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
-  EFINAME = "BOOT${toUpper efiArch}.EFI";
+  env = {
+    EXT_FS = extfs;
+    INITRAMFS = initramfs;
+    KERNEL = "${rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}";
+    ROOT_FS = rootfs;
+    SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
+    EFINAME = "BOOT${toUpper efiArch}.EFI";
+  };
 
   buildFlags = [ "dest=$(out)" ];
 
   dontInstall = true;
 
   enableParallelBuilding = true;
+
+  __structuredAttrs = true;
 
   passthru = { inherit initramfs rootfs; };
 }

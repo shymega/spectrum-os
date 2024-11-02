@@ -101,17 +101,21 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [ erofs-utils jq lseek s6-rc util-linux ];
 
-  KERNEL = "${kernel}/${baseNameOf kernelTarget}";
-  PACKAGES = runCommand "packages" {} ''
-    printf "%s\n/\n" ${packagesSysroot} >$out
-    sed p ${writeClosure [ packagesSysroot] } >>$out
-  '';
+  env = {
+    KERNEL = "${kernel}/${baseNameOf kernelTarget}";
+    PACKAGES = runCommand "packages" {} ''
+      printf "%s\n/\n" ${packagesSysroot} >$out
+      sed p ${writeClosure [ packagesSysroot] } >>$out
+    '';
+  };
 
   makeFlags = [ "prefix=$(out)" ];
 
   dontInstall = true;
 
   enableParallelBuilding = true;
+
+  __structuredAttrs = true;
 
   passthru = { inherit kernel; };
 

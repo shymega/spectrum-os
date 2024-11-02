@@ -58,6 +58,7 @@ let
   microcode = if stdenvNoCC.hostPlatform.isx86_64 then
     runCommand "microcode.cpio" {
       nativeBuildInputs = [ cpio ];
+      __structuredAttrs = true;
     } ''
       cpio -id < ${microcodeAmd}/amd-ucode.img
       cpio -id < ${microcodeIntel}/intel-ucode.img
@@ -68,6 +69,7 @@ let
   packagesCpio = runCommand "packages.cpio" {
     nativeBuildInputs = [ cpio ];
     storePaths = writeClosure [ packagesSysroot ];
+    __structuredAttrs = true;
   } ''
     cd ${packagesSysroot}
     (printf "/nix\n/nix/store\n" && find . $(< $storePaths)) |
@@ -87,8 +89,10 @@ stdenvNoCC.mkDerivation {
   };
   sourceRoot = "source/host/initramfs";
 
-  MICROCODE = microcode;
-  PACKAGES_CPIO = packagesCpio;
+  env = {
+    MICROCODE = microcode;
+    PACKAGES_CPIO = packagesCpio;
+  };
 
   nativeBuildInputs = [ cpio lseek ];
 
@@ -97,5 +101,7 @@ stdenvNoCC.mkDerivation {
   dontInstall = true;
 
   enableParallelBuilding = true;
+
+  __structuredAttrs = true;
 }
 ) {}) (_: {})

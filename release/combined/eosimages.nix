@@ -8,6 +8,7 @@ runCommand "eosimages.img" {
   nativeBuildInputs = [ e2fsprogs tar2ext4 ];
   imageName = "Spectrum-0.0-x86_64-generic.0.Live.img";
   image = callSpectrumPackage ../live {};
+  __structuredAttrs = true;
 } ''
   mkdir dir
   cd dir
