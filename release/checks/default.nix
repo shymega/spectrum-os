@@ -8,6 +8,8 @@ import ../../lib/call-package.nix ({ callSpectrumPackage }:
 
   codespell = callSpectrumPackage ./codespell.nix {};
 
+  deadnix = callSpectrumPackage ./deadnix.nix {};
+
   doc-links = callSpectrumPackage ./doc-links.nix {};
 
   doc-anchors = callSpectrumPackage ./doc-anchors.nix {};
