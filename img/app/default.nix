@@ -53,8 +53,6 @@ let
 in
 
 let
-  inherit (lib) concatMapStringsSep;
-
   packagesSysroot = runCommand "packages-sysroot" {} ''
     mkdir -p $out/etc/ssl/certs
     ln -s ${appimageFhsenv}/{lib64,usr} ${kernel}/lib $out

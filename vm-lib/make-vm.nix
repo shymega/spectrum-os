@@ -17,9 +17,7 @@ pkgs.pkgsStatic.callPackage (
 { run, type, providers ? {}, sharedDirs ? {} }:
 
 let
-  inherit (lib)
-    any attrValues concatLists concatStrings concatStringsSep hasInfix
-    mapAttrsToList;
+  inherit (lib) any attrValues concatLists hasInfix mapAttrsToList;
 in
 
 assert !(any (hasInfix "\n") (concatLists (attrValues providers)));

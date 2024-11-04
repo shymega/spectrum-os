@@ -10,7 +10,7 @@ import ../../lib/call-package.nix (
 }:
 
 (callSpectrumPackage ./. {}).overrideAttrs (
-{ nativeBuildInputs ? [], shellHook ? "", passthru ? {}, ... }:
+{ nativeBuildInputs ? [], passthru ? {}, ... }:
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
