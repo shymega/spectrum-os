@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021, 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021, 2023-2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../../lib/call-package.nix (
 { callSpectrumPackage, srcOnly
@@ -7,13 +7,15 @@ import ../../../lib/call-package.nix (
 }:
 
 (callSpectrumPackage ./. {}).overrideAttrs (
-{ nativeBuildInputs ? [], passthru ? {}, ... }:
+{ nativeBuildInputs ? [], env ? {}, passthru ? {}, ... }:
 
 {
   nativeBuildInputs = nativeBuildInputs ++ [
     cloud-hypervisor crosvm execline jq iproute2 qemu_kvm reuse
   ];
 
-  LINUX_SRC = srcOnly passthru.kernel;
-  VMLINUX = "${passthru.kernel.dev}/vmlinux";
+  env = env // {
+    LINUX_SRC = srcOnly passthru.kernel;
+    VMLINUX = "${passthru.kernel.dev}/vmlinux";
+  };
 })) (_: {})
