@@ -168,7 +168,7 @@ run-crosvm: $(imgdir)/appvm/blk/root.img start-vhost-user-gpu start-virtiofsd
 	    -p "console=ttyS0 root=PARTLABEL=root" \
 	    --net tap-name=tap0 \
 	    --vhost-user-fs build/virtiofsd.sock:virtiofs0 \
-	    --vhost-user-gpu build/vhost-user-gpu.sock \
+	    --vhost-user gpu,socket=build/vhost-user-gpu.sock \
 	    --vsock cid=3 \
 	    --serial type=file,hardware=serial,path=build/serial.log \
 	    --serial type=stdout,hardware=virtio-console,stdin=true \
