@@ -7,8 +7,6 @@ project('xdg-desktop-portal-spectrum', 'c',
     'warning_level': '3',
   })
 
-add_project_arguments('-D_GNU_SOURCE', language : 'c')
-
 dbus = dependency('dbus-1')
 
 install_data('spectrum.portal',
