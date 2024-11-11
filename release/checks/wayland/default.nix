@@ -38,7 +38,7 @@ nixosTest ({ lib, pkgs, ... }: {
     systemd.services.crosvm = {
       after = [ "crosvm-gpu.service" "weston.service" ];
       requires = [ "crosvm-gpu.service" "weston.service" ];
-      serviceConfig.ExecStart = "${lib.getExe pkgs.crosvm} run -s /run/crosvm --disk ${appvm}/img/appvm/blk/root.img -p \"console=ttyS0 root=PARTLABEL=root\" --vhost-user-fs /run/virtiofsd.sock,tag=virtiofs0 --vhost-user-gpu /run/crosvm-gpu.sock --vsock cid=3 --serial type=stdout,hardware=virtio-console,stdin=true ${appvm}/img/appvm/vmlinux";
+      serviceConfig.ExecStart = "${lib.getExe pkgs.crosvm} run -s /run/crosvm --disk ${appvm}/img/appvm/blk/root.img -p \"console=ttyS0 root=PARTLABEL=root\" --vhost-user-fs /run/virtiofsd.sock,tag=virtiofs0 --vhost-user gpu,socket=/run/crosvm-gpu.sock --vsock cid=3 --serial type=stdout,hardware=virtio-console,stdin=true ${appvm}/img/appvm/vmlinux";
       serviceConfig.ExecStop = "${lib.getExe pkgs.crosvm} stop /run/crosvm";
     };
 
