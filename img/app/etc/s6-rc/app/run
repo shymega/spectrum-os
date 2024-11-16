@@ -14,6 +14,8 @@ importas -i home HOME
 if { mkdir -p -- $home }
 cd $home
 
+if { /etc/mdev/wait virtiofs0 }
+
 foreground {
   redirfd -r 0 /run/virtiofs/virtiofs0/config/type
   withstdinas -E type
