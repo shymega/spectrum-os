@@ -24,9 +24,7 @@ let
           CONFIG_FEATURE_IP_ADDRESS y
           CONFIG_FEATURE_IP_LINK y
           CONFIG_FEATURE_IP_ROUTE y
-          CONFIG_FEATURE_WGET_TIMEOUT y
           CONFIG_IP y
-          CONFIG_WGET y
         '';
       })
 
