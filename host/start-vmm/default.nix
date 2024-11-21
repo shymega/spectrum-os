@@ -114,11 +114,19 @@ stdenv.mkDerivation (finalAttrs: {
 
     run = run-spectrum-vm.override { start-vmm = finalAttrs.finalPackage; };
 
-    tests = finalAttrs.finalPackage.overrideAttrs ({ name, ... }: {
-      name = "${name}-tests";
-      preConfigure = "";
-      doCheck = true;
-    });
+    tests = finalAttrs.finalPackage.overrideAttrs (
+      { name, mesonFlags ? [], ... }:
+      {
+        name = "${name}-tests";
+
+        mesonFlags = mesonFlags ++ [
+          "-Dunwind=true"
+          "-Dtests=true"
+        ];
+
+        doCheck = true;
+      }
+    );
   };
 
   meta = {
