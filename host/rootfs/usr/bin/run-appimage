@@ -48,4 +48,4 @@ if {
   umount $dir
 }
 
-rm -rf /run/vm/run.${vm_name} /run/configs/vm_name
+rm -r /run/vm/run.${vm_name} /run/configs/${vm_name}
