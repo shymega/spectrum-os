@@ -2,6 +2,7 @@
 // SPDX-FileCopyrightText: 2022-2024 Alyssa Ross <hi@alyssa.is>
 
 use std::env::args_os;
+use std::fs::File;
 use std::os::unix::prelude::*;
 use std::path::Path;
 use std::process::exit;
@@ -15,7 +16,8 @@ fn ex_usage() -> ! {
 
 /// # Safety
 ///
-/// Calls [`notify_readiness`], so can only be called once.
+/// Takes ownership of the file descriptor used for readiness notification, so can
+/// only be called once.
 unsafe fn run() -> String {
     let mut args = args_os().skip(1);
     let Some(vm_name) = args.next() else {
@@ -32,7 +34,9 @@ unsafe fn run() -> String {
         Err(e) => return e,
     };
 
-    if let Err(e) = create_vm(&vm_dir) {
+    let ready_fd = File::from_raw_fd(3);
+
+    if let Err(e) = create_vm(&vm_dir, ready_fd) {
         return e;
     }
 

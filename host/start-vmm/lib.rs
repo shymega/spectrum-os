@@ -11,7 +11,7 @@ use std::borrow::Cow;
 use std::convert::TryInto;
 use std::env::args_os;
 use std::ffi::OsStr;
-use std::fs::remove_file;
+use std::fs::{remove_file, File};
 use std::io::{self, ErrorKind};
 use std::os::unix::net::UnixListener;
 use std::os::unix::prelude::*;
@@ -163,20 +163,18 @@ pub fn vm_config(vm_dir: &Path) -> Result<VmConfig, String> {
     })
 }
 
-/// # Safety
-///
-/// Calls [notify_readiness], so can only be called once per process.
-unsafe fn create_vm_child_main(vm_dir: &Path, config: VmConfig) -> ! {
+fn create_vm_child_main(vm_dir: &Path, ready_fd: File, config: VmConfig) -> ! {
     if let Err(e) = ch::create_vm(vm_dir, config) {
         eprintln!("{}: creating VM: {e}", prog_name());
-        if kill(parent_id() as _, SIGTERM) == -1 {
+        // SAFETY: trivially safe.
+        if unsafe { kill(parent_id() as _, SIGTERM) } == -1 {
             let e = io::Error::last_os_error();
             eprintln!("{}: killing cloud-hypervisor: {e}", prog_name());
         };
         exit(1);
     }
 
-    if let Err(e) = notify_readiness() {
+    if let Err(e) = notify_readiness(ready_fd) {
         eprintln!("{}: failed to notify readiness: {e}", prog_name());
         exit(1);
     }
@@ -184,7 +182,7 @@ unsafe fn create_vm_child_main(vm_dir: &Path, config: VmConfig) -> ! {
     exit(0)
 }
 
-pub fn create_vm(vm_dir: &Path) -> Result<(), String> {
+pub fn create_vm(vm_dir: &Path, ready_fd: File) -> Result<(), String> {
     let config = vm_config(vm_dir)?;
 
     // SAFETY: safe because we ensure we don't violate any invariants
@@ -194,7 +192,7 @@ pub fn create_vm(vm_dir: &Path) -> Result<(), String> {
         e if e < 0 => Err(format!("double fork: {}", io::Error::from_raw_os_error(-e))),
         // SAFETY: create_vm_child_main can only be called once per process,
         // but this is a new process, so we know it hasn't been called before.
-        0 => unsafe { create_vm_child_main(vm_dir, config) },
+        0 => create_vm_child_main(vm_dir, ready_fd, config),
         _ => Ok(()),
     }
 }
@@ -210,9 +208,12 @@ pub fn vm_command(api_socket_fd: RawFd) -> Result<Command, String> {
 mod tests {
     use super::*;
 
+    use std::fs::OpenOptions;
+
     #[test]
     fn test_vm_name_colon() {
-        let e = create_vm(Path::new("/:vm")).unwrap_err();
+        let ready_fd = OpenOptions::new().write(true).open("/dev/null").unwrap();
+        let e = create_vm(Path::new("/:vm"), ready_fd).unwrap_err();
         assert!(e.contains("colon"), "unexpected error: {:?}", e);
     }
 }
