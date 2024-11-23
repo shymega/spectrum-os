@@ -14,8 +14,6 @@
 #include <string.h>
 #include <unistd.h>
 
-#include <sys/un.h>
-
 #include <linux/if_tun.h>
 
 static int setup_tap(const char bridge_name[static 1],
