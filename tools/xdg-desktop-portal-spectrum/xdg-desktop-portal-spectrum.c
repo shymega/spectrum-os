@@ -109,7 +109,7 @@ static void check_result(int sock)
 	if (read(sock, &r, 1) == -1)
 		err(EXIT_FAILURE, "reading result");
 	if (r)
-		err(EXIT_FAILURE, "host send bad result: %hhd", r);
+		errx(EXIT_FAILURE, "host sent bad result: %hhd", r);
 }
 
 int main(void)
