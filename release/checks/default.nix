@@ -26,5 +26,7 @@ import ../../lib/call-package.nix ({ callSpectrumPackage }:
 
   try = callSpectrumPackage ./try.nix {};
 
+  uncrustify = callSpectrumPackage ./uncrustify.nix {};
+
   wayland = callSpectrumPackage ./wayland {};
 }) (_: {})
