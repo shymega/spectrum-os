@@ -1,13 +1,17 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 
-import ../../lib/call-package.nix ({ callSpectrumPackage, nixosTest }:
+import ../../lib/call-package.nix (
+{ callSpectrumPackage, lib, nixosTest, path }:
+
+lib.fix (self: nixosTest ({ pkgs, stdenv, mtools, ... }:
 
 let
   live = callSpectrumPackage ../live {};
-in
 
-nixosTest ({ stdenv, mtools, ... }: {
+  inherit (import (path + /nixos/lib/qemu-common.nix) { inherit lib pkgs; })
+    qemuBinary qemuSerialDevice;
+in {
   name = "try-spectrum-test";
   nodes = {};
 
@@ -31,15 +35,14 @@ nixosTest ({ stdenv, mtools, ... }: {
         cmdline = value
         break
 
-    flags = " ".join(map(shlex.quote, [
-      "qemu-kvm",
+    flags = "${qemuBinary self.config.qemu.package} " + " ".join(map(shlex.quote, [
       "-m", "512",
       "-kernel", "${live.rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}",
       "-initrd", "${live.initramfs}",
       "-device", "qemu-xhci",
       "-device", "usb-storage,drive=drive1,removable=true",
       "-drive", "file=${live},id=drive1,format=raw,if=none,readonly=on",
-      "-append", f"console=ttyS0 panic=-1 {cmdline}",
+      "-append", f"console=${qemuSerialDevice} panic=-1 {cmdline}",
     ]))
 
     machine = create_machine(flags)
@@ -48,4 +51,4 @@ nixosTest ({ stdenv, mtools, ... }: {
     machine.wait_for_console_text("EXT4-fs \\(sda4\\): mounted filesystem")
     machine.crash()
   '';
-})) (_: {})
+}))) (_: {})
