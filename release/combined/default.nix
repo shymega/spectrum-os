@@ -60,15 +60,22 @@ let
 
   esp = runCommand "esp.img" {
     nativeBuildInputs = [ grub libfaketime dosfstools mtools ];
-    grubTargetDir = "${grub}/lib/grub/${grub.grubTarget}";
-    # Definition copied from util/grub-install-common.c.
-    # Last checked: GRUB 2.06
-    pkglib_DATA = [
-      "efiemu32.o" "efiemu64.o" "moddep.lst" "command.lst" "fs.lst" "partmap.lst"
-      "parttool.lst" "video.lst" "crypto.lst" "terminal.lst" "modinfo.sh"
-    ];
+
+    env = {
+      grubTargetDir = "${grub}/lib/grub/${grub.grubTarget}";
+      # Definition copied from util/grub-install-common.c.
+      # Last checked: GRUB 2.06
+      pkglib_DATA = lib.escapeShellArgs [
+        "efiemu32.o" "efiemu64.o" "moddep.lst" "command.lst" "fs.lst"
+        "partmap.lst" "parttool.lst" "video.lst" "crypto.lst" "terminal.lst"
+        "modinfo.sh"
+      ];
+    };
+
     __structuredAttrs = true;
+
     unsafeDiscardReferences = { out = true; };
+
     passthru = { inherit grubCfg; };
   } ''
     truncate -s 15M $out
