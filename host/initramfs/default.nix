@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: MIT
 
 import ../../lib/call-package.nix (
@@ -55,17 +55,15 @@ let
     cp ${util-linuxMinimal}/bin/{findfs,lsblk} $out/bin
   '';
 
-  microcode = if stdenvNoCC.hostPlatform.isx86_64 then
-    runCommand "microcode.cpio" {
-      nativeBuildInputs = [ cpio ];
-      __structuredAttrs = true;
-      unsafeDiscardReferences = { out = true; };
-    } ''
-      cpio -id < ${microcodeAmd}/amd-ucode.img
-      cpio -id < ${microcodeIntel}/intel-ucode.img
-      find kernel | cpio -oH newc -R +0:+0 --reproducible > $out
-    ''
-  else null;
+  microcode = runCommand "microcode.cpio" {
+    nativeBuildInputs = [ cpio ];
+    __structuredAttrs = true;
+    unsafeDiscardReferences = { out = true; };
+  } ''
+    cpio -id < ${microcodeAmd}/amd-ucode.img
+    cpio -id < ${microcodeIntel}/intel-ucode.img
+    find kernel | cpio -oH newc -R +0:+0 --reproducible > $out
+  '';
 
   packagesCpio = runCommand "packages.cpio" {
     nativeBuildInputs = [ cpio ];
@@ -92,8 +90,9 @@ stdenvNoCC.mkDerivation {
   sourceRoot = "source/host/initramfs";
 
   env = {
-    MICROCODE = microcode;
     PACKAGES_CPIO = packagesCpio;
+  } // lib.optionalAttrs stdenvNoCC.hostPlatform.isx86_64 {
+    MICROCODE = microcode;
   };
 
   nativeBuildInputs = [ cpio lseek ];
