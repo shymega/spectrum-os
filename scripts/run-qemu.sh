@@ -1,5 +1,5 @@
 #!/bin/sh -ue
-# SPDX-FileCopyrightText: 2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2023-2024 Alyssa Ross <hi@alyssa.is>
 # SPDX-License-Identifier: EUPL-1.2+
 
 # This script wraps around QEMU to paper over platform differences,
@@ -18,7 +18,8 @@ while [ $i -lt $# ]; do
 	shift
 
 	if [ "$arg" = -append ]; then
-		append="${append:+$append }$1"
+		set -- "$@" -append "${append:+$append }$1"
+		i=$((i + 2))
 		shift
 		continue
 	fi
@@ -26,6 +27,12 @@ while [ $i -lt $# ]; do
 	set -- "$@" "$arg"
 
 	i=$((i + 1))
+done
+
+for arg; do
+	if [ "$arg" = -append ]; then
+		append=
+	fi
 done
 
 set -x
