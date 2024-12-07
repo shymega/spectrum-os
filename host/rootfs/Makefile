@@ -212,7 +212,7 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	exec ../../scripts/run-qemu.sh -cpu host -m 4G \
 	    -kernel $(KERNEL) \
 	    -initrd $(INITRAMFS) \
-	    -display gtk,gl=on \
+	    -display gtk \
 	    -gdb unix:build/gdb.sock,server,nowait \
 	    -qmp unix:build/vmm.sock,server,nowait \
 	    -monitor vc \
