@@ -208,8 +208,10 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	exec 3<>"$$ext" && \
 	rm -f "$$ext" && \
 	truncate -s +10G /proc/self/fd/3 && \
-	exec $(QEMU_KVM) -cpu host -m 4G \
-	    -machine q35,kernel=$(KERNEL),kernel-irqchip=split,initrd=$(INITRAMFS) \
+	set +x && \
+	exec ../../scripts/run-qemu.sh -cpu host -m 4G \
+	    -kernel $(KERNEL) \
+	    -initrd $(INITRAMFS) \
 	    -display gtk,gl=on \
 	    -gdb unix:build/gdb.sock,server,nowait \
 	    -qmp unix:build/vmm.sock,server,nowait \
@@ -217,7 +219,7 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	    -parallel none \
 	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
 	    -drive file=/proc/self/fd/3,if=virtio,format=raw \
-	    -append "console=ttyS0 roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on nokaslr" \
+	    -append "roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on nokaslr" \
 	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl \
 	    -device vhost-vsock-pci,guest-cid=3
