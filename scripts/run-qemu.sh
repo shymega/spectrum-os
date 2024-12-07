@@ -30,14 +30,19 @@ while [ $i -lt $# ]; do
 done
 
 for arg; do
-	if [ "$arg" = -append ]; then
-		append=
-	fi
+	case "$arg" in
+		-append)
+			append=
+			;;
+		-kernel)
+			kernel=1
+			;;
+	esac
 done
 
 set -x
 exec ${QEMU_SYSTEM:-qemu-system-$ARCH} \
 	-accel kvm \
 	-machine "$machine" \
-	${append:+-append "$append"} \
+	${kernel:+${append:+-append "$append"}} \
 	"$@"
