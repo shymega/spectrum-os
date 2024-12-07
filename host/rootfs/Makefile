@@ -220,7 +220,6 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
 	    -drive file=/proc/self/fd/3,if=virtio,format=raw \
 	    -append "roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on nokaslr" \
-	    -device intel-iommu,intremap=on \
 	    -device virtio-vga-gl \
 	    -device vhost-vsock-pci,guest-cid=3
 .PHONY: run
