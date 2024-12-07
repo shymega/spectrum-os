@@ -9,7 +9,7 @@ machine=virt
 
 if [ "${ARCH:="$(uname -m)"}" = x86_64 ]; then
 	append="console=ttyS0${append:+ $append}"
-	machine=q35
+	machine=q35,kernel-irqchip=split
 fi
 
 i=0
