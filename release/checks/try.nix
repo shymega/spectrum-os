@@ -45,7 +45,7 @@ nixosTest ({ stdenv, mtools, ... }: {
     machine = create_machine(flags)
 
     machine.start()
-    machine.wait_for_console_text("EXT4-fs \(sda4\): mounted filesystem")
+    machine.wait_for_console_text("EXT4-fs \\(sda4\\): mounted filesystem")
     machine.crash()
   '';
 })) (_: {})
