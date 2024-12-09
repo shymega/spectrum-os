@@ -52,7 +52,7 @@ clean:
 .PHONY: clean
 
 run: $(dest)
-	../../scripts/run-qemu.sh -m 4G \
+	@../../scripts/run-qemu.sh -m 4G \
 	    -cpu host \
 	    -device virtio-keyboard \
 	    -device virtio-mouse \
