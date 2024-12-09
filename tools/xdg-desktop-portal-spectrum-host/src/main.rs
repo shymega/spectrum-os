@@ -19,7 +19,7 @@ use async_executor::StaticExecutor;
 use async_io::Async;
 use futures_lite::prelude::*;
 use futures_lite::stream::StreamExt;
-use zbus::{Connection, ConnectionBuilder, MessageStream};
+use zbus::{connection, AuthMechanism, Connection, MessageStream};
 
 use file_chooser::FileChooser;
 
@@ -135,7 +135,8 @@ async fn run_guest_connection(mut conn: Async<UnixStream>) -> Result<(), String>
         let vsock = connect_to_guest(port).await?;
 
         let imp = FileChooser::new(guest_share_root);
-        ConnectionBuilder::socket(vsock)
+        connection::Builder::socket(vsock)
+            .auth_mechanism(AuthMechanism::Anonymous)
             .name("org.freedesktop.impl.portal.desktop.spectrum")
             .unwrap()
             .serve_at("/org/freedesktop/portal/desktop", imp)
