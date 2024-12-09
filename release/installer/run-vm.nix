@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
 { callSpectrumPackage, lib, coreutils, qemu_kvm, stdenv, writeShellScript }:
@@ -28,9 +28,11 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
   truncate -s 20G "$img"
   exec 3<>"$img"
   rm -f "$img"
-  exec qemu-kvm -cpu host -m 4G -machine q35 \
-    -display gtk,gl=on \
-    -device virtio-vga-gl \
+  exec ${../../scripts/run-qemu.sh} -cpu host -m 4G \
+    -device virtio-keyboard \
+    -device virtio-mouse \
+    -device virtio-gpu \
+    -vga none \
     -virtfs local,mount_tag=store,path=/nix/store,security_model=none,readonly=true \
     -drive file=${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd,format=raw,if=pflash,readonly=true \
     -drive file=${eosimages},format=raw,if=virtio,readonly=true \

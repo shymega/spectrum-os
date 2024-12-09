@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: EUPL-1.2+
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 .POSIX:
 
@@ -52,12 +52,12 @@ clean:
 .PHONY: clean
 
 run: $(dest)
-	$(QEMU_KVM) -m 4G \
+	../../scripts/run-qemu.sh -m 4G \
 	    -cpu host \
-	    -machine q35,kernel-irqchip=split \
-	    -display gtk,gl=on \
-	    -device intel-iommu,intremap=on \
-	    -device virtio-vga-gl \
+	    -device virtio-keyboard \
+	    -device virtio-mouse \
+	    -device virtio-gpu \
+	    -vga none \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
 	    -drive file=$(OVMF_CODE),format=raw,if=pflash,readonly=true \

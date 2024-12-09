@@ -70,16 +70,16 @@ clean:
 .PHONY: clean
 
 run: $(dest) build/rootfs.verity.roothash $(RUN_IMAGE)
-	$(QEMU_KVM) -m 4G \
+	@../../scripts/run-qemu.sh -m 4G \
 	    -kernel $(KERNEL) \
 	    -initrd $(dest) \
-	    -append "ro console=ttyS0 ext=vda intel_iommu=on roothash=$$(< build/rootfs.verity.roothash) nokaslr" \
+	    -append "ro ext=vda intel_iommu=on roothash=$$(< build/rootfs.verity.roothash) nokaslr" \
 	    -cpu host \
-	    -machine q35,kernel-irqchip=split \
-	    -display gtk,gl=on \
 	    -gdb unix:build/gdb.sock,server,nowait \
-	    -device intel-iommu,intremap=on \
-	    -device virtio-vga-gl \
+	    -device virtio-keyboard \
+	    -device virtio-mouse \
+	    -device virtio-gpu \
+	    -vga none \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \
 	    -drive file=$(RUN_IMAGE),id=drive1,format=raw,if=none,readonly=true \
