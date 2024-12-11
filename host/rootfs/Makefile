@@ -229,9 +229,13 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	    -qmp unix:build/vmm.sock,server,nowait \
 	    -monitor vc \
 	    -parallel none \
+	    -serial none \
+	    -chardev vc,id=virtiocon0 \
+	    -device virtio-serial \
+	    -device virtconsole,chardev=virtiocon0 \
 	    -drive file=build/live.img,if=virtio,format=raw,readonly=on \
 	    -drive file=/proc/self/fd/3,if=virtio,format=raw \
-	    -append "roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on nokaslr" \
+	    -append "console=hvc0 roothash=$$(< build/rootfs.verity.roothash) ext=/dev/vdb intel_iommu=on nokaslr" \
 	    -device virtio-keyboard \
 	    -device virtio-mouse \
 	    -device virtio-gpu \
