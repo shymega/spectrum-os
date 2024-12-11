@@ -39,7 +39,7 @@ nixosTest ({ stdenv, mtools, ... }: {
       "-device", "qemu-xhci",
       "-device", "usb-storage,drive=drive1,removable=true",
       "-drive", "file=${live},id=drive1,format=raw,if=none,readonly=on",
-      "-append", f"panic=-1 {cmdline}",
+      "-append", f"console=ttyS0 panic=-1 {cmdline}",
     ]))
 
     machine = create_machine(flags)
