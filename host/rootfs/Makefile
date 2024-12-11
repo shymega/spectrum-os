@@ -31,6 +31,8 @@ FILES = \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
 	etc/s6-linux-init/run-image/service/getty-tty4/run \
 	etc/s6-linux-init/run-image/service/getty-ttyS0/run \
+	etc/s6-linux-init/run-image/service/s6-svscan-log/notification-fd \
+	etc/s6-linux-init/run-image/service/s6-svscan-log/run \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/notification-fd \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/run \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/template/notification-fd \
@@ -89,6 +91,8 @@ DIRS = \
 	proc \
 	sys
 
+FIFOS = etc/s6-linux-init/run-image/service/s6-svscan-log/fifo
+
 # These are separate because they need to be included, but putting
 # them as make dependencies would confuse make.
 LINKS = \
@@ -100,13 +104,18 @@ LINKS = \
 
 BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
 
-$(dest): ../../scripts/make-erofs.sh $(FILES) $(BUILD_FILES) build/empty
+$(dest): ../../scripts/make-erofs.sh $(FILES) $(BUILD_FILES) build/empty build/fifo
 	( \
 	    cat $$PACKAGES ;\
 	    for file in $(FILES) $(LINKS); do printf '%s\n%s\n' $$file $$file; done ;\
 	    for file in $(BUILD_FILES); do printf '%s\n%s\n' $$file $${file#build/}; done ;\
 	    printf 'build/empty\n%s\n' $(DIRS) ;\
+	    printf 'build/fifo\n%s\n' $(FIFOS) ;\
 	) | ../../scripts/make-erofs.sh $@
+
+build/fifo:
+	mkdir -p build
+	mkfifo -m 0600 $@
 
 build/empty:
 	mkdir -p $@
