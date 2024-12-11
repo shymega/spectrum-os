@@ -30,9 +30,11 @@ FILES = \
 	etc/s6-linux-init/run-image/service/getty-tty2/run \
 	etc/s6-linux-init/run-image/service/getty-tty3/run \
 	etc/s6-linux-init/run-image/service/getty-tty4/run \
-	etc/s6-linux-init/run-image/service/getty-ttyS0/run \
 	etc/s6-linux-init/run-image/service/s6-svscan-log/notification-fd \
 	etc/s6-linux-init/run-image/service/s6-svscan-log/run \
+	etc/s6-linux-init/run-image/service/serial-getty/notification-fd \
+	etc/s6-linux-init/run-image/service/serial-getty/run \
+	etc/s6-linux-init/run-image/service/serial-getty/template/run \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/notification-fd \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/run \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/template/notification-fd \
@@ -70,6 +72,8 @@ DIRS = \
 	etc/s6-linux-init/run-image/service/dbus/instances \
 	etc/s6-linux-init/run-image/service/dbus/template/data \
 	etc/s6-linux-init/run-image/service/dbus/template/env \
+	etc/s6-linux-init/run-image/service/serial-getty/instance \
+	etc/s6-linux-init/run-image/service/serial-getty/instances \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/instance \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/instances \
 	etc/s6-linux-init/run-image/service/vhost-user-fs/template/data \
