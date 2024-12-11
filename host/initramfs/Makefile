@@ -76,6 +76,7 @@ run: $(dest) build/rootfs.verity.roothash $(RUN_IMAGE)
 	    -append "ro ext=vda intel_iommu=on roothash=$$(< build/rootfs.verity.roothash) nokaslr" \
 	    -cpu host \
 	    -gdb unix:build/gdb.sock,server,nowait \
+	    -parallel none \
 	    -device virtio-keyboard \
 	    -device virtio-mouse \
 	    -device virtio-gpu \

@@ -19,6 +19,7 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
   exec ${../../scripts/run-qemu.sh} -cpu host -m 4G \
     -device virtio-mouse \
     -device virtio-gpu \
+    -parallel none \
     -vga none \
     -device qemu-xhci \
     -device usb-kbd \

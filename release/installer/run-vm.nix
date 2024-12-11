@@ -32,6 +32,7 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
     -device virtio-keyboard \
     -device virtio-mouse \
     -device virtio-gpu \
+    -parallel none \
     -vga none \
     -virtfs local,mount_tag=store,path=/nix/store,security_model=none,readonly=true \
     -drive file=${qemu_kvm}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd,format=raw,if=pflash,readonly=true \

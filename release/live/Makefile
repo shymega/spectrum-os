@@ -57,6 +57,7 @@ run: $(dest)
 	    -device virtio-keyboard \
 	    -device virtio-mouse \
 	    -device virtio-gpu \
+	    -parallel none \
 	    -vga none \
 	    -device qemu-xhci \
 	    -device usb-storage,drive=drive1,removable=true \

@@ -141,6 +141,7 @@ run-qemu: $(imgdir)/appvm/blk/root.img start-virtiofsd
 	    -object memory-backend-memfd,id=mem,size=256M,share=on \
 	    -numa node,memdev=mem \
 	    -device vhost-vsock-pci,guest-cid=3 \
+	    -parallel none \
 	    -chardev vc,id=virtiocon0 \
 	    -device virtio-serial-pci \
 	    -device virtconsole,chardev=virtiocon0
