@@ -2,7 +2,14 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2020-2022, 2024 Alyssa Ross <hi@alyssa.is>
 
-background { s6-instance-create /run/service/serial-getty ttyS0 }
+background {
+  redirfd -r 0 /sys/class/tty/console/active
+  withstdinas active
+  importas -isu active active
+  forx -po0 -E tty { $active }
+  case $tty { tty[0-9]* { } }
+  s6-instance-create /run/service/serial-getty $tty
+}
 
 if { s6-rc-init -c /etc/s6-rc /run/service }
 
