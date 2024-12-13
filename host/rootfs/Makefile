@@ -229,6 +229,8 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	    -device virtio-keyboard \
 	    -device virtio-mouse \
 	    -device virtio-gpu \
+	    -netdev user,id=net0 \
+	    -device e1000e,netdev=net0 \
 	    -vga none \
 	    -device vhost-vsock-pci,guest-cid=3
 .PHONY: run
