@@ -200,9 +200,6 @@ stdenvNoCC.mkDerivation {
   nativeBuildInputs = [ erofs-utils lseek s6-rc ];
 
   env = {
-    MODULES_ALIAS = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.alias";
-    MODULES_ORDER = "${kernel}/lib/modules/${kernel.modDirVersion}/modules.order";
-
     PACKAGES = runCommand "packages" {} ''
       printf "%s\n/\n" ${packagesSysroot} >$out
       sed p ${writeClosure [ packagesSysroot] } >>$out

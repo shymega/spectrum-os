@@ -106,7 +106,7 @@ LINKS = \
 	lib \
 	sbin
 
-BUILD_FILES = build/etc/mdev/modalias.sh build/etc/s6-rc
+BUILD_FILES = build/etc/s6-rc
 
 $(dest): ../../scripts/make-erofs.sh $(FILES) $(BUILD_FILES) build/empty build/fifo
 	( \
@@ -123,18 +123,6 @@ build/fifo:
 
 build/empty:
 	mkdir -p $@
-
-build/etc/mdev/modules.map: scripts/modprobe/gen_modules.map.awk
-	mkdir -p $$(dirname $@)
-	awk -f scripts/modprobe/gen_modules.map.awk \
-		$(MODULES_ORDER) > $@ || rm -f $@
-
-build/etc/mdev/modalias.sh: scripts/modprobe/gen_modalias.sh.awk build/etc/mdev/modules.map
-	mkdir -p $$(dirname $@)
-	awk -v modmap=build/etc/mdev/modules.map \
-		-f scripts/modprobe/gen_modalias.sh.awk \
-		$(MODULES_ALIAS) > $@ || rm -f $@
-	chmod +x $@
 
 S6_RC_FILES = \
 	etc/s6-rc/card0/type \
