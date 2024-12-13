@@ -5,13 +5,16 @@
 # This script wraps around QEMU to paper over platform differences,
 # which can't be handled portably in Make language.
 
-machine=virt
-
-if [ "${ARCH:="$(uname -m)"}" = x86_64 ]; then
-	append="console=ttyS0${append:+ $append}"
-	iommu=intel-iommu,intremap=on
-	machine=q35,kernel-irqchip=split
-fi
+case "${ARCH:="$(uname -m)"}" in
+	aarch64)
+		machine=virt,gic-version=3,iommu=smmuv3
+		;;
+	x86_64)
+		append="console=ttyS0${append:+ $append}"
+		iommu=intel-iommu,intremap=on
+		machine=q35,kernel-irqchip=split
+		;;
+esac
 
 i=0
 while [ $i -lt $# ]; do
