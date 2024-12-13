@@ -16,7 +16,8 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
   rm -f "$img"
   # usb-kbd is used here as edk2 does not support virtio-keyboard:
   # https://github.com/tianocore/edk2/pull/6444
-  exec ${../../scripts/run-qemu.sh} -cpu host -m 4G \
+  exec ${../../scripts/run-qemu.sh} -cpu max -m 4G \
+    -machine virtualization=on \
     -device virtio-mouse \
     -device virtio-gpu \
     -parallel none \

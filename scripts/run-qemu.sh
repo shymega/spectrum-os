@@ -5,6 +5,8 @@
 # This script wraps around QEMU to paper over platform differences,
 # which can't be handled portably in Make language.
 
+accel=kvm
+
 case "${ARCH:="$(uname -m)"}" in
 	aarch64)
 		machine=virt,gic-version=3,iommu=smmuv3
@@ -40,6 +42,31 @@ while [ $i -lt $# ]; do
 			done
 			unset IFS
 			;;
+		-machine)
+			set -- "$@" "$arg"
+			i=$((i + 1))
+			arg=
+
+			IFS=,
+			for opt in $1; do
+				case "$opt" in
+					virtualization=on)
+						case "$ARCH" in
+							aarch64)
+								accel=tcg
+								;;
+							*)
+								continue
+								;;
+						esac
+						;;
+				esac
+
+				arg="$arg${arg:+,}$opt"
+			done
+			unset IFS
+
+			shift
 	esac
 
 	set -- "$@" "$arg"
@@ -60,7 +87,7 @@ done
 
 set -x
 exec ${QEMU_SYSTEM:-qemu-system-$ARCH} \
-	-accel kvm \
+	-accel "$accel" \
 	-machine "$machine" \
 	${kernel:+${append:+-append "$append"}} \
 	${iommu:+-device "$iommu"} \

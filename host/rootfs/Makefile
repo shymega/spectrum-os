@@ -210,7 +210,8 @@ run: build/live.img $(EXT_FS) build/rootfs.verity.roothash
 	rm -f "$$ext" && \
 	truncate -s +10G /proc/self/fd/3 && \
 	set +x && \
-	exec ../../scripts/run-qemu.sh -cpu host -m 4G \
+	exec ../../scripts/run-qemu.sh -cpu max -m 4G \
+	    -machine virtualization=on \
 	    -kernel $(KERNEL) \
 	    -initrd $(INITRAMFS) \
 	    -gdb unix:build/gdb.sock,server,nowait \

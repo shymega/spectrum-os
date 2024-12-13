@@ -53,7 +53,8 @@ clean:
 
 run: $(dest)
 	@../../scripts/run-qemu.sh -m 4G \
-	    -cpu host \
+	    -machine virtualization=on \
+	    -cpu max \
 	    -device virtio-keyboard \
 	    -device virtio-mouse \
 	    -device virtio-gpu \
