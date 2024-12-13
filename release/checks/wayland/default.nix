@@ -89,6 +89,10 @@ nixosTest ({ lib, pkgs, ... }: {
       listenStreams = [ "/run/virtiofsd.sock" ];
       wantedBy = [ "sockets.target" ];
     };
+
+    virtualisation.qemu.options =
+      lib.optionals (!pkgs.stdenv.hostPlatform.isx86)
+        [ "-machine" "accel=tcg,virtualization=on" ];
   };
 
   testScript = { ... }: ''
