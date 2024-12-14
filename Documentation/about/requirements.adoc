@@ -1,0 +1,29 @@
+= Hardware and firmware requirements
+:page-parent: About Spectrum
+
+// SPDX-FileCopyrightText: 2024 Alyssa Ross <hi@alyssa.is>
+// SPDX-License-Identifier: GFDL-1.3-no-invariants-or-later OR CC-BY-SA-4.0
+
+== Firmware requirements
+
+Firmware must implement either
+https://en.wikipedia.org/wiki/UEFI[UEFI] or the
+https://uapi-group.org/specifications/specs/boot_loader_specification/[Boot
+Loader Specification].  If the firmware provides a device tree,
+Spectrum will use
+https://www.freedesktop.org/software/systemd/man/latest/systemd-stub.html[systemd-stub]'s
+`.dtbauto` mechanism to attempt to load a matching device tree from Linux.
+
+== Hardware requirements
+
+- aarch64 or x86_64 processor with https://en.wikipedia.org/wiki/Virtualization#Hardware_assisted[virtualization extensions]
+- GICv3 or later with Interrupt Translation Services (on aarch64)
+- PCI network controller on a cache-coherent
+  https://en.wikipedia.org/wiki/Input%E2%80%93output_memory_management_unit[IOMMU]
+  (for network access) — some may not work due to Cloud Hypervisor
+  bugs
+
+All hardware to be used with Spectrum must be supported in the
+mainline Linux kernel that Spectrum uses.  Only device firmware
+included by NixOS's `hardware.enableRedistributableFirmware` option
+will be provided by Spectrum.
