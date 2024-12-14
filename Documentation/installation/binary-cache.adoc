@@ -7,9 +7,9 @@
 
 Building Spectrum from source can take a very long time.  To avoid
 having to wait when building the system to try it out or test patches,
-an x86_64 binary cache service is available.  If configured to do so,
-Nix will download build outputs from the cache, instead of building
-them locally.
+an aarch64 and x86_64 binary cache service is available.  If
+configured to do so, Nix will download build outputs from the cache,
+instead of building them locally.
 
 The binary cache is populated by doing a Spectrum
 xref:../development/release.adoc[release build] with a
