@@ -1,4 +1,4 @@
-From f5256f46ec45e777fffad1dadd708da814fc8461 Mon Sep 17 00:00:00 2001
+From eacb8e3e6d4fd7ec15412ff159904f6c93427771 Mon Sep 17 00:00:00 2001
 From: Alyssa Ross <alyssa.ross@unikie.com>
 Date: Wed, 7 Sep 2022 14:16:29 +0000
 Subject: [PATCH 2/2] virtio-devices: add a GPU device
@@ -164,7 +164,7 @@ index f807189d..dee53f19 100644
              Command::new("add-pmem")
                  .about("Add persistent memory device")
 diff --git a/src/main.rs b/src/main.rs
-index 43b901df..1803641d 100644
+index fc9f6038..82072264 100644
 --- a/src/main.rs
 +++ b/src/main.rs
 @@ -27,9 +27,9 @@ use vmm::vm_config;
@@ -180,7 +180,7 @@ index 43b901df..1803641d 100644
  };
  use vmm_sys_util::eventfd::EventFd;
  use vmm_sys_util::signal::block_signal;
-@@ -331,6 +331,13 @@ fn create_app(default_vcpus: String, default_memory: String, default_rng: String
+@@ -332,6 +332,13 @@ fn create_app(default_vcpus: String, default_memory: String, default_rng: String
                  .num_args(1..)
                  .group("vm-config"),
          )
@@ -194,7 +194,7 @@ index 43b901df..1803641d 100644
          .arg(
              Arg::new("pmem")
                  .long("pmem")
-@@ -1053,6 +1060,7 @@ mod unit_tests {
+@@ -1054,6 +1061,7 @@ mod unit_tests {
              },
              balloon: None,
              fs: None,
@@ -1017,7 +1017,7 @@ index b7074fdb..d6223957 100644
        required:
          - file
 diff --git a/vmm/src/config.rs b/vmm/src/config.rs
-index 3f8062d9..b4f132f4 100644
+index 422e904f..36217b63 100644
 --- a/vmm/src/config.rs
 +++ b/vmm/src/config.rs
 @@ -30,6 +30,8 @@ pub enum Error {
@@ -1073,7 +1073,7 @@ index 3f8062d9..b4f132f4 100644
              pmem,
              serial,
              console,
-@@ -1704,6 +1715,49 @@ impl FsConfig {
+@@ -1705,6 +1716,49 @@ impl FsConfig {
      }
  }
  
@@ -1123,7 +1123,7 @@ index 3f8062d9..b4f132f4 100644
  impl PmemConfig {
      pub const SYNTAX: &'static str = "Persistent memory parameters \
      \"file=<backing_file_path>,size=<persistent_memory_size>,iommu=on|off,\
-@@ -2546,6 +2600,17 @@ impl VmConfig {
+@@ -2547,6 +2601,17 @@ impl VmConfig {
              }
          }
  
@@ -1141,7 +1141,7 @@ index 3f8062d9..b4f132f4 100644
          if let Some(pmems) = &self.pmem {
              for pmem in pmems {
                  pmem.validate(self)?;
-@@ -2793,6 +2858,15 @@ impl VmConfig {
+@@ -2794,6 +2859,15 @@ impl VmConfig {
              fs = Some(fs_config_list);
          }
  
@@ -1157,7 +1157,7 @@ index 3f8062d9..b4f132f4 100644
          let mut pmem: Option<Vec<PmemConfig>> = None;
          if let Some(pmem_list) = &vm_params.pmem {
              let mut pmem_config_list = Vec::new();
-@@ -2933,6 +3007,7 @@ impl VmConfig {
+@@ -2934,6 +3008,7 @@ impl VmConfig {
              rng,
              balloon,
              fs,
@@ -1165,7 +1165,7 @@ index 3f8062d9..b4f132f4 100644
              pmem,
              serial,
              console,
-@@ -2994,6 +3069,13 @@ impl VmConfig {
+@@ -2995,6 +3070,13 @@ impl VmConfig {
              removed |= fs.len() != len;
          }
  
@@ -1179,7 +1179,7 @@ index 3f8062d9..b4f132f4 100644
          // Remove if net device
          if let Some(net) = self.net.as_mut() {
              let len = net.len();
-@@ -3066,6 +3148,7 @@ impl Clone for VmConfig {
+@@ -3067,6 +3149,7 @@ impl Clone for VmConfig {
              #[cfg(feature = "pvmemcontrol")]
              pvmemcontrol: self.pvmemcontrol.clone(),
              fs: self.fs.clone(),
@@ -1187,7 +1187,7 @@ index 3f8062d9..b4f132f4 100644
              pmem: self.pmem.clone(),
              serial: self.serial.clone(),
              console: self.console.clone(),
-@@ -3576,6 +3659,23 @@ mod tests {
+@@ -3577,6 +3660,23 @@ mod tests {
          Ok(())
      }
  
@@ -1211,7 +1211,7 @@ index 3f8062d9..b4f132f4 100644
      fn pmem_fixture() -> PmemConfig {
          PmemConfig {
              file: PathBuf::from("/tmp/pmem"),
-@@ -3847,6 +3947,7 @@ mod tests {
+@@ -3848,6 +3948,7 @@ mod tests {
              rng: RngConfig::default(),
              balloon: None,
              fs: None,
@@ -1219,7 +1219,7 @@ index 3f8062d9..b4f132f4 100644
              pmem: None,
              serial: default_serial(),
              console: default_console(),
-@@ -4048,6 +4149,7 @@ mod tests {
+@@ -4049,6 +4150,7 @@ mod tests {
              },
              balloon: None,
              fs: None,
@@ -1227,7 +1227,7 @@ index 3f8062d9..b4f132f4 100644
              pmem: None,
              serial: ConsoleConfig {
                  file: None,
-@@ -4220,6 +4322,13 @@ mod tests {
+@@ -4221,6 +4323,13 @@ mod tests {
              Err(ValidationError::VhostUserRequiresSharedMemory)
          );
  
@@ -1242,7 +1242,7 @@ index 3f8062d9..b4f132f4 100644
          still_valid_config.memory.shared = true;
          still_valid_config.validate().unwrap();
 diff --git a/vmm/src/device_manager.rs b/vmm/src/device_manager.rs
-index 4c9b65fd..1a5eec39 100644
+index 8b3c20e5..209827bb 100644
 --- a/vmm/src/device_manager.rs
 +++ b/vmm/src/device_manager.rs
 @@ -12,6 +12,7 @@
@@ -1308,7 +1308,7 @@ index 4c9b65fd..1a5eec39 100644
      /// Error creating serial output file
      SerialOutputFileOpen(io::Error),
  
-@@ -2197,6 +2209,9 @@ impl DeviceManager {
+@@ -2186,6 +2198,9 @@ impl DeviceManager {
          // Add virtio-fs if required
          devices.append(&mut self.make_virtio_fs_devices()?);
  
@@ -1318,7 +1318,7 @@ index 4c9b65fd..1a5eec39 100644
          // Add virtio-pmem if required
          devices.append(&mut self.make_virtio_pmem_devices()?);
  
-@@ -2755,6 +2770,114 @@ impl DeviceManager {
+@@ -2744,6 +2759,114 @@ impl DeviceManager {
          Ok(devices)
      }
  
@@ -1433,7 +1433,7 @@ index 4c9b65fd..1a5eec39 100644
      fn make_virtio_pmem_device(
          &mut self,
          pmem_cfg: &mut PmemConfig,
-@@ -4074,6 +4197,7 @@ impl DeviceManager {
+@@ -4062,6 +4185,7 @@ impl DeviceManager {
                  | VirtioDeviceType::Block
                  | VirtioDeviceType::Pmem
                  | VirtioDeviceType::Fs
@@ -1441,7 +1441,7 @@ index 4c9b65fd..1a5eec39 100644
                  | VirtioDeviceType::Vsock => {}
                  _ => return Err(DeviceManagerError::RemovalNotAllowed(device_type)),
              }
-@@ -4359,6 +4483,13 @@ impl DeviceManager {
+@@ -4347,6 +4471,13 @@ impl DeviceManager {
          self.hotplug_virtio_pci_device(device)
      }
  
@@ -1456,10 +1456,10 @@ index 4c9b65fd..1a5eec39 100644
          self.validate_identifier(&pmem_cfg.id)?;
  
 diff --git a/vmm/src/lib.rs b/vmm/src/lib.rs
-index 814d5eb5..e6674e62 100644
+index 8a197b73..892a9e43 100644
 --- a/vmm/src/lib.rs
 +++ b/vmm/src/lib.rs
-@@ -59,8 +59,8 @@ use crate::migration::{recv_vm_config, recv_vm_state};
+@@ -60,8 +60,8 @@ use crate::migration::{recv_vm_config, recv_vm_state};
  use crate::seccomp_filters::{get_seccomp_filter, Thread};
  use crate::vm::{Error as VmError, Vm, VmState};
  use crate::vm_config::{
@@ -1470,7 +1470,7 @@ index 814d5eb5..e6674e62 100644
  };
  
  mod acpi;
-@@ -1810,6 +1810,32 @@ impl RequestHandler for Vmm {
+@@ -1962,6 +1962,32 @@ impl RequestHandler for Vmm {
          }
      }
  
@@ -1503,7 +1503,7 @@ index 814d5eb5..e6674e62 100644
      fn vm_add_pmem(&mut self, pmem_cfg: PmemConfig) -> result::Result<Option<Vec<u8>>, VmError> {
          self.vm_config.as_ref().ok_or(VmError::VmNotCreated)?;
  
-@@ -2210,6 +2236,7 @@ mod unit_tests {
+@@ -2365,6 +2391,7 @@ mod unit_tests {
              },
              balloon: None,
              fs: None,
@@ -1511,7 +1511,7 @@ index 814d5eb5..e6674e62 100644
              pmem: None,
              serial: ConsoleConfig {
                  file: None,
-@@ -2441,6 +2468,54 @@ mod unit_tests {
+@@ -2596,6 +2623,54 @@ mod unit_tests {
          );
      }
  
@@ -1567,7 +1567,7 @@ index 814d5eb5..e6674e62 100644
      fn test_vmm_vm_cold_add_pmem() {
          let mut vmm = create_dummy_vmm();
 diff --git a/vmm/src/vm.rs b/vmm/src/vm.rs
-index db035f46..515832b6 100644
+index e8a53830..36cf89f8 100644
 --- a/vmm/src/vm.rs
 +++ b/vmm/src/vm.rs
 @@ -89,8 +89,8 @@ use crate::migration::get_vm_snapshot;
@@ -1581,7 +1581,7 @@ index db035f46..515832b6 100644
  };
  use crate::{
      cpu, GuestMemoryMmap, PciDeviceInfo, CPU_MANAGER_SNAPSHOT_ID, DEVICE_MANAGER_SNAPSHOT_ID,
-@@ -1621,6 +1621,30 @@ impl Vm {
+@@ -1622,6 +1622,30 @@ impl Vm {
          Ok(pci_device_info)
      }
  
@@ -1641,5 +1641,5 @@ index e74fbc1d..cce0bdc1 100644
      #[serde(default = "default_serial")]
      pub serial: ConsoleConfig,
 -- 
-2.46.0
+2.47.0
 

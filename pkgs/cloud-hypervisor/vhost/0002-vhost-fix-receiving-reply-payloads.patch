@@ -1,4 +1,4 @@
-From 8f45dffb3bdf894d1ca6ca33133be816ba5ac70d Mon Sep 17 00:00:00 2001
+From b89f211b3a002aebce9bc8d9dbd159b9c88fd3b3 Mon Sep 17 00:00:00 2001
 From: David Stevens <stevensd@chromium.org>
 Date: Wed, 15 Jun 2022 15:56:18 +0900
 Subject: [PATCH 2/4] vhost: fix receiving reply payloads
@@ -82,10 +82,10 @@ index 4fca9c5..0ce7215 100644
  }
  
 diff --git a/vhost/src/vhost_user/frontend.rs b/vhost/src/vhost_user/frontend.rs
-index 9f2d85a..d56354b 100644
+index 0fb548b..9e26474 100644
 --- a/vhost/src/vhost_user/frontend.rs
 +++ b/vhost/src/vhost_user/frontend.rs
-@@ -727,23 +727,13 @@ impl FrontendInternal {
+@@ -738,23 +738,13 @@ impl FrontendInternal {
          &mut self,
          hdr: &VhostUserMsgHeader<FrontendReq>,
      ) -> VhostUserResult<(T, Vec<u8>, Option<Vec<File>>)> {
@@ -113,5 +113,5 @@ index 9f2d85a..d56354b 100644
          }
  
 -- 
-2.46.0
+2.47.0
 
