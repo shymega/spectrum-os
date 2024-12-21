@@ -15,7 +15,10 @@ let
   modules = makeModulesClosure {
     inherit (rootfs) firmware kernel;
     rootModules = with rootfs.nixosAllHardware.config.boot.initrd;
-      availableKernelModules ++ kernelModules ++ [ "dm-verity" "erofs" "loop" ];
+      lib.subtractLists [ "virtio_net" "vmxnet3" ]
+        (availableKernelModules ++ kernelModules ++ [
+          "dm-verity" "erofs" "loop"
+        ]);
   };
 
   packages = [
