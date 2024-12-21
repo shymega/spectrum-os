@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: EUPL-1.2+
 # SPDX-FileCopyrightText: 2022 Unikie
 
-s6-notifyoncheck -d
+s6-notifyoncheck -dn 0
 crosvm --no-syslog device gpu
   --socket env/crosvm.sock
   --wayland-sock /run/user/0/wayland-1
