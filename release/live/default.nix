@@ -5,13 +5,15 @@
 import ../../lib/call-package.nix (
 { callSpectrumPackage, lseek, rootfs, src, lib, pkgsStatic, stdenvNoCC
 , cryptsetup, dosfstools, jq, mtools, util-linux
-, systemd
+, systemdUkify
 }:
 
 let
   inherit (lib) toUpper;
 
   stdenv = stdenvNoCC;
+
+  systemd = systemdUkify;
 
   extfs = pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit callSpectrumPackage;
@@ -35,7 +37,9 @@ stdenv.mkDerivation {
   };
   sourceRoot = "source/release/live";
 
-  nativeBuildInputs = [ cryptsetup dosfstools jq lseek mtools util-linux ];
+  nativeBuildInputs = [
+    cryptsetup dosfstools jq lseek mtools systemd util-linux
+  ];
 
   env = {
     EXT_FS = extfs;

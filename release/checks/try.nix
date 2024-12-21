@@ -17,32 +17,14 @@ in {
 
   testScript = ''
     import shlex
-    import subprocess
-
-    conf = subprocess.run([
-      "${mtools}/bin/mcopy",
-      "-i",
-      "${live}@@1M",
-      "::loader/entries/spectrum.conf",
-      "-",
-    ], stdout=subprocess.PIPE)
-    conf.check_returncode()
-
-    cmdline = None
-    for line in conf.stdout.decode('utf-8').splitlines():
-      key, value = line.split(' ', 1)
-      if key == 'options':
-        cmdline = value
-        break
 
     flags = "${qemuBinary self.config.qemu.package} " + " ".join(map(shlex.quote, [
       "-m", "512",
-      "-kernel", "${live.rootfs.kernel}/${stdenv.hostPlatform.linux-kernel.target}",
-      "-initrd", "${live.initramfs}",
       "-device", "qemu-xhci",
       "-device", "usb-storage,drive=drive1,removable=true",
+      "-drive", "file=${self.config.qemu.package}/share/qemu/edk2-${stdenv.hostPlatform.qemuArch}-code.fd,format=raw,if=pflash,readonly=on",
       "-drive", "file=${live},id=drive1,format=raw,if=none,readonly=on",
-      "-append", f"console=${qemuSerialDevice} panic=-1 {cmdline}",
+      "-smbios", "type=11,value=io.systemd.stub.kernel-cmdline-extra=console=${qemuSerialDevice} panic=-1",
     ]))
 
     machine = create_machine(flags)

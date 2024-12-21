@@ -15,20 +15,19 @@ $(dest): ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh ../../scripts/sf
 	    $(EXT_FS):9293e1ff-cee4-4658-88be-898ec863944f
 	mv $@.tmp $@
 
-build/spectrum.conf: build/rootfs.verity.roothash
-	printf "title Spectrum\n" > $@
-	printf "linux /spectrum/linux\n" >> $@
-	printf "initrd /spectrum/initrd\n" >> $@
-	printf "options ro intel_iommu=on roothash=" >> $@
-	cat build/rootfs.verity.roothash >> $@
+build/spectrum.efi: build/rootfs.verity.roothash $(KERNEL) $(INITRAMFS)
+	$(UKIFY) build \
+	    --output $@ \
+	    --linux $(KERNEL) \
+	    --initrd $(INITRAMFS) \
+	    --os-release $$'NAME="Spectrum"\n' \
+	    --cmdline "ro intel_iommu=on roothash=$$(cat build/rootfs.verity.roothash)"
 
-build/boot.fat: $(KERNEL) $(INITRAMFS) $(SYSTEMD_BOOT_EFI) build/spectrum.conf
+build/boot.fat: $(SYSTEMD_BOOT_EFI) build/spectrum.efi
 	$(TRUNCATE) -s 440401920 $@
 	$(MKFS_FAT) $@
-	$(MMD) -i $@ ::/EFI ::/EFI/BOOT ::/loader ::/loader/entries ::/spectrum
-	$(MCOPY) -i $@ build/spectrum.conf ::/loader/entries
-	$(MCOPY) -i $@ $(KERNEL) ::/spectrum/linux
-	$(MCOPY) -i $@ $(INITRAMFS) ::/spectrum/initrd
+	$(MMD) -i $@ ::/EFI ::/EFI/BOOT ::/EFI/Linux
+	$(MCOPY) -i $@ build/spectrum.efi ::/EFI/Linux
 	$(MCOPY) -i $@ $(SYSTEMD_BOOT_EFI) ::/EFI/BOOT/$(EFINAME)
 
 # veritysetup format produces two files, but Make only (portably)

@@ -44,15 +44,6 @@ let
   grubCfg = substituteAll {
     src = ./grub.cfg.in;
 
-    nativeBuildInputs = [ mtools ];
-
-    preInstall = ''
-      export spectrumKernelParams="$(
-          mcopy -i ${eosimages.image}@@1M ::/loader/entries/spectrum.conf - |
-          grep '^options ' |
-          sed 's/^options //')"
-    '';
-
     linux = removePrefix storeDir installer.kernel;
     initrd = removePrefix storeDir installer.initramfs;
     inherit (installer) kernelParams;

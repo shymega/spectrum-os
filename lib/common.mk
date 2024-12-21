@@ -14,5 +14,6 @@ MMD = mmd
 S6_IPCSERVER_SOCKETBINDER = s6-ipcserver-socketbinder
 TAR = tar
 TRUNCATE = truncate
+UKIFY = ukify
 VERITYSETUP = veritysetup
 VIRTIOFSD = virtiofsd
