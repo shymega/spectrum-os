@@ -4,7 +4,7 @@
 import ../../../lib/call-package.nix ({ lseek, src, terminfo, pkgsStatic }:
 pkgsStatic.callPackage (
 
-{ lib, stdenvNoCC, runCommand, writeClosure
+{ lib, stdenvNoCC, nixos, runCommand, writeClosure
 , erofs-utils, jq, s6-rc, util-linux, xorg
 , busybox, connmanMinimal, dbus, execline, kmod, linux_latest, mdevd, nftables
 , s6, s6-linux-init
@@ -12,6 +12,7 @@ pkgsStatic.callPackage (
 
 let
   inherit (lib) concatMapStringsSep;
+  inherit (nixosAllHardware.config.hardware) firmware;
 
   connman = connmanMinimal;
 
@@ -34,7 +35,7 @@ let
 
   # Packages that should be fully linked into /usr,
   # (not just their bin/* files).
-  usrPackages = [ connman dbus kernel terminfo ];
+  usrPackages = [ connman dbus firmware kernel terminfo ];
 
   packagesSysroot = runCommand "packages-sysroot" {
     inherit packages;
@@ -50,6 +51,12 @@ let
         lndir -ignorelinks -silent "$pkg" "$out/usr"
     done
   '';
+
+  nixosAllHardware = nixos ({ modulesPath, ... }: {
+    imports = [ (modulesPath + "/profiles/all-hardware.nix") ];
+
+    system.stateVersion = lib.trivial.release;
+  });
 
   kernelTarget =
     if stdenvNoCC.hostPlatform.isx86 then
@@ -123,7 +130,7 @@ stdenvNoCC.mkDerivation {
 
   unsafeDiscardReferences = { out = true; };
 
-  passthru = { inherit kernel packagesSysroot; };
+  passthru = { inherit firmware kernel packagesSysroot; };
 
   meta = with lib; {
     license = licenses.eupl12;
