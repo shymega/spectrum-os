@@ -32,18 +32,22 @@ let
     (nftables.override { withCli = false; })
   ];
 
+  # Packages that should be fully linked into /usr,
+  # (not just their bin/* files).
+  usrPackages = [ connman dbus kernel terminfo ];
+
   packagesSysroot = runCommand "packages-sysroot" {
     inherit packages;
     nativeBuildInputs = [ xorg.lndir ];
     passAsFile = [ "packages" ];
   } ''
-    mkdir -p $out/usr/bin $out/usr/share/dbus-1
-    ln -s ${concatMapStringsSep " " (p: "${p}/bin/*") packages} $out/usr/bin
-    ln -s ${kernel}/lib "$out"
-    ln -s ${terminfo}/share/terminfo $out/usr/share
+    mkdir -p $out/usr/bin
 
-    for pkg in ${dbus} ${connman}; do
-        lndir -silent $pkg/share/dbus-1 $out/usr/share/dbus-1
+    ln -st $out/usr/bin \
+        ${concatMapStringsSep " " (p: "${p}/bin/*") packages}
+
+    for pkg in ${lib.escapeShellArgs usrPackages}; do
+        lndir -ignorelinks -silent "$pkg" "$out/usr"
     done
   '';
 
