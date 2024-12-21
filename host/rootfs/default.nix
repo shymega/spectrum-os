@@ -216,7 +216,9 @@ stdenvNoCC.mkDerivation {
 
   unsafeDiscardReferences = { out = true; };
 
-  passthru = { inherit appvm firmware kernel nixosAllHardware pkgsGui; };
+  passthru = {
+    inherit appvm firmware kernel nixosAllHardware packagesSysroot pkgsGui;
+  };
 
   meta = with lib; {
     license = licenses.eupl12;

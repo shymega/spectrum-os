@@ -119,7 +119,7 @@ stdenvNoCC.mkDerivation {
 
   unsafeDiscardReferences = { out = true; };
 
-  passthru = { inherit kernel; };
+  passthru = { inherit kernel packagesSysroot; };
 
   meta = with lib; {
     license = licenses.eupl12;
