@@ -4,12 +4,14 @@
 
 import ../../lib/call-package.nix (
 { callSpectrumPackage, lseek, rootfs, src, lib, pkgsStatic, stdenvNoCC
-, cryptsetup, dosfstools, jq, mtools, util-linux, stdenv
+, cryptsetup, dosfstools, jq, mtools, util-linux
 , systemd
 }:
 
 let
   inherit (lib) toUpper;
+
+  stdenv = stdenvNoCC;
 
   extfs = pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit callSpectrumPackage;
@@ -18,7 +20,7 @@ let
   efiArch = stdenv.hostPlatform.efiArch;
 in
 
-stdenvNoCC.mkDerivation {
+stdenv.mkDerivation {
   name = "spectrum-live.img";
 
   src = lib.fileset.toSource {
