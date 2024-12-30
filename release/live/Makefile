@@ -5,6 +5,8 @@
 
 include ../../lib/common.mk
 
+DTBS ?= build/empty
+
 dest = build/live.img
 
 $(dest): ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh ../../scripts/sfdisk-field.awk build/boot.fat build/rootfs.verity.superblock build/rootfs.verity.roothash $(ROOT_FS) $(EXT_FS)
@@ -15,6 +17,24 @@ $(dest): ../../scripts/format-uuid.sh ../../scripts/make-gpt.sh ../../scripts/sf
 	    $(EXT_FS):9293e1ff-cee4-4658-88be-898ec863944f
 	mv $@.tmp $@
 
+build/empty:
+	mkdir -p $@
+
+# Each device tree is a PE section, and there can only be a maximum of
+# 96 PE sections.  To work around this and consider every device tree
+# provided by the kernel for auto-loading, split them across as many
+# UKI addons (each of which is its own PE binary) as required.
+# https://github.com/systemd/systemd/issues/35943
+build/spectrum.efi.extra.d: $(DTBS)
+	rm -rf $@
+	mkdir -p $@
+	i=0; find $(DTBS) -name '*.dtb' | xargs -rn 92 | while read -r dtbs; do \
+	    i=$$((i + 1)) ;\
+	    printf "[UKI]\nDeviceTreeAuto=%s\n" "$$dtbs" | $(UKIFY) build \
+	        --output $@/dtbs$$i.addon.efi \
+	        --config /dev/stdin ;\
+	done
+
 build/spectrum.efi: build/rootfs.verity.roothash $(KERNEL) $(INITRAMFS)
 	$(UKIFY) build \
 	    --output $@ \
@@ -23,11 +43,12 @@ build/spectrum.efi: build/rootfs.verity.roothash $(KERNEL) $(INITRAMFS)
 	    --os-release $$'NAME="Spectrum"\n' \
 	    --cmdline "ro intel_iommu=on roothash=$$(cat build/rootfs.verity.roothash)"
 
-build/boot.fat: $(SYSTEMD_BOOT_EFI) build/spectrum.efi
+build/boot.fat: $(SYSTEMD_BOOT_EFI) build/spectrum.efi build/spectrum.efi.extra.d
 	$(TRUNCATE) -s 440401920 $@
 	$(MKFS_FAT) $@
 	$(MMD) -i $@ ::/EFI ::/EFI/BOOT ::/EFI/Linux
 	$(MCOPY) -i $@ build/spectrum.efi ::/EFI/Linux
+	$(MCOPY) -i $@ build/spectrum.efi.extra.d ::/EFI/Linux
 	$(MCOPY) -i $@ $(SYSTEMD_BOOT_EFI) ::/EFI/BOOT/$(EFINAME)
 
 # veritysetup format produces two files, but Make only (portably)

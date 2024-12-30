@@ -13,7 +13,9 @@ let
 
   stdenv = stdenvNoCC;
 
-  systemd = systemdUkify;
+  systemd = systemdUkify.overrideAttrs ({ mesonFlags ? [], ... }: {
+    mesonFlags = mesonFlags ++ [ "-Defi-addon-extra-sections=95" ];
+  });
 
   extfs = pkgsStatic.callPackage ../../host/initramfs/extfs.nix {
     inherit callSpectrumPackage;
@@ -48,6 +50,8 @@ stdenv.mkDerivation {
     ROOT_FS = rootfs;
     SYSTEMD_BOOT_EFI = "${systemd}/lib/systemd/boot/efi/systemd-boot${efiArch}.efi";
     EFINAME = "BOOT${toUpper efiArch}.EFI";
+  } // lib.optionalAttrs stdenv.hostPlatform.linux-kernel.DTB or false {
+    DTBS = "${rootfs.kernel}/dtbs";
   };
 
   buildFlags = [ "dest=$(out)" ];
