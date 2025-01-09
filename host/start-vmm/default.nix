@@ -27,9 +27,9 @@ let
     })
     (fetchCrate {
       pname = "quote";
-      version = "1.0.35";
+      version = "1.0.38";
       unpack = false;
-      hash = "sha256-KR7Jq179k0qvUDpkZsXVJRU10QjudHRyw5d8xazIaO8=";
+      hash = "sha256-Dk3Mqq+JUU9UbGk93BQPcp+VjCR5GKEzgMzMYHg5Gsw=";
     })
     (fetchCrate {
       pname = "ryu";
