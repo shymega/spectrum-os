@@ -62,6 +62,9 @@ let
       postgresql = super.postgresql.override {
         systemdSupport = false;
       };
+      ppp = super.ppp.override {
+        withSystemd = false;
+      };
       procps = super.procps.override {
         withSystemd = false;
       };
