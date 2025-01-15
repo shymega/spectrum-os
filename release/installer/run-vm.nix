@@ -40,5 +40,8 @@ writeShellScript "run-spectrum-installer-vm.sh" ''
     -drive file=/proc/self/fd/3,format=raw,if=virtio \
     -kernel ${installer.kernel} \
     -initrd ${installer.initramfs} \
-    -append ${escapeShellArg installer.kernelParams}
+    -append ${escapeShellArg (toString [
+      installer.kernelParams
+      "systemd.journald.forward_to_console"
+    ])}
 '') (_: {})
