@@ -21,9 +21,9 @@ let
     })
     (fetchCrate {
       pname = "proc-macro2";
-      version = "1.0.79";
+      version = "1.0.93";
       unpack = false;
-      hash = "sha256-6DX/Ipj1chYI6xqYDsruGu8sEyv5XswCahG3vzwBwC4=";
+      hash = "sha256-YJRqaOX50osNwcIbuKl+59AYqLMi+leDi6McyHjiLZk=";
     })
     (fetchCrate {
       pname = "quote";
