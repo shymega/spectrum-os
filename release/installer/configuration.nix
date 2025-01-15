@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2023 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
 
 { lib, modulesPath, pkgs, ... }:
 
@@ -34,6 +34,13 @@ in
 
   services.cage.enable = true;
   services.cage.program = lib.getExe (pkgs.callPackage ./app {});
+
+  services.udev.extraRules = ''
+    KERNEL=="card0", TAG+="systemd"
+  '';
+
+  systemd.services.cage-tty1.after = [ "dev-dri-card0.device" ];
+  systemd.services.cage-tty1.wants = [ "dev-dri-card0.device" ];
 
   # Force eos-installer to stop artificially constraining its size.
   systemd.services.cage-tty1.environment.GIS_SMALL_SCREEN = "1";
