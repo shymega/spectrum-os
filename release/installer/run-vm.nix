@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: MIT
-# SPDX-FileCopyrightText: 2021-2024 Alyssa Ross <hi@alyssa.is>
+# SPDX-FileCopyrightText: 2021-2025 Alyssa Ross <hi@alyssa.is>
 
 import ../../lib/call-package.nix (
 { callSpectrumPackage, lib, coreutils, qemu_kvm, stdenv, writeShellScript }:
