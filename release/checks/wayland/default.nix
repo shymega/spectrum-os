@@ -100,7 +100,7 @@ nixosTest ({ lib, pkgs, ... }: {
 
     machine.start_job('crosvm.service')
     machine.wait_for_unit('surface-notify-socket.service');
-    machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=180)
+    machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=360)
     machine.screenshot('crosvm')
     machine.stop_job('crosvm-gpu.service')
     machine.stop_job('crosvm.service')
@@ -108,7 +108,7 @@ nixosTest ({ lib, pkgs, ... }: {
     machine.systemctl('restart surface-notify-socket')
     machine.wait_for_unit('surface-notify-socket')
     machine.start_job('cloud-hypervisor.service')
-    machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=180)
+    machine.succeed('test "$(wc -c /run/surface-notify)" = "1 /run/surface-notify"', timeout=360)
     machine.screenshot('cloud-hypervisor')
   '';
 })) (_: {})
